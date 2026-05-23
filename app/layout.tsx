@@ -7,6 +7,7 @@ import {
   Merriweather,
   Roboto_Mono
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -90,7 +91,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
-      <body className={fontVars}>{children}</body>
+      <body className={fontVars}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

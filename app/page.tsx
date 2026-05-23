@@ -91,7 +91,7 @@ const FONTS: FontItem[] = [
   { label: "Mono",         kind: "unicode", transform: "mono" }
 ];
 
-const VERSION = "v2.1.2";
+const VERSION = "v2.1.3";
 
 export default function Page() {
   const [text, setText] = useState("");
