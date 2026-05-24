@@ -90,6 +90,77 @@
     </defs>
   </svg>
 
+  <!-- v5.53.0 — content for browsers without JavaScript (Lynx, w3m,
+       ELinks, Browsh, JS-disabled mode). Hidden when JS runs.
+       Semantic HTML so screen readers + text browsers can still consume
+       the basics. -->
+  <noscript>
+    <div class="ns-shell">
+      <h1>Banana — помощник</h1>
+      <p>Этот сайт требует JavaScript для основного функционала: смены тем, генератора шрифтов, калькулятора, таймеров, шифрованного логина.</p>
+      <p>Чтобы воспользоваться им полностью:</p>
+      <ul>
+        <li>Включи JavaScript в настройках браузера, или</li>
+        <li>Открой сайт в современном браузере: Chrome, Firefox, Safari, Edge, Brave, Vivaldi или Opera</li>
+      </ul>
+      <h2>Что есть на сайте</h2>
+      <ul>
+        <li>🔤 Генератор шрифтов для Telegram / Discord / Word</li>
+        <li>🔢 Калькулятор с историей</li>
+        <li>⏱ Таймер и часы по поясам</li>
+        <li>🛠 Утилиты: UUID, Base64, HEX, ROT13, Morse, slug, JSON-форматтер, и др.</li>
+        <li>🎨 68 цветовых тем</li>
+        <li>🔓 20 секретных кодов</li>
+      </ul>
+      <p>Источник: <a href="https://github.com/1565gfd/bananafonts">github.com/1565gfd/bananafonts</a></p>
+    </div>
+  </noscript>
+
+  <!-- v5.53.0 — legacy-browser warning. Hidden by default; the bootstrap
+       script below shows it if critical APIs are missing (no Promise / no
+       Object.assign / no fetch). UA-sniff isn't used — feature-detect is
+       more reliable. -->
+  <div id="legacy-banner" class="legacy-banner" hidden>
+    <strong>⚠ Браузер устарел.</strong>
+    Некоторые функции могут не работать.
+    Обнови: <a href="https://browsehappy.com/" target="_blank" rel="noopener">browsehappy.com</a>
+    или установи Chrome / Firefox / Edge.
+    <button type="button" id="legacy-dismiss" aria-label="Закрыть">×</button>
+  </div>
+  <script>
+    /* Feature-detect critical ES2015+ APIs. If any missing → show banner. */
+    (function () {
+      try {
+        var ok = true;
+        if (typeof Promise === "undefined") ok = false;
+        if (typeof Object.assign !== "function") ok = false;
+        if (typeof Array.from !== "function") ok = false;
+        if (typeof window.fetch !== "function") ok = false;
+        if (!document.querySelector) ok = false;
+        /* CSS custom-properties test */
+        var probe = document.createElement("div");
+        probe.style.setProperty("--probe", "1");
+        if (probe.style.getPropertyValue("--probe") !== "1") ok = false;
+        if (!ok) {
+          var b = document.getElementById("legacy-banner");
+          if (b) b.removeAttribute("hidden");
+        }
+      } catch (e) {
+        var b2 = document.getElementById("legacy-banner");
+        if (b2) b2.removeAttribute("hidden");
+      }
+      /* Dismiss handler — must use only ES5 + querySelector since legacy
+         browsers might be reading this. */
+      var dismiss = document.getElementById("legacy-dismiss");
+      if (dismiss) {
+        dismiss.onclick = function () {
+          var b = document.getElementById("legacy-banner");
+          if (b) b.setAttribute("hidden", "");
+        };
+      }
+    })();
+  </script>
+
   <main class="app">
     <div class="top-bar">
       <div class="theme-switch" role="group" aria-label="Theme">
@@ -225,7 +296,13 @@
       </div>
 
       <div id="calc-panel-basic" class="calc-panel">
-        <div class="calc-display" id="calc-display">0</div>
+        <!-- v5.55.0 — two-line display: small gray preview shows the
+             ongoing expression (e.g. "444 + 444"), big number is the
+             current entry / result. -->
+        <div class="calc-display-wrap">
+          <div class="calc-expr" id="calc-expr" aria-hidden="true"></div>
+          <div class="calc-display" id="calc-display">0</div>
+        </div>
         <div class="calc-keypad">
           <button type="button" class="calc-btn calc-btn-action" data-key="AC">AC</button>
           <button type="button" class="calc-btn calc-btn-action" data-key="neg">±</button>

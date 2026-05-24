@@ -2222,16 +2222,42 @@ html:not(.page-noir) {
   display: none;
 }
 
-/* v5.37.0 — Calculator display as recessed LCD-style block */
-.calc-display {
+/* v5.55.0 — wrap now carries the LCD card styling so the two-line
+   layout (small expression preview + big result) shares one container.
+   .calc-display itself is transparent and just renders the number. */
+.calc-display-wrap {
   position: relative;
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.05) 100%),
     var(--output-bg);
   border: 1px solid var(--output-border);
   border-radius: 22px;
-  padding: 24px 26px;
+  padding: 14px 26px 18px;
   margin-bottom: 16px;
+}
+.calc-expr {
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-align: right;
+  letter-spacing: 0.5px;
+  min-height: 18px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  opacity: 0.7;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.calc-expr:empty::before { content: "\200B"; }
+
+.calc-display {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
   font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
   font-size: 44px;
   font-weight: 600;
@@ -3056,11 +3082,15 @@ html:not(.page-noir) {
 }
 
 @media (max-width: 480px) {
+  /* v5.55.0 — split sizing across wrap + display + expr */
+  .calc-display-wrap {
+    padding: 10px 16px 14px;
+  }
   .calc-display {
     font-size: 28px;
-    padding: 14px 16px;
-    min-height: 60px;
+    min-height: 44px;
   }
+  .calc-expr { font-size: 12px; min-height: 14px; }
   .calc-btn {
     min-height: 48px;
     font-size: 19px;
@@ -8962,4 +8992,383 @@ body.admin-role-creator .tab-btn[data-tab="logs"].active {
 @media (max-width: 600px) {
   .logs-stats { grid-template-columns: 1fr 1fr; }
   .admin-logs-search { min-width: 100px; font-size: 11px; }
+}
+
+
+/* v5.52.1 — defense-in-depth: hide creator-only tab content when body
+   has no admin-role-creator class. Without this, user could be left
+   on the Logs tab with content visible after admin logout (the tab
+   button hides via CSS, but the section's  attribute was
+   removed when user clicked the button). */
+body:not(.admin-role-creator) .tab-content[data-min-role="creator"] {
+  display: none !important;
+}
+
+
+/* ============================================================
+   v5.53.0 — CROSS-BROWSER POLISH + MOBILE TUNING
+   - Remove iOS Safari tap-highlight (blue flash) globally
+   - Disable pull-to-refresh on mobile (overscroll-behavior)
+   - Firefox parity for user-select (-moz- alongside -webkit-)
+   - Use dvh viewport units on mobile to handle Android/iOS toolbar
+   - Better text-selection styles cross-browser
+   - Scrollbar styling (Firefox has its own syntax)
+   - <noscript> fallback styling
+   - Legacy-browser warning banner
+   ============================================================ */
+
+/* iOS Safari tap-highlight: remove the blue/grey flash on tap.
+   Setting on html cascades to all clickable elements. */
+html {
+  -webkit-tap-highlight-color: transparent;
+  /* Smooth scrolling unless user prefers reduced motion */
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Prevent pull-to-refresh / over-scroll bounce on mobile.
+   Body is the scroll container in our layout. */
+body {
+  overscroll-behavior-y: contain;
+  /* Better text rendering on most browsers */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Firefox parity: most -webkit-user-select declarations don't have a
+   -moz- counterpart in this file. Apply via this catch-all rule. */
+*::selection {
+  background: rgba(255, 225, 53, 0.35);
+  color: inherit;
+}
+*::-moz-selection {
+  background: rgba(255, 225, 53, 0.35);
+  color: inherit;
+}
+
+/* Make all inputs/textareas at least 16px on touch devices, in one place.
+   Prevents iOS Safari zoom-on-focus. */
+@media (hover: none), (pointer: coarse) {
+  input, textarea, select {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Firefox scrollbar — uses scrollbar-color / scrollbar-width instead of
+   the ::-webkit-scrollbar pseudo. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+/* WebKit-based scrollbars (Chrome/Safari/Edge/etc.) — thin + themed. */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Mobile-only: use dvh (dynamic viewport height) where supported, so
+   the layout doesn't jump when iOS/Android toolbars expand/contract.
+   Falls back to vh for old browsers via the cascade. */
+@supports (height: 100dvh) {
+  body { min-height: 100dvh; }
+}
+
+/* Accessibility — focus-visible for keyboard navigation. Wraps elements
+   in a clear ring only when reached via keyboard, not via mouse click. */
+:focus-visible {
+  outline: 2px solid var(--accent, #ffe135);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── <noscript> fallback styling (text browsers, JS-off mode) ── */
+.ns-shell {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: #1a1f3a;
+}
+.ns-shell h1 { font-size: 32px; margin: 0 0 12px; }
+.ns-shell h2 { font-size: 22px; margin: 24px 0 8px; }
+.ns-shell ul { padding-left: 24px; }
+.ns-shell li { margin-bottom: 4px; }
+.ns-shell a { color: #4f3fcf; }
+
+/* ── Legacy-browser warning banner ── */
+.legacy-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  padding: 12px 48px 12px 16px;
+  background: linear-gradient(90deg, #ffd93d, #ff8a3c);
+  color: #2a1a00;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+.legacy-banner strong { font-weight: 800; margin-right: 6px; }
+.legacy-banner a { color: #5a1a00; font-weight: 700; }
+.legacy-banner button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  color: #2a1a00;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+.legacy-banner button:hover { background: rgba(0, 0, 0, 0.25); }
+
+/* ── @supports fallbacks for features that newer browsers have ── */
+
+/* color-mix not supported → fall back to plain rgba via existing
+   --output-bg overrides (no action needed; this is a marker). */
+
+/* :has() not supported → degraded gracefully (no usage that breaks
+   without it; sites rendered same as before :has support era). */
+
+/* aspect-ratio not supported → font cards may lose their square shape,
+   but layout doesn't crash. */
+@supports not (aspect-ratio: 1) {
+  /* Fallback height: 1 for any element using aspect-ratio: 1 */
+  [style*="aspect-ratio"] { min-height: 1em; }
+}
+
+/* gap on flex not supported (very old Safari < 14.1, very old Firefox).
+   Cascade fallback: items just don't have gaps, layout still works. */
+
+/* backdrop-filter — already has -webkit- prefix throughout the file.
+   @supports gate already in place around the SVG-filter section. */
+
+/* user-select polyfill via vendor prefixes — applied per-element by hand
+   for the most-affected places (.sync-code, .secret-input). */
+.sync-code,
+.calc-display,
+.secret-result,
+.output {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* ── Mobile tuning consolidated ── */
+@media (max-width: 600px) {
+  /* Better spacing on edge of viewport for safe-area phones */
+  .app {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  /* Reduce backdrop-filter complexity on mobile (already done globally;
+     this catches lingering ones in newer sections). */
+  .legacy-banner { font-size: 12px; padding: 10px 40px 10px 12px; }
+}
+
+/* ── Print stylesheet (in case someone prints fonts) ── */
+@media print {
+  .top-bar, .tabs, .account-widget, .admin-badge,
+  .legacy-banner, .ddos-overlay { display: none !important; }
+  .app { background: #fff !important; color: #000 !important; box-shadow: none !important; }
+  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+}
+
+/* ── Browsers without backdrop-filter (Firefox < 103, Brave Strict) ── */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app, .tool-section, .tool-btn, .settings-btn, .calc-btn, .home-input,
+  textarea, .admin-modal, .account-widget {
+    /* Use solid bg fallback so the glass theme stays readable */
+    background-color: var(--output-bg, rgba(20, 20, 30, 0.92)) !important;
+  }
+}
+
+
+/* ============================================================
+   v5.54.0 — FULL SCREEN-SIZE COVERAGE
+   Specific tuning for every display class the site might run on.
+   Layered atop the existing 600/700/900/1100/1366 breakpoints.
+   ============================================================ */
+
+/* TINY: smartwatches, Garmin browsers, Kindle Voyage, <= 320px */
+@media (max-width: 320px) {
+  html { font-size: 13px; }
+  .app { padding: 8px 6px !important; border-radius: 14px !important; }
+  .top-bar { gap: 4px; padding-right: 60px; margin-bottom: 10px; }
+  .theme-switch, .lang-switch { padding: 3px; gap: 2px; }
+  .tabs { gap: 3px; padding: 4px; }
+  .tab-btn { padding: 5px 7px; font-size: 11px; min-height: 32px; }
+  h1 { font-size: 16px; margin: 0 0 8px; }
+  .account-widget-main { padding: 4px 6px 4px 4px; max-width: 70px; font-size: 11px; }
+  .account-widget-main .account-avatar { width: 20px; height: 20px; font-size: 12px; }
+  .account-widget-main .account-name { max-width: 50px; font-size: 10px; }
+  .account-widget-logout { padding: 0 6px; min-width: 28px; font-size: 11px; }
+  .calc-btn { font-size: 14px; padding: 8px; }
+  .calc-display { font-size: 22px; padding: 8px 10px; }
+}
+
+/* SMARTWATCH-class square: 240-280px width, near 1:1 aspect */
+@media (max-width: 280px) {
+  .top-bar { padding-right: 0; flex-direction: column; align-items: stretch; }
+  .top-bar > * { width: 100%; justify-content: center; }
+  .tab-btn span:not(.tab-icon) { display: none; }
+  .account-widget {
+    position: static !important;
+    margin: 6px auto;
+    max-width: 200px;
+  }
+  .admin-badge { display: none !important; }
+}
+
+/* FOLDABLES inner display, near 1:1 aspect, ~700-900px */
+@media (min-width: 600px) and (max-width: 900px) and (min-aspect-ratio: 9/10) and (max-aspect-ratio: 11/10) {
+  .app { max-width: 92vw; }
+  .fonts { grid-template-columns: repeat(3, 1fr); }
+  .account-modal { max-width: 460px; }
+}
+
+/* PORTRAIT TABLETS: 600px-1024px wide, portrait (iPad class) */
+@media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
+  .app { max-width: 88vw; padding: 24px 20px; }
+  .fonts { grid-template-columns: repeat(3, 1fr); }
+  h1 { font-size: 28px; }
+}
+
+/* ULTRAWIDE: 21:9 and 32:9 monitors */
+@media (min-aspect-ratio: 2/1) and (min-width: 1800px) {
+  .app { max-width: 1100px; }
+  .admin-modal { max-width: 720px; }
+  .ddos-overlay { padding: 32px 15%; }
+}
+
+/* LARGE DESKTOPS: 1440-2400px */
+@media (min-width: 1440px) {
+  .app { max-width: 980px; }
+  .output { font-size: 22px; }
+  textarea { font-size: 18px; }
+}
+
+/* 4K / RETINA-SCALED: 2400px+ effective viewport */
+@media (min-width: 2400px) {
+  html { font-size: 18px; }
+  .app { max-width: 1280px; padding: 36px 32px; }
+  .account-widget-main { padding: 9px 16px 9px 9px; font-size: 15px; }
+  .account-widget-main .account-avatar { width: 34px; height: 34px; font-size: 18px; }
+  .admin-badge { width: 44px; height: 44px; font-size: 18px; }
+}
+
+/* 8K / TV-CLASS: 3200px+ (sit-back viewing distance) */
+@media (min-width: 3200px) {
+  html { font-size: 22px; }
+  .app { max-width: 1600px; padding: 48px 40px; }
+  h1 { font-size: 56px; }
+  .tab-btn { padding: 14px 24px; font-size: 18px; }
+  .auth-input, .calc-input { font-size: 20px; padding: 18px 20px; }
+  .auth-submit { font-size: 22px; padding: 22px 28px; }
+}
+
+/* PORTRAIT MONITORS: tall narrow (1080x1920 rotated) */
+@media (orientation: portrait) and (min-width: 800px) and (min-height: 1400px) {
+  .app { max-width: 700px; margin: 60px auto; }
+  .tab-content { min-height: 70vh; }
+}
+
+/* e-INK / SLOW UPDATE displays (Kindle, reMarkable, BOOX) */
+@media (update: slow), (prefers-contrast: more) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  [data-theme] {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  [data-theme="dark"], [data-theme="night"], [data-theme="black-orange"] {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  .app, .tool-section, .calc-btn, .tab-btn, .auth-input, textarea {
+    background: transparent !important;
+    border: 1px solid currentColor !important;
+  }
+}
+
+/* FORCED-COLORS MODE (Windows High Contrast) */
+@media (forced-colors: active) {
+  * {
+    forced-color-adjust: auto;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .app, .tool-section, .calc-btn, .tab-btn,
+  .auth-input, textarea, .admin-modal {
+    background: Canvas !important;
+    color: CanvasText !important;
+    border: 1px solid CanvasText !important;
+  }
+  .tab-btn.active, .auth-submit, .calc-btn.active {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+  .legacy-banner { background: Highlight; color: HighlightText; }
+}
+
+/* HIGH DPR (>=2x): Retina, AMOLED */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  hr { transform: scaleY(0.5); }
+}
+
+/* WIDE COLOR GAMUT (P3): MacBook Pro, modern iPhone */
+@media (color-gamut: p3) {
+  :root {
+    --accent-p3: color(display-p3 1 0.88 0.21);
+  }
+}
+
+/* SHORT VIEWPORTS: laptops in landscape with chrome UI eating vertical */
+@media (max-height: 600px) and (min-width: 800px) {
+  .app { margin-top: 8px; padding-top: 14px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  .tab-content { padding-top: 8px; }
+}
+
+/* EXTRA-NARROW DESKTOPS: Surface Duo / split-screen Windows */
+@media (min-width: 540px) and (max-width: 720px) and (orientation: portrait) {
+  .top-bar { padding-right: 120px; }
+}
+
+/* HOVER-CAPABLE precision pointers: mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .settings-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
+  .settings-slider::-moz-range-thumb     { width: 18px; height: 18px; }
+}
+
+/* ZERO-MOTION + ZERO-DATA combined: extreme accessibility */
+@media (prefers-reduced-motion: reduce) and (prefers-reduced-data: reduce) {
+  .ddos-overlay, body.ddos-active::before { display: none !important; }
 }

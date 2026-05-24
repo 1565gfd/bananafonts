@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.52.0";
+  var VERSION = "v5.55.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1986,15 +1986,49 @@
   }
 
   /* --------- basic calculator --------- */
+  /* v5.55.0 — `expr` holds the small-grey preview string shown above
+     the main display (e.g. "444 + 444"). Updated by calcRender after
+     every operation. */
+  var calcDisplayExprEl = document.getElementById("calc-expr");
+  var CALC_OP_SYMBOL = { "+": "+", "-": "−", "*": "×", "/": "÷" };
   var calcState = {
     display: "0",
     prev: null,
     op: null,
-    waiting: false
+    waiting: false,
+    /* v5.55.0 — last completed expression "A op B =", shown until the
+       user starts a new entry. Cleared on AC. */
+    lastExpr: ""
   };
+
+  /* Format a number the same way the main display does, for the expr line */
+  function _calcFmtForExpr(n) {
+    if (n === null || n === undefined) return "";
+    if (typeof n === "number") return calcFormat(n);
+    return String(n);
+  }
 
   function calcRender() {
     calcDisplayEl.textContent = calcState.display;
+    /* v5.55.0 — build the small grey expression preview.
+       Cases:
+         1. lastExpr set (after =) → "444 + 444 ="  (until next digit clears it)
+         2. op pending, waiting=true (user just pressed +) → "444 +"
+         3. op pending, waiting=false (user typing second number) → "444 + 12"
+         4. nothing in progress → empty (zero-width space keeps height) */
+    var expr = "";
+    if (calcState.lastExpr) {
+      expr = calcState.lastExpr;
+    } else if (calcState.op !== null && calcState.prev !== null) {
+      var sym = CALC_OP_SYMBOL[calcState.op] || calcState.op;
+      if (calcState.waiting) {
+        expr = _calcFmtForExpr(calcState.prev) + " " + sym;
+      } else {
+        expr = _calcFmtForExpr(calcState.prev) + " " + sym + " " + calcState.display;
+      }
+    }
+    if (calcDisplayExprEl) calcDisplayExprEl.textContent = expr;
+
     /* Highlight active operator */
     for (var i = 0; i < calcBtns.length; i++) {
       var k = calcBtns[i].dataset.key;
@@ -2015,6 +2049,9 @@
   }
 
   function calcInputDigit(d) {
+    /* v5.55.0 — any new digit clears the "A op B =" preview from the
+       previous calculation. User has moved on. */
+    calcState.lastExpr = "";
     if (calcState.waiting) {
       calcState.display = d;
       calcState.waiting = false;
@@ -2025,6 +2062,7 @@
   }
 
   function calcInputDot() {
+    calcState.lastExpr = "";
     if (calcState.waiting) {
       calcState.display = "0.";
       calcState.waiting = false;
@@ -2047,6 +2085,8 @@
   function calcSetOp(op) {
     var current = parseFloat(calcState.display);
     if (isNaN(current)) return;
+    /* v5.55.0 — once the user presses an op, the "=" preview is gone */
+    calcState.lastExpr = "";
     if (calcState.prev === null) {
       calcState.prev = current;
     } else if (!calcState.waiting) {
@@ -2063,11 +2103,17 @@
     if (calcState.op === null || calcState.prev === null) return;
     var current = parseFloat(calcState.display);
     if (isNaN(current)) return;
+    /* v5.55.0 — capture the full expression BEFORE we wipe state so we
+       can show it as "A op B =" above the result. */
+    var sym = CALC_OP_SYMBOL[calcState.op] || calcState.op;
+    var fullExpr = _calcFmtForExpr(calcState.prev) + " " + sym + " " +
+                   calcState.display + " =";
     var result = calcEval(calcState.prev, current, calcState.op);
     calcState.display = calcFormat(result);
     calcState.prev = null;
     calcState.op = null;
     calcState.waiting = true;
+    calcState.lastExpr = fullExpr;
     calcRender();
     playUiSound("coin");             /* v5.38.2: cha-ching on calculator result */
   }
@@ -2077,6 +2123,7 @@
     calcState.prev = null;
     calcState.op = null;
     calcState.waiting = false;
+    calcState.lastExpr = "";
     calcRender();
     playUiSound("squeak");           /* v5.38.2: rubber-eraser feel on AC */
   }
@@ -2092,11 +2139,15 @@
   function calcPercent() {
     var n = parseFloat(calcState.display);
     if (isNaN(n)) return;
-    /* If there's a pending operation, percent of prev value */
+    /* v5.55.0 — capture expression: "X%" alone or "A op X% = R" mid-op */
+    var orig = calcState.display;
     if (calcState.prev !== null && calcState.op) {
+      var sym = CALC_OP_SYMBOL[calcState.op] || calcState.op;
       calcState.display = calcFormat(calcState.prev * n / 100);
+      calcState.lastExpr = _calcFmtForExpr(calcState.prev) + " " + sym + " " + orig + "%";
     } else {
       calcState.display = calcFormat(n / 100);
+      calcState.lastExpr = orig + "%";
     }
     calcRender();
   }
@@ -3267,8 +3318,11 @@
     try { localStorage.setItem("bananafont:admin", "1"); } catch (e) {}
     adminBadgeEl.removeAttribute("hidden");
     /* v5.50.0 — sync body class with active role so CSS can gate UI
-       per role (data-min-role="admin"/"creator" attributes on sections). */
-    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-moderator");
+       per role (data-min-role="admin"/"creator" attributes on sections).
+       v5.52.1 — also clear "admin-role-helper" (was "moderator" pre-rename;
+       leaving the old class name here caused the helper class to persist
+       across logout/login, leaving the page in a stale role state). */
+    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-helper", "admin-role-moderator");
     var roleClass = (typeof _activeRole === "string" && _activeRole) ? _activeRole : "admin";
     document.body.classList.add("admin-role-" + roleClass);
     /* v5.47.8 — stealth activation: no heart-rain / rainbow flash /
@@ -3282,8 +3336,19 @@
     try { localStorage.removeItem("bananafont:admin"); } catch (e) {}
     adminBadgeEl.setAttribute("hidden", "");
     closeAdminPanel();
-    /* v5.50.0 — clear role body classes when leaving admin */
-    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-moderator");
+    /* v5.52.1 — include "admin-role-helper" (the new name) in the clear
+       list. The old "moderator" entry was a no-op after the v5.50.2
+       rename, so helper logouts left the body class stuck and the
+       creator/admin/helper-only sections kept their hidden state. */
+    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-helper", "admin-role-moderator");
+    /* v5.52.1 — if user was viewing the creator-only Logs tab when admin
+       mode dropped, bounce them back to Home so they don't get stuck on
+       a now-button-less tab. */
+    var logsTab = document.getElementById("tab-logs");
+    if (logsTab && !logsTab.hasAttribute("hidden")) {
+      var homeBtn = document.getElementById("tab-btn-home");
+      if (homeBtn) homeBtn.click();
+    }
     playUiSound("knock");   /* v5.38.2 — "leaving" feel */
   }
   function openAdminPanel() {
