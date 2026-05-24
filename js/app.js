@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.30.5";
+  var VERSION = "v5.31.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3476,6 +3476,23 @@
      sliders added dynamically also work. */
   document.addEventListener("input", function (e) {
     var el = e.target;
+    /* v5.31.0: swear detection on any user text input. Apology input
+       (page-red-input) and readonly/disabled fields are skipped. If
+       a swear word is found in the value, the input is cleared and the
+       red apology lockout is triggered. */
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA")) {
+      var skipSwearCheck =
+        el.readOnly ||
+        el.disabled ||
+        (el.classList && el.classList.contains("page-red-input")) ||
+        document.querySelector(".page-red-flash");
+      if (!skipSwearCheck && el.type !== "range" && el.type !== "number" &&
+          el.type !== "color" && containsSwear(el.value)) {
+        el.value = "";   /* wipe the offensive content */
+        lockPageInRed();
+        return;          /* don't also fire the slider-tick handler */
+      }
+    }
     if (el && el.tagName === "INPUT" && el.type === "range") {
       playSliderTick();
     }
@@ -3925,13 +3942,140 @@
     }, 3300);
   }
 
-  /* ── lockPageInRed (v5.30.3 / v5.30.4) ── deep red fullscreen overlay
-     with apology UI. The only way out is to type SORRY or ПРОСТИ
-     (case-insensitive). No reload — locked until apology.
-     v5.30.4: also clears any showBigText overlay so the red lock is the
-     only thing on screen (was overlapping for ~2 seconds before). */
+  /* ── Swear detection (v5.31.0) ── catches Russian мат + основные
+     English profanity (case-insensitive, ловит даже КАПС и МиШаНКу).
+     На любой ввод в любое поле — если в значении найден мат, поле
+     очищается + срабатывает lockPageInRed (та же кара что и за код 1488).
+     Список умышленно консервативен — стеммы хуй / пизд / бля / еб(стандартный),
+     плюс сука/пидор/мудак/долбо-, плюс fuck/shit/bitch/cunt/asshole/dick. */
+  var SWEAR_PATTERNS = [
+    /* Russian — основные корни мата + производные + жаргон */
+    /(хуй|хуе|хуя|хую|хуё|хуи|хуёв|хер[нив])/i,
+    /пизд/i,
+    /(бля|блядь|блять|бляд)/i,
+    /(?<![рктсзлжчшщпбгджфхцнм])(ёб|еб)(?=ат|ал|ан|нут|ну[лть]|ло|ёт|ёш|и[тлсх]|у[тчшщ]|анн|ёб)/i,
+    /(сука|суки|сучк|сучен)/i,
+    /(пидор|пидар|пидер|педик|пед[еи]раст)/i,
+    /(мудак|мудил|муд[аоие]зв|муда[чк])/i,
+    /долбо[её]б/i,
+    /(гнида|гондон|урод\b|выродок)/i,
+    /(шлюх|проститут|курв[ауы])/i,
+    /(\bговно|насрать|обосра|зас[еы]ра|срать|обоср)/i,
+    /(\bзалуп[ауы]|очко\b)/i,
+    /сволоч/i,
+    /скотин[ауы]/i,
+
+    /* English — core profanity + slang + variants */
+    /(\bfuck|fucking|fucked|fucker|motherfucker|mthrfkr|fk\b)/i,
+    /(\bshit\b|bullshit|bsht)/i,
+    /\bbitch/i,
+    /\bcunt/i,
+    /\basshole/i,
+    /\b(dickhead|dick\b|prick\b|pricks\b)/i,
+    /\btwat/i,
+    /\bwanker/i,
+    /\bbollocks/i,
+    /\bbastard/i,
+    /\bcrap\b/i,
+    /\bdouche(bag)?/i,
+    /\bpiss(ed|ing)?/i,
+    /\bslut/i,
+    /\bwhore/i,
+
+    /* German */
+    /\bschei[sß]e/i,
+    /\barschloch/i,
+    /\bfotze/i,
+    /\bschwanz\b/i,
+
+    /* Spanish */
+    /\bmierda/i,
+    /\bjoder/i,
+    /\bputa\b/i,
+    /\bcabr[óo]n/i,
+    /\bpendejo/i,
+    /\bco[ñn]o/i,
+
+    /* French */
+    /\bmerde/i,
+    /\bputain/i,
+    /\bconnard/i,
+    /\bsalope/i,
+    /\benculé/i,
+
+    /* Italian */
+    /\bcazzo/i,
+    /\bstronzo/i,
+    /\bputtana/i,
+    /\bvaffanculo/i,
+
+    /* Polish */
+    /\bkurwa/i,
+    /\bpierdol/i,
+    /\bdupek/i,
+    /\bchuj/i,
+
+    /* Ukrainian (similar to Russian but unique variants) */
+    /\b(сволот|курва|підар|підор)/i,
+
+    /* v5.31.2 — "плохие люди": Nazi-era genocidaires + universally
+       condemned mass murderers. Direct names in Cyrillic + Latin + common
+       transliterations. NOTE: JS \b не работает на кириллице (не-\w char),
+       поэтому для cyrillic-only паттернов \b убран — риск false positives
+       минимальный, эти имена редко встречаются как substring в обычных
+       словах. Не пытаемся детектить l33t/anagram-обфускацию. */
+    /(\bhitler|гитлер|гiтлер)/i,
+    /(\bg(oe|ö)bbels|геббельс)/i,
+    /(\bhimmler|гиммлер)/i,
+    /(\bg(oe|ö)ring|геринг)/i,
+    /(\bmengele|менгеле)/i,
+    /(\beichmann|эйхман)/i,
+    /(\bbin\s+laden|бен\s+ладен)/i,
+    /(\bpol\s+pot|пол\s+пот)/i,
+    /(\bmussolini|муссолини)/i,
+    /(\bstalin|сталин)/i,                /* tyrant, mass murderer */
+    /(\bsaddam|саддам)/i,                /* Hussein */
+    /\bnazi/i,
+    /нацист/i
+  ];
+  function containsSwear(text) {
+    if (!text) return false;
+    var s = String(text);
+    /* Quick lowercase + remove digits / dots that obfuscators use */
+    for (var i = 0; i < SWEAR_PATTERNS.length; i++) {
+      if (SWEAR_PATTERNS[i].test(s)) return true;
+    }
+    return false;
+  }
+
+  /* ── lockPageInRed (v5.30.3+ / v5.31.1) ── deep red fullscreen overlay
+     with apology UI + 3-second countdown + 3-strikes limit. If the user
+     doesn't apologize correctly within 3 seconds, OR makes 3 wrong
+     attempts, ALL bananafont:* localStorage is wiped and the page reloads.
+     The only escape is correct SORRY or ПРОСТИ (case-insensitive). */
+  function wipeAndReload() {
+    try {
+      var keys = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("bananafont:") === 0) keys.push(k);
+      }
+      keys.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+    location.reload();
+  }
+  /* v5.31.2: Cross-session trigger counter. Every time the user trips the
+     mat/code-1488/bad-person filter, this goes up. Reaches 3 → no more
+     mercy, no apology screen, instant wipe&reload. Resets on page load. */
+  var swearTriggerCount = 0;
   function lockPageInRed() {
     if (document.querySelector(".page-red-flash")) return;  /* don't double-lock */
+    swearTriggerCount++;
+    if (swearTriggerCount >= 3) {
+      /* Third strike — no apology screen, immediate wipe */
+      wipeAndReload();
+      return;
+    }
     /* Remove any in-flight showBigText overlays */
     var existing = document.querySelectorAll(".big-number-overlay");
     for (var i = 0; i < existing.length; i++) {
@@ -3949,6 +4093,11 @@
     title.className = "page-red-title";
     title.textContent = t.apologyTitle;
 
+    /* v5.31.1: big pulsing countdown — 3 → 2 → 1 → wipe */
+    var countdown = document.createElement("div");
+    countdown.className = "page-red-countdown";
+    countdown.textContent = "3";
+
     var hint = document.createElement("p");
     hint.className = "page-red-hint";
     hint.textContent = t.apologyHint;
@@ -3965,20 +4114,69 @@
     btn.className = "page-red-submit silent-btn";
     btn.textContent = t.apologyBtn;
 
+    /* Attempt counter shown subtly below the button */
+    var attempts = document.createElement("div");
+    attempts.className = "page-red-attempts";
+
+    /* ── Timer / attempts state ── */
+    var wrongCount = 0;
+    var MAX_ATTEMPTS = 3;
+    var COUNTDOWN_TOTAL_MS = 3000;
+    var countdownStartedAt = performance.now();
+    var rafId = null;
+    var settled = false;        /* true once unlock OR wipe triggered */
+
+    function setAttemptsText() {
+      var left = MAX_ATTEMPTS - wrongCount;
+      attempts.textContent = (currentLang === "ru")
+        ? ("Осталось попыток: " + left)
+        : ("Attempts left: " + left);
+    }
+    setAttemptsText();
+
+    function settle() {
+      settled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+    }
+
+    function tick() {
+      if (settled) return;
+      var elapsed = performance.now() - countdownStartedAt;
+      var remaining = COUNTDOWN_TOTAL_MS - elapsed;
+      if (remaining <= 0) {
+        countdown.textContent = "0";
+        settle();
+        wipeAndReload();
+        return;
+      }
+      /* Show 3, 2, 1 (ceil so it reads "3" right when timer starts) */
+      countdown.textContent = String(Math.ceil(remaining / 1000));
+      rafId = requestAnimationFrame(tick);
+    }
+
     function check() {
+      if (settled) return;
       var v = (input.value || "").trim().toUpperCase();
-      /* Accept both Latin SORRY and Cyrillic ПРОСТИ (case-insensitive
-         via toUpperCase — works on both alphabets). */
       if (v === "SORRY" || v === "ПРОСТИ") {
+        settle();
         red.classList.add("removing");
         playUiSound("confirm");
         setTimeout(function () {
           if (red.parentNode) red.parentNode.removeChild(red);
         }, 850);
       } else {
-        input.classList.add("shake");
+        wrongCount++;
         playUiSound("fail");
+        input.classList.add("shake");
         setTimeout(function () { input.classList.remove("shake"); }, 500);
+        if (wrongCount >= MAX_ATTEMPTS) {
+          settle();
+          wipeAndReload();
+          return;
+        }
+        setAttemptsText();
+        input.value = "";
+        input.focus();
       }
     }
     btn.addEventListener("click", check);
@@ -3987,14 +4185,18 @@
     });
 
     inner.appendChild(title);
+    inner.appendChild(countdown);
     inner.appendChild(hint);
     inner.appendChild(input);
     inner.appendChild(btn);
+    inner.appendChild(attempts);
     red.appendChild(inner);
     document.body.appendChild(red);
 
     requestAnimationFrame(function () { red.classList.add("active"); });
     setTimeout(function () { input.focus(); }, 400);
+    /* Start the countdown */
+    rafId = requestAnimationFrame(tick);
   }
 
   /* 🎨 Console banner — greet developers who open DevTools */

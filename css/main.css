@@ -1616,6 +1616,35 @@ html:not(.page-noir) {
   opacity: 0.92;
   line-height: 1.4;
 }
+/* v5.31.1 — pulsing countdown number */
+.page-red-countdown {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: clamp(70px, 14vw, 150px);
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow:
+    0 0 40px rgba(255, 255, 255, 0.7),
+    0 0 14px rgba(255, 255, 255, 0.5),
+    0 4px 18px rgba(0, 0, 0, 0.5);
+  margin: 8px 0 18px;
+  animation: redCountdownPulse 1s ease-in-out infinite;
+}
+@keyframes redCountdownPulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.18); opacity: 0.82; }
+}
+/* Attempts counter under the submit button */
+.page-red-attempts {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-red-countdown { animation: none; }
+}
 .page-red-input {
   width: 100%;
   max-width: 340px;
