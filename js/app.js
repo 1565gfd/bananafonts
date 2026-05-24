@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.48.5";
+  var VERSION = "v5.49.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -7350,8 +7350,11 @@
       accProfileAvatar.style.background = "";
     }
     accProfileName.textContent = acc.username;
-    /* Owner badge */
-    if (acc.username.toLowerCase() === OWNER_USERNAME) {
+    /* Badge: role takes priority over OWNER, since service accounts ARE roles */
+    if (acc.role && ROLES[acc.role]) {
+      accProfileBadge.textContent = ROLES[acc.role].badge;
+      accProfileBadge.className = "account-profile-badge role-" + acc.role;
+    } else if (acc.username.toLowerCase() === OWNER_USERNAME) {
       accProfileBadge.textContent = "👑 OWNER";
       accProfileBadge.className = "account-profile-badge owner";
     } else {
@@ -7465,7 +7468,12 @@
       }
       var nm = document.createElement("span");
       nm.className = "account-list-name";
-      nm.textContent = acc.username + (acc.username.toLowerCase() === OWNER_USERNAME ? " 👑" : "");
+      var roleSigil = "";
+      if (acc.role === "creator")        roleSigil = " 👑";
+      else if (acc.role === "admin")     roleSigil = " 🛡";
+      else if (acc.role === "moderator") roleSigil = " 🌿";
+      else if (acc.username.toLowerCase() === OWNER_USERNAME) roleSigil = " 👑";
+      nm.textContent = acc.username + roleSigil;
       item.appendChild(av); item.appendChild(nm);
       item.addEventListener("click", function () {
         /* Click on a list item — if it's the current account, go to profile;
@@ -7539,9 +7547,14 @@
       return;
     }
     var upper = raw.toUpperCase();
-    if (_isPrivilegedCode(upper)) {
+    /* v5.49.0 — try all 3 role codes. Each maps to a different account
+       (creator/admin/moderator) with its own colour + badge. */
+    var matchedRole = _resolveRole(upper);
+    if (matchedRole) {
+      _activeRole = matchedRole;
+      try { localStorage.setItem("bananafont:role", matchedRole); } catch (e2) {}
       _adminTries = 0;
-      _adminFb("Доступ открыт ✓", false);
+      _adminFb("Доступ открыт: " + ROLES[matchedRole].badge + " ✓", false);
       activateAdmin();
       closeAccountPanel();
       /* Clear sensitive input */
@@ -7571,55 +7584,99 @@
   });
 
   /* ─────────────────────────────────────────────────────────
-     v5.47.4 — auto-create + auto-login the "admin" account when
-     the service code is accepted. Shield SVG avatar on a Discord
-     blurple (#7289da) background. The account's passHash is set
-     to a non-hex sentinel so regular username+password login can
-     NEVER match — admin access stays gated behind the service
-     code only.
+     v5.49.0 — ROLE-BASED service accounts: creator / admin / moderator.
+     Each role has its own XOR-encoded code, dedicated account, badge
+     colour, and visible role-badge on the profile card. The `passHash`
+     stays a non-hex sentinel for all three so regular login can never
+     match — these accounts only become available via service code.
      ───────────────────────────────────────────────────────── */
-  var ADMIN_USERNAME = "admin";
-  var ADMIN_COLOR    = "#7289da";
-  /* SVG shield: outer black silhouette + white inset on the left half.
-     Inline data URL so it ships with one tiny string (no separate asset). */
-  var ADMIN_AVATAR_SVG =
+  /* Shared shield SVG (outer black silhouette + white inset). Background
+     gradient differs per role — colour is the differentiator. */
+  var ROLE_AVATAR_SVG =
     "data:image/svg+xml;utf8," +
     "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>" +
     "<path d='M32 4 L58 13 V32 C58 48 47 58 32 62 C17 58 6 48 6 32 V13 Z' fill='%23000'/>" +
     "<path d='M32 10 V58 C18 53 10 45 10 31 V17 L32 10 Z' fill='%23fff'/>" +
     "</svg>";
 
+  /* Role registry. `encoded` = XOR-encoded plaintext via key "BANANA"
+     (decoded at runtime by _ad). Plaintext stays off-repo. */
+  var ROLES = {
+    creator: {
+      username: "creator",
+      color:    "#ffd700",       /* gold */
+      badge:    "👑 CREATOR",
+      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 13, 19, 11, 0, 22, 14, 28, 108, 5, 120, 18, 117, 0, 118, 6, 114, 6, 116]
+    },
+    admin: {
+      username: "admin",
+      color:    "#7289da",       /* discord blurple */
+      badge:    "🛡 ADMIN",
+      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 22, 120, 5, 115, 18, 117, 3, 121, 20, 114, 19, 118, 28, 116]
+    },
+    moderator: {
+      username: "moderator",
+      color:    "#43b581",       /* mod green */
+      badge:    "🌿 MOD",
+      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 3, 14, 10, 108, 8, 117, 2, 121, 12, 119, 22, 120, 28, 116, 13, 115, 15, 121]
+    }
+  };
+
+  /* Currently-active role (set when a service code unlocks the panel).
+     Persisted so reloads stay in the same role's avatar/badge. */
+  var _activeRole = null;
+  try {
+    var _savedRole = localStorage.getItem("bananafont:role");
+    if (_savedRole && ROLES[_savedRole]) _activeRole = _savedRole;
+  } catch (e) {}
+
+  /* Try-all-three resolver: returns role name or null. */
+  function _resolveRole(rawUpper) {
+    for (var r in ROLES) {
+      if (Object.prototype.hasOwnProperty.call(ROLES, r) &&
+          rawUpper === _ad(ROLES[r].encoded)) return r;
+    }
+    return null;
+  }
+  /* For backward compat with any code paths that called the old single-
+     role helper. Defined on app.js (not in ROLES). */
+  var _isAnyRoleCode = _resolveRole;
+
+  /* List of all known role-account usernames — used to detect "is this
+     account a service account?" for logout-coupling. */
+  var ROLE_USERNAMES = Object.keys(ROLES).map(function (k) {
+    return ROLES[k].username.toLowerCase();
+  });
+
   function ensureAdminAccountAndLogin() {
+    var role = ROLES[_activeRole] || ROLES.admin;
     var arr = loadAccounts();
     var existing = null;
     var idx = -1;
     for (var i = 0; i < arr.length; i++) {
-      if ((arr[i].username || "").toLowerCase() === ADMIN_USERNAME) {
+      if ((arr[i].username || "").toLowerCase() === role.username) {
         existing = arr[i]; idx = i; break;
       }
     }
     if (!existing) {
       existing = {
-        id: "acc_admin",
-        username: ADMIN_USERNAME,
+        id: "acc_" + role.username,
+        username: role.username,
         email: "",
         salt: _randSalt(),
-        /* Sentinel — not a valid SHA-256 hex string. hashPassword() always
-           returns 64-char hex, so this can never match → regular login is
-           impossible. Admin only via service code. */
         passHash: "__service_only__",
-        avatar: ADMIN_AVATAR_SVG,
-        color: ADMIN_COLOR,
+        avatar: ROLE_AVATAR_SVG,
+        color: role.color,
+        role: _activeRole || "admin",
         regDate: Date.now(),
         lastSeen: Date.now(),
         visits: 1
       };
       arr.push(existing);
     } else {
-      /* Refresh visuals every time — protects against user-edited values
-         from the Профиль tab + bumps visit stats. */
-      existing.avatar   = ADMIN_AVATAR_SVG;
-      existing.color    = ADMIN_COLOR;
+      existing.avatar   = ROLE_AVATAR_SVG;
+      existing.color    = role.color;
+      existing.role     = _activeRole || "admin";
       existing.lastSeen = Date.now();
       existing.visits   = (existing.visits || 0) + 1;
       arr[idx] = existing;
@@ -7647,9 +7704,13 @@
     var _origLogoutAdmin = logoutAdmin;
     logoutAdmin = function () {
       var cur = getCurrentAccount();
-      var wasAdminAccount = !!(cur && cur.username && cur.username.toLowerCase() === ADMIN_USERNAME);
+      var wasRoleAccount = !!(cur && cur.username &&
+        ROLE_USERNAMES.indexOf(cur.username.toLowerCase()) !== -1);
       _origLogoutAdmin();
-      if (wasAdminAccount) {
+      /* v5.49.0 — clear active role + persisted localStorage flag */
+      _activeRole = null;
+      try { localStorage.removeItem("bananafont:role"); } catch (e) {}
+      if (wasRoleAccount) {
         setCurrentAccountId(null);
         refreshAccountWidget();
       }
@@ -7667,17 +7728,15 @@
       ? "Log out of " + cur.username + "?"
       : "Выйти из аккаунта " + cur.username + "?");
     if (!ok) return;
-    /* v5.47.6 — capture admin-account state BEFORE clearing so we know
-       whether to also drop admin status. */
-    var wasAdminAccount = cur.username.toLowerCase() === ADMIN_USERNAME;
+    /* v5.49.0 — check against ALL role usernames (creator/admin/moderator)
+       so logging out of any one of them also drops admin status. */
+    var wasRoleAccount = ROLE_USERNAMES.indexOf(cur.username.toLowerCase()) !== -1;
     setCurrentAccountId(null);
     refreshAccountWidget();
-    /* If this was the admin account → also drop admin status (badge,
-       localStorage flag, close panel). Uses the un-wrapped version
-       to avoid re-entering the logoutAdmin wrap which would re-check
-       current account and short-circuit. */
-    if (wasAdminAccount && typeof _origLogoutAdmin === "function") {
+    if (wasRoleAccount && typeof _origLogoutAdmin === "function") {
       _origLogoutAdmin();
+      _activeRole = null;
+      try { localStorage.removeItem("bananafont:role"); } catch (e2) {}
     }
     playUiSound("knock");
   });

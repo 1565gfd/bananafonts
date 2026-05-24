@@ -8702,3 +8702,26 @@ body.ddos-active { /* marker only — no animation */ }
   .admin-power-grid button.power-danger { animation: none; }
   .admin-power-grid button.power-danger::before { animation: none; }
 }
+
+/* v5.49.0 — role-specific badges on profile card */
+.account-profile-badge.role-creator {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd700, #ff8a3c);
+  color: #2a1a00;
+}
+.account-profile-badge.role-admin {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7289da, #5868c0);
+  color: #fff;
+}
+.account-profile-badge.role-moderator {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #43b581, #2d8c5e);
+  color: #fff;
+}
