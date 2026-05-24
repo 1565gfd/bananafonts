@@ -356,7 +356,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.16.7";
+  var VERSION = "v5.17.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -886,11 +886,39 @@
   }
 
   /* --------- Home tab: text tools --------- */
+  /* Heuristic: a token counts as a "real word" only if it's a single
+     character (а / я / I / a — legit one-letter words exist) OR contains
+     at least two DISTINCT letters/digits. Filters out keyboard-mashing
+     like "вввв пппп" → 0 words, while letting "ab", "okay", "привет",
+     "12345" through. v5.17.0 — fixes the user-reported case where
+     "вввв пппп" was counted as 2 words. */
+  function isRealWord(token) {
+    if (!token) return false;
+    if (token.length === 1) return true;
+    /* Walk the token, return true the moment we find a 2nd distinct char.
+       Strip case so "AaAa" doesn't pass — we want at least 2 distinct
+       LETTERS (case-insensitive). */
+    var lower = token.toLowerCase();
+    var first = lower.charAt(0);
+    for (var i = 1; i < lower.length; i++) {
+      if (lower.charAt(i) !== first) return true;
+    }
+    return false;
+  }
+  function countRealWords(text) {
+    var trimmed = text.trim();
+    if (!trimmed) return 0;
+    var tokens = trimmed.split(/\s+/);
+    var n = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      if (isRealWord(tokens[i])) n++;
+    }
+    return n;
+  }
   function updateTextStats() {
     var t = homeInputEl.value;
     statCharsEl.textContent = t.length;
-    var trimmed = t.trim();
-    statWordsEl.textContent = trimmed ? trimmed.split(/\s+/).length : 0;
+    statWordsEl.textContent = countRealWords(t);
     statLinesEl.textContent = t === "" ? 0 : t.split("\n").length;
     statNoSpacesEl.textContent = t.replace(/\s/g, "").length;
   }
@@ -1787,6 +1815,12 @@
     timerFeedbackEl.textContent = text || "";
     timerFeedbackEl.style.color = isError ? "#ff6b7a" : "";
   }
+  /* Track in-flight chimes so we can silence them instantly when the
+     user resets the timer or dismisses the alarm. Both arrays cleaned
+     up automatically as chimes complete naturally. */
+  var pendingChimeTimeouts = [];   /* setTimeout ids for scheduled reps */
+  var pendingChimeNodes    = [];   /* {oscA, oscB, gain} for live notes */
+
   /* Play ONE ascending C-major arpeggio (C5 → E5 → G5 → C6) via WebAudio.
      Each note: soft attack (30ms), long bell-like decay (~1.4s). Notes
      overlap to form a chord — feels like a gentle chime. v5.16.0 redesign. */
@@ -1825,6 +1859,15 @@
       oscB.start(t0);
       oscA.stop(t0 + 1.5);
       oscB.stop(t0 + 1.5);
+      /* Register node so silenceAllChimes() can stop it early. */
+      var nodeRef = { oscA: oscA, oscB: oscB, gain: gain };
+      pendingChimeNodes.push(nodeRef);
+      /* Auto-cleanup after the note completes naturally (~1.6s) so the
+         array doesn't grow without bound on repeat use. */
+      setTimeout(function () {
+        var idx = pendingChimeNodes.indexOf(nodeRef);
+        if (idx >= 0) pendingChimeNodes.splice(idx, 1);
+      }, 1700);
     });
   }
 
@@ -1836,9 +1879,42 @@
     if (typeof repeats !== "number" || repeats < 1) repeats = 1;
     try {
       for (var r = 0; r < repeats; r++) {
-        setTimeout(playSingleChime, r * 1800);
+        (function (delayMs) {
+          var tid = setTimeout(function () {
+            /* Remove this tid from the pending list before firing,
+               so silenceAllChimes()'s clearTimeout is a clean no-op. */
+            var i = pendingChimeTimeouts.indexOf(tid);
+            if (i >= 0) pendingChimeTimeouts.splice(i, 1);
+            playSingleChime();
+          }, delayMs);
+          pendingChimeTimeouts.push(tid);
+        })(r * 1800);
       }
     } catch (e) { /* WebAudio unavailable — fail silently */ }
+  }
+
+  /* Silence ALL chimes immediately: cancel any scheduled repeats AND
+     fade out any oscillators currently playing. Called from timerReset
+     and the alarm dismiss path (cancelAlarm). v5.16.8. */
+  function silenceAllChimes() {
+    /* Drop any future scheduled repeats */
+    while (pendingChimeTimeouts.length) {
+      try { clearTimeout(pendingChimeTimeouts.pop()); } catch (e) {}
+    }
+    if (!audioCtx) { pendingChimeNodes.length = 0; return; }
+    var now = audioCtx.currentTime;
+    while (pendingChimeNodes.length) {
+      var node = pendingChimeNodes.pop();
+      try {
+        /* Wipe the scheduled gain envelope and ramp down to silence
+           in 50ms — a tiny fade prevents a click/pop on abrupt stop. */
+        node.gain.gain.cancelScheduledValues(now);
+        node.gain.gain.setValueAtTime(node.gain.gain.value || 0.0001, now);
+        node.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+        try { node.oscA.stop(now + 0.06); } catch (e) {}
+        try { node.oscB.stop(now + 0.06); } catch (e) {}
+      } catch (e) {}
+    }
   }
   function timerFinish() {
     tmState = "done";
@@ -1916,6 +1992,9 @@
   }
   function timerReset() {
     stopTimerTicker();
+    /* v5.17.0: kill any chime currently ringing from the finish + cancel
+       remaining scheduled repeats so the sound stops instantly. */
+    silenceAllChimes();
     tmState = "idle";
     tmRemainingMs = 0;
     var ms = readTimerInputs();
@@ -2389,12 +2468,15 @@
     if (alarmState.ringIntervalId) clearInterval(alarmState.ringIntervalId);
     alarmState.ringIntervalId = setInterval(playSingleChime, 3000);
   }
-  /* Stop any running alarm chime loop. Called from cancelAlarm. */
+  /* Stop any running alarm chime loop AND silence any chime currently
+     playing. Called from cancelAlarm (Dismiss path). v5.17.0: also calls
+     silenceAllChimes() so the in-flight bell decays immediately. */
   function stopAlarmRinging() {
     if (alarmState.ringIntervalId) {
       clearInterval(alarmState.ringIntervalId);
       alarmState.ringIntervalId = null;
     }
+    silenceAllChimes();
   }
 
   /* Check alarm fire condition every second from the same clock-tick
