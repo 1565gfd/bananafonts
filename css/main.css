@@ -9423,3 +9423,39 @@ body {
   /* Keep width stable; only opacity transitions */
   transition: opacity 0.18s ease !important;
 }
+
+
+/* v5.55.2 — anti-mat detector tester */
+.admin-mat-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 8px;
+}
+.admin-mat-row > input {
+  flex: 1;
+  font-size: 13px;
+}
+.admin-mat-row > .settings-btn {
+  flex: 0 0 auto;
+  min-width: 110px;
+}
+.admin-mat-result {
+  min-height: 18px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  transition: background 0.15s, color 0.15s;
+}
+.admin-mat-result:empty { display: none; }
+.admin-mat-result.caught {
+  background: rgba(255, 80, 80, 0.18);
+  color: #ff8888;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+}
+.admin-mat-result.clean {
+  background: rgba(45, 209, 106, 0.15);
+  color: #6ef098;
+  border: 1px solid rgba(45, 209, 106, 0.4);
+}

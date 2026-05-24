@@ -1186,6 +1186,19 @@
         </div>
       </div>
 
+      <!-- v5.55.2 — anti-mat detector tester. Non-destructive: just runs
+           containsSwear() on user input + shows verdict. No lockout fires,
+           no localStorage wipe. Visible to admin tier and above. -->
+      <div class="admin-section" data-min-role="admin">
+        <h3 id="admin-mat-title">🧪 Тест анти-мат фильтра</h3>
+        <p class="admin-hint" id="admin-mat-hint">Введи фразу — проверка покажет, поймает ли её фильтр (без срабатывания lockout). Поле + текстовая проверка через <code>containsSwear()</code>.</p>
+        <div class="admin-mat-row">
+          <input type="text" id="admin-mat-input" class="calc-input" placeholder="фраза для проверки…" autocomplete="off" spellcheck="false" />
+          <button type="button" id="admin-mat-check" class="settings-btn silent-btn">Проверить</button>
+        </div>
+        <div id="admin-mat-result" class="admin-mat-result"></div>
+      </div>
+
       <div class="admin-section" data-min-role="creator">
         <h3 id="admin-lockout-title"></h3>
         <p class="admin-hint" id="admin-lockout-hint"></p>

@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.55.1";
+  var VERSION = "v5.55.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3799,6 +3799,46 @@
     refreshAdminToggleLabels();
     playUiSound(swearFilterDisabled ? "fail" : "confirm");
   });
+
+  /* v5.55.2 — anti-mat detector tester. Non-destructive sanity-check
+     against `containsSwear()` so admin can verify the filter works on
+     a specific phrase without triggering the actual lockout/wipe.
+     Uses the un-overridden detector (the real one), even if the swear
+     filter is currently disabled via the override toggle — so the test
+     reflects real detection capability. */
+  var adminMatInputEl  = document.getElementById("admin-mat-input");
+  var adminMatCheckBtn = document.getElementById("admin-mat-check");
+  var adminMatResultEl = document.getElementById("admin-mat-result");
+  if (adminMatCheckBtn && adminMatInputEl && adminMatResultEl) {
+    function runMatTest() {
+      var phrase = (adminMatInputEl.value || "").trim();
+      if (!phrase) {
+        adminMatResultEl.textContent = "Введи фразу";
+        adminMatResultEl.className = "admin-mat-result";
+        return;
+      }
+      /* Use the ORIGINAL (un-wrapped) detector so the override doesn't
+         falsify the test. `_origContainsSwear` was captured before the
+         swearFilterDisabled patch in v5.38.0. */
+      var detector = (typeof _origContainsSwear === "function")
+        ? _origContainsSwear
+        : containsSwear;
+      var caught = detector(phrase);
+      if (caught) {
+        adminMatResultEl.textContent = "🚨 ПОЙМАН: фраза сработает на anti-mat фильтр → red lockout";
+        adminMatResultEl.className = "admin-mat-result caught";
+        playUiSound("fail");
+      } else {
+        adminMatResultEl.textContent = "✓ ЧИСТО: фраза пройдёт мимо фильтра";
+        adminMatResultEl.className = "admin-mat-result clean";
+        playUiSound("confirm");
+      }
+    }
+    adminMatCheckBtn.addEventListener("click", runMatTest);
+    adminMatInputEl.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); runMatTest(); }
+    });
+  }
 
   /* ── 5. Trigger red lockout (UI test) ── */
   adminLockoutFireBtn.addEventListener("click", function () {
