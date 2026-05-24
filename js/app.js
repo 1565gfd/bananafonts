@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.42.0";
+  var VERSION = "v5.44.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -6188,20 +6188,51 @@
   var accTitleEl      = document.getElementById("account-title");
   var accTabBtns      = document.querySelectorAll(".account-tab-btn");
   var accSections     = document.querySelectorAll(".account-section");
-  /* Login form */
-  var accLoginUserEl  = document.getElementById("acc-login-username");
-  var accLoginPassEl  = document.getElementById("acc-login-password");
-  var accLoginBtn     = document.getElementById("acc-login-btn");
-  var accLoginFb      = document.getElementById("acc-login-feedback");
-  /* Register form */
-  var accRegUserEl    = document.getElementById("acc-reg-username");
-  var accRegPassEl    = document.getElementById("acc-reg-password");
-  var accRegPass2El   = document.getElementById("acc-reg-password2");
-  var accRegAvatarEl  = document.getElementById("acc-reg-avatar");
-  var accRegBioEl     = document.getElementById("acc-reg-bio");
-  var accRegColorEl   = document.getElementById("acc-reg-color");
-  var accRegisterBtn  = document.getElementById("acc-register-btn");
-  var accRegFb        = document.getElementById("acc-register-feedback");
+  /* Login form (v5.44.0 — modern screen) */
+  var accLoginUserEl     = document.getElementById("acc-login-username");
+  var accLoginPassEl     = document.getElementById("acc-login-password");
+  var accLoginBtn        = document.getElementById("acc-login-btn");
+  var accLoginFb         = document.getElementById("acc-login-feedback");
+  var accLoginPassToggle = document.getElementById("acc-login-password-toggle");
+  var accAuthPillBtns    = document.querySelectorAll(".auth-pill-btn");
+  var accQuickLoginBtn   = document.getElementById("acc-quick-login-btn");
+  var accQuickLoginIcon  = document.getElementById("acc-quick-login-icon");
+  var accQuickLoginLabel = document.getElementById("acc-quick-login-label");
+  var accAuthDivider     = document.getElementById("acc-auth-divider");
+  /* Register form (v5.43.0 — real-ish multi-step) */
+  var accRegStepForm   = document.getElementById("acc-reg-step-form");
+  var accRegStepVerify = document.getElementById("acc-reg-step-verify");
+  var accRegUserEl     = document.getElementById("acc-reg-username");
+  var accRegUserHint   = document.getElementById("acc-reg-username-hint");
+  var accRegEmailEl    = document.getElementById("acc-reg-email");
+  var accRegEmailHint  = document.getElementById("acc-reg-email-hint");
+  var accRegPassEl     = document.getElementById("acc-reg-password");
+  var accRegPass2El    = document.getElementById("acc-reg-password2");
+  var accRegPassToggle = document.getElementById("acc-reg-password-toggle");
+  var accRegPwdBar     = document.getElementById("acc-reg-pwd-bar");
+  var accRegPwdCheck   = document.getElementById("acc-reg-pwd-check");
+  var accRegAvatarEl   = document.getElementById("acc-reg-avatar");
+  var accRegAvatarPrev = document.getElementById("acc-reg-avatar-preview");
+  var accRegAvatarUp   = document.getElementById("acc-reg-avatar-upload-btn");
+  var accRegAvatarClr  = document.getElementById("acc-reg-avatar-clear-btn");
+  var accRegAvatarFile = document.getElementById("acc-reg-avatar-file");
+  var accRegBioEl      = document.getElementById("acc-reg-bio");
+  var accRegColorEl    = document.getElementById("acc-reg-color");
+  var accRegAgeEl      = document.getElementById("acc-reg-age");
+  var accRegTosEl      = document.getElementById("acc-reg-tos");
+  var accRegSyncEl     = document.getElementById("acc-reg-sync");
+  var accRegisterBtn   = document.getElementById("acc-register-btn");
+  var accRegFb         = document.getElementById("acc-register-feedback");
+  /* Step 2 — verification */
+  var accRegCodeEl     = document.getElementById("acc-reg-code");
+  var accRegVerifyBtn  = document.getElementById("acc-reg-verify-btn");
+  var accRegResendBtn  = document.getElementById("acc-reg-resend-btn");
+  var accRegBackBtn    = document.getElementById("acc-reg-back-btn");
+  /* Profile avatar edit */
+  var accEditAvatarBtn  = document.getElementById("acc-edit-avatar-btn");
+  var accEditAvatarFile = document.getElementById("acc-edit-avatar-file");
+  /* In-flight register state (between step 1 and step 2) */
+  var _regPending = null;
   /* Profile */
   var accProfileAvatar = document.getElementById("acc-profile-avatar");
   var accProfileName   = document.getElementById("acc-profile-name");
@@ -6250,6 +6281,27 @@
       if ((arr[i].username || "").toLowerCase() === lc) return arr[i];
     }
     return null;
+  }
+  /* v5.44.0 — lookup by username OR email. Login screen accepts either. */
+  function findAccountByLogin(input) {
+    var lc = (input || "").toLowerCase().trim();
+    if (!lc) return null;
+    var arr = loadAccounts();
+    for (var i = 0; i < arr.length; i++) {
+      if ((arr[i].username || "").toLowerCase() === lc) return arr[i];
+      if ((arr[i].email    || "").toLowerCase() === lc) return arr[i];
+    }
+    return null;
+  }
+  /* Most-recently-active account on this device — used by quick-login.
+     Sorted by lastSeen desc, falling back to regDate. */
+  function getMostRecentAccount() {
+    var arr = loadAccounts();
+    if (!arr.length) return null;
+    arr.sort(function (a, b) {
+      return (b.lastSeen || b.regDate || 0) - (a.lastSeen || a.regDate || 0);
+    });
+    return arr[0];
   }
 
   /* ── Crypto — SHA-256 with salt ── */
@@ -6345,13 +6397,13 @@
     accWidget.removeAttribute("hidden");
     if (current) {
       accWidget.classList.add("logged-in");
-      accWidgetAvatar.textContent = current.avatar || "🙂";
+      renderAvatar(accWidgetAvatar, current.avatar || "🙂");
       if (current.color) accWidgetAvatar.style.background =
         "linear-gradient(135deg, " + current.color + ", " + shiftHex(current.color, -25) + ")";
       accWidgetName.textContent = current.username;
     } else {
       accWidget.classList.remove("logged-in");
-      accWidgetAvatar.textContent = "🍌";
+      renderAvatar(accWidgetAvatar, "🍌");
       accWidgetAvatar.style.background = "";
       accWidgetName.textContent = currentLang === "en" ? "Sign in" : "Войти";
     }
@@ -6370,76 +6422,490 @@
     return "#" + hx(c(r)) + hx(c(g)) + hx(c(b));
   }
 
-  /* ── REGISTER ── */
-  accRegisterBtn.addEventListener("click", function () {
+  /* ─────────────────────────────────────────────────────────
+     v5.43.0 — avatar helpers (data-URL images + emoji)
+     ───────────────────────────────────────────────────────── */
+  /* Render any avatar string (emoji OR data:image) into a container.
+     Clears previous content first. */
+  function renderAvatar(el, avatar) {
+    if (!el) return;
+    el.innerHTML = "";
+    if (avatar && /^data:image\//.test(avatar)) {
+      var img = document.createElement("img");
+      img.src = avatar;
+      img.alt = "";
+      el.appendChild(img);
+    } else {
+      el.textContent = avatar || "🙂";
+    }
+  }
+  /* Compress an image File → 128×128 JPEG data URL (~5-15KB typical).
+     Uses cover-fit (scale + center-crop) so non-square images don't
+     squish. Returns Promise<dataURL>. */
+  function compressImageToDataURL(file, size, quality) {
+    size = size || 128;
+    quality = quality || 0.85;
+    return new Promise(function (resolve, reject) {
+      if (!file || !/^image\//.test(file.type)) {
+        reject(new Error("Не картинка"));
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        reject(new Error("Файл > 8 МБ"));
+        return;
+      }
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error("Ошибка чтения")); };
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.createElement("canvas");
+          canvas.width = size; canvas.height = size;
+          var ctx = canvas.getContext("2d");
+          /* Cover-fit: pick larger scale so canvas is fully covered */
+          var ratio = Math.max(size / img.width, size / img.height);
+          var w = img.width * ratio;
+          var h = img.height * ratio;
+          var x = (size - w) / 2;
+          var y = (size - h) / 2;
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, size, size);
+          ctx.drawImage(img, x, y, w, h);
+          try {
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          } catch (e2) { reject(e2); }
+        };
+        img.onerror = function () { reject(new Error("Битая картинка")); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  /* Avatar state for the in-progress register form. Starts as emoji. */
+  var _regAvatarValue = "🍌";
+  function _refreshRegAvatarPreview() {
+    renderAvatar(accRegAvatarPrev, _regAvatarValue);
+    if (/^data:image\//.test(_regAvatarValue)) {
+      accRegAvatarClr.removeAttribute("hidden");
+    } else {
+      accRegAvatarClr.setAttribute("hidden", "");
+    }
+  }
+  accRegAvatarEl.addEventListener("input", function () {
+    /* Typing in emoji input → switch back to emoji mode unless data URL */
+    var v = (accRegAvatarEl.value || "🙂").trim().slice(0, 4) || "🙂";
+    _regAvatarValue = v;
+    _refreshRegAvatarPreview();
+  });
+  accRegAvatarUp.addEventListener("click", function () {
+    accRegAvatarFile.click();
+  });
+  accRegAvatarFile.addEventListener("change", function () {
+    var file = accRegAvatarFile.files && accRegAvatarFile.files[0];
+    if (!file) return;
+    compressImageToDataURL(file, 128, 0.85).then(function (dataUrl) {
+      _regAvatarValue = dataUrl;
+      _refreshRegAvatarPreview();
+      playUiSound("confirm");
+    }).catch(function (e) {
+      feedback(accRegFb, "Аватар: " + e.message, true);
+      playUiSound("fail");
+    });
+    accRegAvatarFile.value = "";
+  });
+  accRegAvatarClr.addEventListener("click", function () {
+    _regAvatarValue = (accRegAvatarEl.value || "🍌").trim().slice(0, 4) || "🍌";
+    _refreshRegAvatarPreview();
+    playUiSound("click");
+  });
+  _refreshRegAvatarPreview();
+
+  /* Password toggle */
+  accRegPassToggle.addEventListener("click", function () {
+    var t = accRegPassEl.type === "password" ? "text" : "password";
+    accRegPassEl.type = t;
+    accRegPass2El.type = t;
+    accRegPassToggle.textContent = t === "password" ? "👁" : "🙈";
+  });
+
+  /* Password strength + checklist (live as the user types) */
+  function _evalPasswordStrength() {
+    var p = accRegPassEl.value || "";
+    var p2 = accRegPass2El.value || "";
+    var rules = {
+      len:   p.length >= 8,
+      upper: /[A-ZА-ЯЁ]/.test(p),
+      lower: /[a-zа-яё]/.test(p),
+      digit: /[0-9]/.test(p),
+      match: p.length > 0 && p === p2
+    };
+    /* Visualize */
+    var items = accRegPwdCheck.querySelectorAll("li[data-rule]");
+    for (var i = 0; i < items.length; i++) {
+      var r = items[i].dataset.rule;
+      items[i].classList.toggle("ok", !!rules[r]);
+    }
+    var passedCount = 0;
+    for (var k in rules) if (rules[k]) passedCount++;
+    /* Bar width: 0..100% */
+    var pct = (passedCount / 5) * 100;
+    accRegPwdBar.style.width = pct + "%";
+    accRegPwdBar.classList.remove("medium", "strong", "very-strong");
+    if (passedCount >= 5)      accRegPwdBar.classList.add("very-strong");
+    else if (passedCount >= 4) accRegPwdBar.classList.add("strong");
+    else if (passedCount >= 2) accRegPwdBar.classList.add("medium");
+    return rules;
+  }
+  accRegPassEl.addEventListener("input", _evalPasswordStrength);
+  accRegPass2El.addEventListener("input", _evalPasswordStrength);
+
+  /* Username live availability check (local only) */
+  accRegUserEl.addEventListener("input", function () {
     var name = (accRegUserEl.value || "").trim();
-    var p1   = accRegPassEl.value || "";
-    var p2   = accRegPass2El.value || "";
-    var avatar = (accRegAvatarEl.value || "🙂").trim().slice(0, 4) || "🙂";
-    var bio  = (accRegBioEl.value || "").trim().slice(0, 100);
-    var color = accRegColorEl.value || "#ffd166";
-
-    var err = validateUsername(name) || validatePassword(p1);
-    if (!err && p1 !== p2) err = "Пароли не совпадают";
-    if (!err && containsSwear(bio)) err = "В био нельзя";
-    if (err) { feedback(accRegFb, err, true); playUiSound("fail"); return; }
-
+    if (!name) {
+      accRegUserHint.textContent = "";
+      accRegUserHint.className = "acc-field-hint";
+      return;
+    }
+    var err = validateUsername(name);
+    if (err) {
+      accRegUserHint.textContent = "✗ " + err;
+      accRegUserHint.className = "acc-field-hint error";
+      return;
+    }
     if (findAccountByUsername(name)) {
-      feedback(accRegFb, "Такое имя уже занято", true);
+      accRegUserHint.textContent = "✗ Это имя уже занято на этом устройстве";
+      accRegUserHint.className = "acc-field-hint error";
+    } else {
+      accRegUserHint.textContent = "✓ Имя свободно";
+      accRegUserHint.className = "acc-field-hint success";
+    }
+  });
+
+  /* Email validation + live hint */
+  function _validEmail(s) {
+    /* Pragmatic email regex — catches obvious mistakes without false-rejecting
+       valid edge cases (RFC 5322 is too permissive to enforce reasonably). */
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(s) && s.length <= 254;
+  }
+  accRegEmailEl.addEventListener("input", function () {
+    var v = (accRegEmailEl.value || "").trim();
+    if (!v) {
+      accRegEmailHint.textContent = "";
+      accRegEmailHint.className = "acc-field-hint";
+      return;
+    }
+    if (_validEmail(v)) {
+      accRegEmailHint.textContent = "✓ Корректный e-mail";
+      accRegEmailHint.className = "acc-field-hint success";
+    } else {
+      accRegEmailHint.textContent = "✗ Похоже на битый e-mail";
+      accRegEmailHint.className = "acc-field-hint error";
+    }
+  });
+
+  /* ─────────────────────────────────────────────────────────
+     v5.43.0 — REAL-ISH REGISTRATION
+     Step 1: validate everything → generate 6-digit code → "send"
+             (shown via alert + console — no real mail server)
+     Step 2: user enters code → verify → finalize → optional cloud push
+     ───────────────────────────────────────────────────────── */
+  function _gen6digitCode() {
+    /* Crypto-random 6-digit numeric code (000000..999999) */
+    if (window.crypto && window.crypto.getRandomValues) {
+      var u = new Uint32Array(1);
+      window.crypto.getRandomValues(u);
+      return String(u[0] % 1000000).padStart(6, "0");
+    }
+    return String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
+  }
+  function _sendVerificationCode(email, code) {
+    /* No backend exists for real email. Show the code prominently to the
+       user instead — they're "verifying" their own form. This is the
+       "kinda real" part: the verification ceremony is real, the delivery
+       isn't. In a future version with a backend we'd swap this for an
+       actual sendgrid/postmark API call. */
+    var msg = (currentLang === "en"
+      ? "Verification code sent to " + email + "\n\nYour code: " + code + "\n\n(Static site has no email server, so the code is shown here. In production this would be emailed.)"
+      : "Код подтверждения для " + email + "\n\nКод: " + code + "\n\n(Сайт статический — почтовика нет, поэтому код показан здесь. В реальной версии он бы пришёл на e-mail.)");
+    /* Defer alert so the UI feedback below renders first */
+    setTimeout(function () { alert(msg); }, 60);
+    /* Also log to console (for testing) */
+    try { console.log("%c[Banana] verification code: " + code, "color:#ffe135;font-weight:700"); } catch (e) {}
+  }
+
+  function _showRegStep(which) {
+    if (which === "verify") {
+      accRegStepForm.setAttribute("hidden", "");
+      accRegStepVerify.removeAttribute("hidden");
+      setTimeout(function () { accRegCodeEl.focus(); }, 50);
+    } else {
+      accRegStepVerify.setAttribute("hidden", "");
+      accRegStepForm.removeAttribute("hidden");
+    }
+  }
+
+  accRegisterBtn.addEventListener("click", function () {
+    var name  = (accRegUserEl.value || "").trim();
+    var email = (accRegEmailEl.value || "").trim();
+    var p1    = accRegPassEl.value || "";
+    var p2    = accRegPass2El.value || "";
+    var bio   = (accRegBioEl.value || "").trim().slice(0, 100);
+    var color = accRegColorEl.value || "#ffd166";
+    var avatar = _regAvatarValue;
+
+    var err = validateUsername(name);
+    if (!err && !_validEmail(email)) err = "Битый e-mail";
+    var rules = _evalPasswordStrength();
+    if (!err && !rules.len)   err = "Пароль < 8 символов";
+    if (!err && !rules.upper) err = "Нужна заглавная буква";
+    if (!err && !rules.lower) err = "Нужна строчная буква";
+    if (!err && !rules.digit) err = "Нужна цифра";
+    if (!err && p1 !== p2)    err = "Пароли не совпадают";
+    if (!err && containsSwear(bio)) err = "В био нельзя";
+    if (!err && !accRegAgeEl.checked) err = "Подтверди возраст 13+";
+    if (!err && !accRegTosEl.checked) err = "Прими правила";
+    if (err) {
+      feedback(accRegFb, err, true);
       playUiSound("fail");
       return;
     }
-    feedback(accRegFb, "Создание…", false);
-    accRegisterBtn.disabled = true;
+    if (findAccountByUsername(name)) {
+      feedback(accRegFb, "Это имя уже занято", true);
+      playUiSound("fail");
+      return;
+    }
+    /* Generate verification code + stash pending data */
+    var code = _gen6digitCode();
+    _regPending = {
+      name: name, email: email, password: p1,
+      avatar: avatar, bio: bio, color: color,
+      code: code, sentAt: Date.now(),
+      autoSync: !!accRegSyncEl.checked,
+      attempts: 0
+    };
+    feedback(accRegFb, "Код отправлен на " + email + " — проверь почту ✉️", false);
+    _sendVerificationCode(email, code);
+    _showRegStep("verify");
+    accRegCodeEl.value = "";
+  });
+
+  accRegBackBtn.addEventListener("click", function () {
+    _regPending = null;
+    _showRegStep("form");
+    feedback(accRegFb, "", false);
+  });
+
+  accRegResendBtn.addEventListener("click", function () {
+    if (!_regPending) return;
+    /* Anti-spam: max once every 30 seconds */
+    if (Date.now() - _regPending.sentAt < 30000) {
+      feedback(accRegFb, "Подожди немного перед повторной отправкой", true);
+      playUiSound("fail");
+      return;
+    }
+    _regPending.code = _gen6digitCode();
+    _regPending.sentAt = Date.now();
+    _regPending.attempts = 0;
+    feedback(accRegFb, "Новый код отправлен ✉️", false);
+    _sendVerificationCode(_regPending.email, _regPending.code);
+    playUiSound("confirm");
+  });
+
+  accRegVerifyBtn.addEventListener("click", function () {
+    if (!_regPending) return;
+    var entered = (accRegCodeEl.value || "").trim();
+    if (!/^[0-9]{6}$/.test(entered)) {
+      feedback(accRegFb, "Введи 6 цифр", true);
+      playUiSound("fail");
+      return;
+    }
+    /* Expire after 10 minutes */
+    if (Date.now() - _regPending.sentAt > 600000) {
+      feedback(accRegFb, "Код истёк — запроси новый", true);
+      playUiSound("fail");
+      return;
+    }
+    if (entered !== _regPending.code) {
+      _regPending.attempts++;
+      if (_regPending.attempts >= 5) {
+        feedback(accRegFb, "Слишком много попыток. Регистрация отменена.", true);
+        playUiSound("fail");
+        _regPending = null;
+        _showRegStep("form");
+        return;
+      }
+      feedback(accRegFb, "Неверный код (попыток осталось: " + (5 - _regPending.attempts) + ")", true);
+      playUiSound("fail");
+      return;
+    }
+    /* Code matches → finalize */
+    feedback(accRegFb, "Создание аккаунта…", false);
+    accRegVerifyBtn.disabled = true;
+    var rp = _regPending;
     var salt = _randSalt();
-    hashPassword(p1, salt).then(function (hash) {
-      var arr = loadAccounts();
+    hashPassword(rp.password, salt).then(function (hash) {
       var newAcc = {
         id: "acc_" + Date.now() + "_" + Math.floor(Math.random() * 1e6),
-        username: name,
+        username: rp.name,
+        email: rp.email,
+        emailVerified: true,
         salt: salt,
         passHash: hash,
-        avatar: avatar,
-        bio: bio,
-        color: color,
+        avatar: rp.avatar,
+        bio: rp.bio,
+        color: rp.color,
         regDate: Date.now(),
         lastSeen: Date.now(),
         visits: 1
       };
+      var arr = loadAccounts();
       arr.push(newAcc);
       saveAccounts(arr);
       setCurrentAccountId(newAcc.id);
-      /* Owner short-circuit — applies theme automatically */
-      if (name.toLowerCase() === OWNER_USERNAME && typeof setTheme === "function") {
+      if (rp.name.toLowerCase() === OWNER_USERNAME && typeof setTheme === "function") {
         setTheme("owner");
       }
       refreshAccountWidget();
-      feedback(accRegFb, "Готово! Привет, " + name + " ✓", false);
       playUiSound("applause");
+      /* Optional auto-sync to cloud */
+      if (rp.autoSync) {
+        feedback(accRegFb, "Регистрация ✓ — синхронизирую в облако…", false);
+        return encryptAccount(newAcc, rp.password).then(cloudPush).then(function (blobId) {
+          var code2 = _formatSyncCode(blobId);
+          /* Save sync code on the account */
+          var arr2 = loadAccounts();
+          for (var i = 0; i < arr2.length; i++) {
+            if (arr2[i].id === newAcc.id) { arr2[i].syncCode = code2; arr2[i].syncedAt = Date.now(); }
+          }
+          saveAccounts(arr2);
+          feedback(accRegFb, "Готово! Sync-код: " + code2 + " ✓", false);
+        }).catch(function (e) {
+          feedback(accRegFb, "Аккаунт создан, но облако недоступно: " + (e.message || e), true);
+        });
+      } else {
+        feedback(accRegFb, "Готово! Привет, " + rp.name + " ✓", false);
+      }
+    }).then(function () {
+      _regPending = null;
       /* Reset form */
       accRegUserEl.value = "";
+      accRegEmailEl.value = "";
       accRegPassEl.value = "";
       accRegPass2El.value = "";
       accRegBioEl.value = "";
-      setTimeout(function () { setAccTab("profile"); }, 500);
+      accRegCodeEl.value = "";
+      accRegAgeEl.checked = false;
+      accRegTosEl.checked = false;
+      _regAvatarValue = "🍌";
+      _refreshRegAvatarPreview();
+      _evalPasswordStrength();
+      accRegUserHint.textContent = ""; accRegUserHint.className = "acc-field-hint";
+      accRegEmailHint.textContent = ""; accRegEmailHint.className = "acc-field-hint";
+      _showRegStep("form");
+      setTimeout(function () { setAccTab("profile"); }, 1500);
     }).catch(function (e) {
-      feedback(accRegFb, "Ошибка крипто: " + e.message, true);
+      feedback(accRegFb, "Ошибка: " + (e && e.message || e), true);
       playUiSound("fail");
     }).then(function () {
-      accRegisterBtn.disabled = false;
+      accRegVerifyBtn.disabled = false;
     });
   });
+  /* Enter in code field submits verify */
+  accRegCodeEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); accRegVerifyBtn.click(); }
+  });
 
-  /* ── LOGIN ── */
+  /* Profile: change avatar from file */
+  accEditAvatarBtn.addEventListener("click", function () {
+    accEditAvatarFile.click();
+  });
+  accEditAvatarFile.addEventListener("change", function () {
+    var file = accEditAvatarFile.files && accEditAvatarFile.files[0];
+    if (!file) return;
+    var acc = getCurrentAccount();
+    if (!acc) return;
+    compressImageToDataURL(file, 128, 0.85).then(function (dataUrl) {
+      acc.avatar = dataUrl;
+      var arr = loadAccounts();
+      for (var i = 0; i < arr.length; i++) if (arr[i].id === acc.id) arr[i] = acc;
+      saveAccounts(arr);
+      refreshAccountWidget();
+      renderProfile();
+      playUiSound("confirm");
+    }).catch(function (e) {
+      alert("Не получилось: " + e.message);
+      playUiSound("fail");
+    });
+    accEditAvatarFile.value = "";
+  });
+
+  /* ── v5.44.0 — pill-toggle: Login ↔ Register ── */
+  for (var apI = 0; apI < accAuthPillBtns.length; apI++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        var target = btn.dataset.accPill;   /* "login" or "register" */
+        for (var k = 0; k < accAuthPillBtns.length; k++) {
+          var active = accAuthPillBtns[k] === btn;
+          accAuthPillBtns[k].classList.toggle("active", active);
+          accAuthPillBtns[k].setAttribute("aria-selected", active ? "true" : "false");
+        }
+        setAccTab(target);
+        playUiSound("click");
+      });
+    })(accAuthPillBtns[apI]);
+  }
+
+  /* ── v5.44.0 — login password eye toggle ── */
+  accLoginPassToggle.addEventListener("click", function () {
+    var hidden = accLoginPassEl.type === "password";
+    accLoginPassEl.type = hidden ? "text" : "password";
+    accLoginPassToggle.textContent = hidden ? "🙈" : "👁";
+    accLoginPassToggle.setAttribute("aria-label", hidden ? "Скрыть пароль" : "Показать пароль");
+  });
+
+  /* ── v5.44.0 — quick-login: shows most recent account on this device,
+     prompts only for password (no need to retype username). If user just
+     wants to continue with the same account → 2 clicks instead of 5. ── */
+  function _refreshQuickLogin() {
+    var recent = getMostRecentAccount();
+    var current = getCurrentAccount();
+    /* Hide if no accounts yet OR if already logged in as the most-recent one */
+    if (!recent || (current && current.id === recent.id)) {
+      accQuickLoginBtn.setAttribute("hidden", "");
+      accAuthDivider.setAttribute("hidden", "");
+      return;
+    }
+    renderAvatar(accQuickLoginIcon, recent.avatar || "🙂");
+    if (recent.color) {
+      accQuickLoginIcon.style.background =
+        "linear-gradient(135deg, " + recent.color + ", " + shiftHex(recent.color, -25) + ")";
+    }
+    accQuickLoginLabel.textContent = (currentLang === "en" ? "Continue as " : "Войти как ") + recent.username;
+    accQuickLoginBtn.removeAttribute("hidden");
+    accAuthDivider.removeAttribute("hidden");
+  }
+  accQuickLoginBtn.addEventListener("click", function () {
+    var recent = getMostRecentAccount();
+    if (!recent) return;
+    /* Pre-fill the login form with this account's username + focus password */
+    accLoginUserEl.value = recent.username;
+    accLoginPassEl.value = "";
+    accLoginPassEl.focus();
+    feedback(accLoginFb, "Введи пароль для " + recent.username, false);
+    playUiSound("click");
+  });
+
+  /* ── LOGIN handler (v5.44.0 — accepts username OR email) ── */
   accLoginBtn.addEventListener("click", function () {
-    var name = (accLoginUserEl.value || "").trim();
+    var input = (accLoginUserEl.value || "").trim();
     var pass = accLoginPassEl.value || "";
-    if (!name || !pass) {
+    if (!input || !pass) {
       feedback(accLoginFb, "Заполни оба поля", true);
       playUiSound("fail");
       return;
     }
-    var acc = findAccountByUsername(name);
+    var acc = findAccountByLogin(input);
     if (!acc) {
       feedback(accLoginFb, "Аккаунт не найден", true);
       playUiSound("fail");
@@ -6468,6 +6934,9 @@
       playUiSound("unlock");
       accLoginUserEl.value = "";
       accLoginPassEl.value = "";
+      /* Reset password visibility */
+      accLoginPassEl.type = "password";
+      accLoginPassToggle.textContent = "👁";
       setTimeout(function () { setAccTab("profile"); }, 500);
     }).catch(function (e) {
       feedback(accLoginFb, "Ошибка: " + e.message, true);
@@ -6485,7 +6954,7 @@
       setAccTab("login");
       return;
     }
-    accProfileAvatar.textContent = acc.avatar || "🙂";
+    renderAvatar(accProfileAvatar, acc.avatar || "🙂");
     if (acc.color) {
       accProfileAvatar.style.background =
         "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
@@ -6525,11 +6994,15 @@
     });
   }
 
-  /* ── EDIT profile (avatar/bio/color via prompt for simplicity) ── */
+  /* ── EDIT profile (bio + color + emoji-avatar via prompts; image-avatar
+     is handled separately by accEditAvatarBtn → file picker) ── */
   accEditBtn.addEventListener("click", function () {
     var acc = getCurrentAccount();
     if (!acc) return;
-    var newAvatar = prompt(currentLang === "en" ? "New emoji avatar:" : "Новый эмодзи-аватар:", acc.avatar || "🙂");
+    /* If current avatar is a data URL, default emoji prompt to 🙂 instead
+       of showing the huge base64 blob. */
+    var emojiDefault = /^data:image\//.test(acc.avatar || "") ? "🙂" : (acc.avatar || "🙂");
+    var newAvatar = prompt(currentLang === "en" ? "Emoji avatar (для image-avatar используй 🖼):" : "Эмодзи-аватар (для картинки → кнопка 🖼):", emojiDefault);
     if (newAvatar === null) return;  /* cancelled */
     var newBio    = prompt(currentLang === "en" ? "Bio (max 100 chars):" : "Био (до 100 симв.):", acc.bio || "");
     if (newBio === null) return;
@@ -6538,8 +7011,11 @@
 
     if (containsSwear(newBio)) { playUiSound("fail"); return; }
     if (!/^#[0-9a-f]{6}$/i.test(newColor)) newColor = acc.color;
-
-    acc.avatar = (newAvatar || "🙂").slice(0, 4);
+    /* Only overwrite avatar if user typed something other than empty.
+       If they keep the existing data:URL prompt-default, _don't_ destroy it. */
+    if (newAvatar && newAvatar.trim() && !/^data:image\//.test(newAvatar)) {
+      acc.avatar = newAvatar.trim().slice(0, 4);
+    }
     acc.bio    = (newBio || "").slice(0, 100);
     acc.color  = newColor;
     var arr = loadAccounts();
@@ -6591,7 +7067,7 @@
       item.className = "account-list-item" + (acc.id === currentId ? " current" : "");
       var av = document.createElement("span");
       av.className = "account-list-avatar";
-      av.textContent = acc.avatar || "🙂";
+      renderAvatar(av, acc.avatar || "🙂");
       if (acc.color) av.style.background =
         "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
       var nm = document.createElement("span");
@@ -7008,6 +7484,22 @@
     if (name === "sync") {
       syncFb("", false);
       _showSavedSyncCodeIfAny();
+    }
+    /* v5.44.0 — keep auth pill in sync with the actual visible section.
+       Old top-bar tab clicks also flow through setAccTab, so this keeps
+       the pill highlighted correctly when user switches via either path. */
+    if (accAuthPillBtns && accAuthPillBtns.length) {
+      for (var k = 0; k < accAuthPillBtns.length; k++) {
+        var p = accAuthPillBtns[k].dataset.accPill;
+        var active = (p === name);
+        accAuthPillBtns[k].classList.toggle("active", active);
+        accAuthPillBtns[k].setAttribute("aria-selected", active ? "true" : "false");
+      }
+    }
+    /* Refresh quick-login chip when entering login tab */
+    if (name === "login" && typeof _refreshQuickLogin === "function") {
+      _refreshQuickLogin();
+      feedback(accLoginFb, "", false);
     }
   };
 

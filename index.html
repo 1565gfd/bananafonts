@@ -773,18 +773,43 @@
         <button type="button" class="account-tab-btn" data-acc-tab="sync" id="acc-tab-sync-btn">☁️ Синк</button>
       </div>
 
-      <!-- ── LOGIN ── -->
-      <section class="account-section" data-acc-section="login">
-        <p class="admin-hint" id="acc-login-hint">Войди в существующий аккаунт.</p>
-        <div class="account-field">
-          <label for="acc-login-username" id="acc-login-username-label">Имя</label>
-          <input type="text" id="acc-login-username" class="calc-input" autocomplete="username" maxlength="20" spellcheck="false" />
+      <!-- ── LOGIN — v5.44.0 modern auth screen ── -->
+      <section class="account-section auth-screen" data-acc-section="login">
+
+        <!-- Mode toggle pill -->
+        <div class="auth-pill" role="tablist">
+          <button type="button" class="auth-pill-btn active" data-acc-pill="login" role="tab" aria-selected="true">Вход</button>
+          <button type="button" class="auth-pill-btn" data-acc-pill="register" role="tab" aria-selected="false">Регистрация</button>
         </div>
-        <div class="account-field">
-          <label for="acc-login-password" id="acc-login-password-label">Пароль</label>
-          <input type="password" id="acc-login-password" class="calc-input" autocomplete="current-password" />
+
+        <!-- Quick-login (continues last account on this device — no password
+             needed if user just unlocked once this session). Hidden when
+             no accounts exist yet. -->
+        <button type="button" id="acc-quick-login-btn" class="auth-oauth-btn" hidden>
+          <span class="auth-oauth-icon" id="acc-quick-login-icon">🍌</span>
+          <span class="auth-oauth-label" id="acc-quick-login-label">Войти как последний аккаунт</span>
+        </button>
+
+        <!-- Divider — appears only when quick-login button is visible -->
+        <div class="auth-divider" id="acc-auth-divider" hidden><span>или</span></div>
+
+        <!-- Email/username -->
+        <div class="auth-field">
+          <label for="acc-login-username">E-mail или имя</label>
+          <input type="text" id="acc-login-username" class="auth-input" autocomplete="username" spellcheck="false" placeholder="ваш@email.com" />
         </div>
-        <button type="button" id="acc-login-btn" class="settings-btn silent-btn">Войти</button>
+
+        <!-- Password with eye toggle -->
+        <div class="auth-field">
+          <label for="acc-login-password">Пароль</label>
+          <div class="auth-pwd-wrap">
+            <input type="password" id="acc-login-password" class="auth-input" autocomplete="current-password" placeholder="••••••••" />
+            <button type="button" id="acc-login-password-toggle" class="auth-eye" aria-label="Показать пароль" title="Показать пароль">👁</button>
+          </div>
+        </div>
+
+        <button type="button" id="acc-login-btn" class="auth-submit">Войти</button>
+
         <div class="account-feedback" id="acc-login-feedback"></div>
       </section>
 
