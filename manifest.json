@@ -1,7 +1,7 @@
 {
-  "name": "Banana Font",
-  "short_name": "Banana Font",
-  "description": "Font preview tool — Word-safe fonts plus Unicode styles for Telegram, Discord, WhatsApp.",
+  "name": "Banana",
+  "short_name": "Banana",
+  "description": "Banana — helpful tools: text counter and case conversion, fonts for Word, Unicode styles for Telegram and Discord.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -1,5 +1,5 @@
 /* ============================================================
-   Banana Font — main stylesheet
+   Banana — main stylesheet
    Themes: light · dark (default) · night (AMOLED + warm accent)
    ============================================================ */
 
@@ -411,10 +411,167 @@ html.theme-transition *::after {
 
 .tab-content {
   display: block;
+  opacity: 1;
+  transition: opacity 0.18s ease;
 }
 
 .tab-content[hidden] {
   display: none;
+}
+
+.tab-content.tab-fading {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-content {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Home tab — text tools
+   ============================================================ */
+
+.home-intro {
+  margin: 0 0 18px;
+  color: var(--text-soft);
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.tool-section {
+  margin-bottom: 22px;
+}
+
+.tool-section h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.home-input {
+  width: 100%;
+  min-height: 96px;
+  height: 96px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  padding: 12px 14px;
+  font-size: 16px;
+  resize: vertical;
+  outline: none;
+  color: var(--text);
+  caret-color: var(--accent);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
+  transition: border-color 0.2s, background 0.25s, color 0.25s;
+  margin-bottom: 0;
+}
+
+.home-input::placeholder {
+  color: var(--text-dim);
+}
+
+.home-input:focus {
+  border-color: var(--accent-border);
+  background: var(--glass-bg-hover);
+}
+
+.text-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.text-stats > span {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.3;
+}
+
+.text-stats strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tool-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, color 0.25s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tool-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--accent-border);
+}
+
+.tool-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 480px) {
+  .tool-btn {
+    padding: 9px 14px;
+    font-size: 14px;
+  }
+  .text-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .text-stats strong {
+    font-size: 18px;
+  }
+}
+
+/* Apply mobile no-blur to home input + tool buttons too */
+@media (hover: none), (max-width: 700px) {
+  .home-input,
+  .tool-btn {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  [data-theme="dark"] .home-input,
+  [data-theme="dark"] .tool-btn {
+    background: rgba(50, 55, 95, 0.5);
+  }
+  [data-theme="light"] .home-input,
+  [data-theme="light"] .tool-btn {
+    background: rgba(255, 255, 255, 0.78);
+  }
+  [data-theme="night"] .home-input,
+  [data-theme="night"] .tool-btn {
+    background: rgba(35, 25, 10, 0.7);
+  }
 }
 
 /* ============================================================
@@ -478,6 +635,26 @@ html.theme-transition *::after {
   color: var(--accent);
   font-weight: 700;
   font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.settings-hint {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.settings-section h3 {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.settings-slider {
+  -webkit-user-drag: none;
 }
 
 .settings-size-sample {
@@ -493,7 +670,8 @@ html.theme-transition *::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: font-size 0.12s ease, background 0.25s, border-color 0.25s, color 0.25s;
+  /* No font-size transition — slider drags would create lag/ghosting. */
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
 
 .settings-hint {
@@ -539,6 +717,304 @@ html.theme-transition *::after {
 
 .settings-about a:hover {
   text-decoration: underline;
+}
+
+/* ============================================================
+   Calculator tab — basic / geometry / units
+   ============================================================ */
+
+.calc-modes {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.calc-mode-btn {
+  flex: 1;
+  min-width: 80px;
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.calc-mode-btn:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text);
+}
+
+.calc-mode-btn.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: #ffffff;
+}
+
+.calc-mode-btn:active {
+  transform: scale(0.97);
+}
+
+.calc-panel {
+  display: block;
+}
+
+.calc-panel[hidden] {
+  display: none;
+}
+
+.calc-display {
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+  font-size: 36px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  word-break: break-all;
+  color: var(--text);
+  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
+  overflow-x: auto;
+}
+
+.calc-keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-btn {
+  min-height: 56px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.18s;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.calc-btn:hover {
+  background: var(--glass-bg-hover);
+}
+
+.calc-btn:active {
+  transform: scale(0.95);
+}
+
+.calc-btn-op {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: #ffffff;
+}
+
+.calc-btn-op.active-op {
+  background: var(--accent);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.calc-btn-action {
+  font-size: 17px;
+  font-weight: 600;
+  background: var(--glass-bg-hover);
+}
+
+.calc-btn-zero {
+  grid-column: span 2;
+}
+
+.calc-btn-eq {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.calc-row label {
+  flex: 0 0 auto;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-soft);
+  min-width: 100px;
+}
+
+.calc-select,
+.calc-input {
+  flex: 1;
+  min-width: 100px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.18s, background 0.25s;
+}
+
+.calc-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-input:focus,
+.calc-select:focus {
+  border-color: var(--accent-border);
+}
+
+.calc-input[readonly] {
+  background: var(--output-bg);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.calc-inputs {
+  margin-bottom: 16px;
+}
+
+.calc-results {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
+}
+
+.calc-results:empty {
+  display: none;
+}
+
+.calc-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--text-soft);
+}
+
+.calc-result-row:last-child {
+  margin-bottom: 0;
+}
+
+.calc-result-value {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.units-conversion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.units-row {
+  display: flex;
+  gap: 8px;
+}
+
+.units-row > .calc-input {
+  flex: 2;
+}
+
+.units-row > .calc-select {
+  flex: 1;
+  min-width: 80px;
+}
+
+.units-arrow {
+  text-align: center;
+  font-size: 22px;
+  color: var(--text-soft);
+  margin: 2px 0;
+  opacity: 0.7;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (max-width: 480px) {
+  .calc-display {
+    font-size: 28px;
+    padding: 14px 16px;
+    min-height: 60px;
+  }
+  .calc-btn {
+    min-height: 48px;
+    font-size: 19px;
+  }
+  .calc-btn-action {
+    font-size: 15px;
+  }
+  .calc-mode-btn {
+    font-size: 13px;
+    padding: 9px 8px;
+  }
+  .calc-row label {
+    min-width: auto;
+    width: 100%;
+  }
+  .calc-result-value {
+    font-size: 16px;
+  }
+}
+
+@media (hover: none), (max-width: 700px) {
+  .calc-btn,
+  .calc-mode-btn,
+  .calc-select,
+  .calc-input {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  [data-theme="dark"] .calc-btn,
+  [data-theme="dark"] .calc-mode-btn,
+  [data-theme="dark"] .calc-select,
+  [data-theme="dark"] .calc-input {
+    background: rgba(50, 55, 95, 0.5);
+  }
+  [data-theme="light"] .calc-btn,
+  [data-theme="light"] .calc-mode-btn,
+  [data-theme="light"] .calc-select,
+  [data-theme="light"] .calc-input {
+    background: rgba(255, 255, 255, 0.78);
+  }
+  [data-theme="night"] .calc-btn,
+  [data-theme="night"] .calc-mode-btn,
+  [data-theme="night"] .calc-select,
+  [data-theme="night"] .calc-input {
+    background: rgba(35, 25, 10, 0.7);
+  }
 }
 
 /* ============================================================

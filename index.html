@@ -6,14 +6,14 @@
   <meta name="theme-color" content="#161b3a" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#eef2ff" media="(prefers-color-scheme: light)" />
   <meta name="color-scheme" content="light dark" />
-  <title>Text Font Chooser only for Microsoft Word</title>
+  <title>Banana — помощник</title>
   <meta name="copyright" content="© banana.team" />
   <meta name="author" content="banana.team" />
-  <meta name="application-name" content="Banana Font" />
-  <meta name="description" content="Font preview tool — Word-safe fonts plus Unicode styles for Telegram, Discord, WhatsApp." />
+  <meta name="application-name" content="Banana" />
+  <meta name="description" content="Banana — набор удобных инструментов: счётчик и преобразование текста, шрифты для Word, Unicode-стили для Telegram и Discord." />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Banana Font" />
+  <meta name="apple-mobile-web-app-title" content="Banana" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="format-detection" content="telephone=no" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='64' y2='64' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23222949'/><stop offset='1' stop-color='%231c1f3a'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='32' font-family='Arial, sans-serif' font-size='38' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='central'>B</text></svg>" />
@@ -70,16 +70,116 @@
     </div>
 
     <nav class="tabs" role="tablist">
-      <button type="button" class="tab-btn active" data-tab="fonts" role="tab" aria-selected="true" id="tab-btn-fonts"></button>
+      <button type="button" class="tab-btn active" data-tab="home" role="tab" aria-selected="true" id="tab-btn-home"></button>
+      <button type="button" class="tab-btn" data-tab="fonts" role="tab" aria-selected="false" id="tab-btn-fonts"></button>
+      <button type="button" class="tab-btn" data-tab="calc" role="tab" aria-selected="false" id="tab-btn-calc"></button>
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
     </nav>
 
-    <section id="tab-fonts" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-fonts">
+    <section id="tab-home" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-home">
+      <h1 id="home-title"></h1>
+      <p class="home-intro" id="home-intro"></p>
+
+      <div class="tool-section">
+        <h3 id="tool-text-label"></h3>
+        <textarea id="home-input" class="home-input" placeholder=""></textarea>
+        <div class="text-stats">
+          <span><strong id="stat-chars">0</strong> <span id="stat-chars-label"></span></span>
+          <span><strong id="stat-words">0</strong> <span id="stat-words-label"></span></span>
+          <span><strong id="stat-lines">0</strong> <span id="stat-lines-label"></span></span>
+          <span><strong id="stat-no-spaces">0</strong> <span id="stat-no-spaces-label"></span></span>
+        </div>
+      </div>
+
+      <div class="tool-section">
+        <h3 id="tool-case-label"></h3>
+        <div class="tool-actions">
+          <button type="button" data-transform="upper" class="tool-btn">ABCD</button>
+          <button type="button" data-transform="lower" class="tool-btn">abcd</button>
+          <button type="button" data-transform="title" class="tool-btn">Abcd</button>
+          <button type="button" data-transform="invert" class="tool-btn">aBcD</button>
+        </div>
+      </div>
+
+      <div class="tool-section">
+        <h3 id="tool-clean-label"></h3>
+        <div class="tool-actions">
+          <button type="button" data-action="trim-spaces" id="btn-trim" class="tool-btn"></button>
+          <button type="button" data-action="reverse" id="btn-reverse" class="tool-btn"></button>
+          <button type="button" data-action="copy" id="btn-home-copy" class="tool-btn"></button>
+          <button type="button" data-action="clear" id="btn-clear" class="tool-btn"></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-fonts" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-fonts" hidden>
       <h1 id="title"></h1>
       <textarea id="input"></textarea>
       <div class="fonts" id="fonts"></div>
       <div id="output" class="output"></div>
       <button type="button" id="copy-btn" class="copy-btn" disabled></button>
+    </section>
+
+    <section id="tab-calc" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-calc" hidden>
+      <h1 id="calc-title"></h1>
+
+      <div class="calc-modes" role="tablist">
+        <button type="button" class="calc-mode-btn active" data-mode="basic"></button>
+        <button type="button" class="calc-mode-btn" data-mode="geom"></button>
+        <button type="button" class="calc-mode-btn" data-mode="units"></button>
+      </div>
+
+      <div id="calc-panel-basic" class="calc-panel">
+        <div class="calc-display" id="calc-display">0</div>
+        <div class="calc-keypad">
+          <button type="button" class="calc-btn calc-btn-action" data-key="AC">AC</button>
+          <button type="button" class="calc-btn calc-btn-action" data-key="neg">±</button>
+          <button type="button" class="calc-btn calc-btn-action" data-key="%">%</button>
+          <button type="button" class="calc-btn calc-btn-op" data-key="/">÷</button>
+          <button type="button" class="calc-btn" data-key="7">7</button>
+          <button type="button" class="calc-btn" data-key="8">8</button>
+          <button type="button" class="calc-btn" data-key="9">9</button>
+          <button type="button" class="calc-btn calc-btn-op" data-key="*">×</button>
+          <button type="button" class="calc-btn" data-key="4">4</button>
+          <button type="button" class="calc-btn" data-key="5">5</button>
+          <button type="button" class="calc-btn" data-key="6">6</button>
+          <button type="button" class="calc-btn calc-btn-op" data-key="-">−</button>
+          <button type="button" class="calc-btn" data-key="1">1</button>
+          <button type="button" class="calc-btn" data-key="2">2</button>
+          <button type="button" class="calc-btn" data-key="3">3</button>
+          <button type="button" class="calc-btn calc-btn-op" data-key="+">+</button>
+          <button type="button" class="calc-btn calc-btn-zero" data-key="0">0</button>
+          <button type="button" class="calc-btn" data-key=".">.</button>
+          <button type="button" class="calc-btn calc-btn-eq" data-key="=">=</button>
+        </div>
+      </div>
+
+      <div id="calc-panel-geom" class="calc-panel" hidden>
+        <div class="calc-row">
+          <label for="geom-shape" id="geom-shape-label"></label>
+          <select id="geom-shape" class="calc-select"></select>
+        </div>
+        <div id="geom-inputs" class="calc-inputs"></div>
+        <div id="geom-results" class="calc-results"></div>
+      </div>
+
+      <div id="calc-panel-units" class="calc-panel" hidden>
+        <div class="calc-row">
+          <label for="units-cat" id="units-cat-label"></label>
+          <select id="units-cat" class="calc-select"></select>
+        </div>
+        <div class="units-conversion">
+          <div class="units-row">
+            <input type="number" id="units-from-val" class="calc-input" value="1" step="any" inputmode="decimal" />
+            <select id="units-from" class="calc-select"></select>
+          </div>
+          <div class="units-arrow">⇅</div>
+          <div class="units-row">
+            <input type="number" id="units-to-val" class="calc-input" readonly />
+            <select id="units-to" class="calc-select"></select>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
