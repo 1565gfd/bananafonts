@@ -1016,6 +1016,16 @@ html.theme-transition *::after {
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 18px;
+  /* v5.48.1 — reserve right-gutter so the fixed account widget doesn't
+     cover the lang-switch. Widget max-width ≈ 220px, typical .app right
+     margin ≈ 60px → 160px clears it cleanly. */
+  padding-right: 160px;
+}
+@media (max-width: 600px) {
+  .top-bar { padding-right: 100px; }
+}
+@media (max-width: 380px) {
+  .top-bar { padding-right: 88px; }
 }
 
 /* v5.32.1 — Pill container with pronounced glass top-edge */
@@ -8420,4 +8430,183 @@ body.ddos-active {
   body.ddos-active { animation: none; }
   .ddos-blink { animation: none; opacity: 0.7; }
   .ddos-bar-fill { animation: none; }
+}
+
+
+/* v5.48.1 — extended DDoS overlay: stats panel, country tags, mitigation
+   log entries. Layout: meters (left) + stats (right) on top, log fills
+   the middle, status at bottom. */
+.ddos-top-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.ddos-meters-box {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.ddos-meters-box .ddos-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+.ddos-stats-box {
+  flex: 0 0 240px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+}
+.ddos-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ddos-stat > span {
+  color: rgba(255, 200, 200, 0.55);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.ddos-stat > b {
+  color: #ff8888;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ddos-mit-off { color: #ff5555 !important; }
+.ddos-mit-on  { color: #6ef098 !important; animation: ddosBlink 0.7s infinite; }
+
+/* Country code tag in log */
+.ddos-log .ddos-cc {
+  display: inline-block;
+  min-width: 26px;
+  padding: 0 4px;
+  background: rgba(255, 100, 100, 0.15);
+  border-radius: 3px;
+  color: #ffaa66;
+  font-weight: 700;
+  font-size: 10px;
+}
+.ddos-log .ddos-ua {
+  color: rgba(170, 255, 170, 0.45);
+  font-size: 10px;
+}
+.ddos-log .ddos-mit {
+  display: block;
+  background: rgba(45, 209, 106, 0.1);
+  color: #88e8a8;
+  padding: 1px 4px;
+  border-left: 2px solid #2dd16a;
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  .ddos-top-row { flex-direction: column; }
+  .ddos-stats-box { flex: 1 1 100%; }
+}
+
+
+/* v5.48.3 — DDoS realism: response codes, UNRESPONSIVE banner, report */
+.ddos-unresp {
+  margin: -6px 0 8px;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ff5050;
+  background: rgba(255, 30, 30, 0.12);
+  border: 1px dashed rgba(255, 60, 60, 0.5);
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+.ddos-log .ddos-2xx { color: #6ef098; font-weight: 600; }
+.ddos-log .ddos-4xx { color: #ffaa44; font-weight: 600; }
+.ddos-log .ddos-5xx { color: #ff5555; font-weight: 700; }
+.ddos-stats-box {
+  grid-template-columns: 1fr 1fr 1fr;   /* 3-column for 9 stats */
+}
+@media (max-width: 600px) {
+  .ddos-stats-box { grid-template-columns: 1fr 1fr; }
+}
+.ddos-report {
+  position: absolute;
+  inset: 24px 32px;
+  background: rgba(0, 0, 0, 0.96);
+  border: 2px solid rgba(255, 90, 90, 0.6);
+  border-radius: 8px;
+  padding: 20px 24px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  color: #ffd0d0;
+  z-index: 11001;
+  display: flex;
+  flex-direction: column;
+  animation: ddosReportFade 0.4s ease-out;
+}
+@keyframes ddosReportFade {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.ddos-report-head {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ff8080;
+  text-shadow: 0 0 12px rgba(255, 80, 80, 0.6);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 90, 90, 0.3);
+}
+.ddos-report-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  align-content: start;
+}
+.ddos-report-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: rgba(255, 60, 60, 0.06);
+  border: 1px solid rgba(255, 60, 60, 0.2);
+  border-radius: 6px;
+}
+.ddos-report-grid > div > span {
+  font-size: 10px;
+  color: rgba(255, 200, 200, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.ddos-report-grid > div > b {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffe080;
+  font-variant-numeric: tabular-nums;
+}
+.ddos-report-foot {
+  margin-top: 16px;
+  padding: 10px 12px;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(255, 170, 0, 0.12);
+  border: 1px solid rgba(255, 170, 0, 0.4);
+  border-radius: 6px;
+  color: #ffaa44;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+  .ddos-report { inset: 16px 12px; padding: 14px 14px; }
+  .ddos-report-head { font-size: 16px; letter-spacing: 1px; margin-bottom: 12px; }
+  .ddos-report-grid { grid-template-columns: 1fr; gap: 6px; }
+  .ddos-report-grid > div { padding: 6px 10px; }
+  .ddos-report-grid > div > b { font-size: 15px; }
+  .ddos-report-foot { font-size: 11px; }
 }

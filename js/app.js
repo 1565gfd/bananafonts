@@ -119,7 +119,7 @@
       adminLockoutHint: "Мгновенно открыть apology-экран — для теста UI.",
       adminLockoutFire: "Запустить",
       /* v5.39.0 — 20 power tools */
-      adminPowerTitle: "🛠 20 инструментов администратора",
+      adminPowerTitle: "🛠 23 инструмента администратора",
       adminPowerHint: "Тычь в любую кнопку — мгновенный эффект. Каждая кнопка трогает реальный браузерный API.",
       pwToggleLang: "🌐 Переключить язык",
       pwZoomIn: "🔍 Зум +10%",
@@ -407,7 +407,7 @@
       adminLockoutHint: "Open the apology screen instantly — for UI testing.",
       adminLockoutFire: "Fire",
       /* v5.39.0 — 20 power tools (EN) */
-      adminPowerTitle: "🛠 20 admin power tools",
+      adminPowerTitle: "🛠 23 admin power tools",
       adminPowerHint: "Click any button — instant effect. Each touches a real browser API.",
       pwToggleLang: "🌐 Toggle language",
       pwZoomIn: "🔍 Zoom +10%",
@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.48.0";
+  var VERSION = "v5.48.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3747,132 +3747,424 @@
   }
 
   /* ─────────────────────────────────────────────────────────
-     v5.48.0 — runDdosSimulation()
-     Fullscreen DDoS-attack theater: fake terminal log, fake metrics,
-     screen flicker. 8 seconds, auto-cleanup. No actual traffic.
+     v5.48.1 — runDdosSimulation() — full multi-stage version.
+     Stages (total ~14 seconds):
+       0.0–1.5s   DETECTION   – anomaly warning, light traffic
+       1.5–5.0s   RAMP-UP     – attack intensity climbs
+       5.0–9.0s   PEAK        – meters maxed, full chaos
+       9.0–11.5s  MITIGATION  – firewall rules deploy, drops climb
+       11.5–13.0s COOL-DOWN   – attack subsides
+       13.0–14.5s ALL-CLEAR   – meters drop, fade out
+     No sound (per user). Pure visual theater. Zero real traffic.
      ───────────────────────────────────────────────────────── */
   var _ddosActive = false;
   function runDdosSimulation() {
     if (_ddosActive) return;
     _ddosActive = true;
 
-    var IP_PREFIXES = ["192.168", "10.0", "172.16", "203.0.113", "198.51.100",
-                       "45.33", "104.18", "185.220", "91.219", "77.83"];
-    var ENDPOINTS = ["/", "/api/login", "/api/users", "/admin", "/wp-admin",
-                     "/.env", "/config.php", "/api/v1/auth", "/login", "/api/secret",
-                     "/.git/config", "/phpmyadmin", "/api/users/1", "/backup.zip"];
-    var METHODS = ["GET", "POST", "GET", "GET", "POST", "PUT", "DELETE", "HEAD"];
-    var ERRORS = ["[ERROR]", "[WARN]", "[CRIT]", "[DDOS]", "[BLOCKED]"];
+    /* IP database — prefixes mapped to ISO country codes for realism */
+    var IP_PREFIXES = [
+      { p: "45.33",    c: "US" },  { p: "104.18",  c: "US" },
+      { p: "203.0.113", c: "US" }, { p: "198.51.100", c: "US" },
+      { p: "91.219",   c: "RU" },  { p: "77.83",   c: "RU" },
+      { p: "185.220",  c: "DE" },  { p: "5.188",   c: "DE" },
+      { p: "112.224",  c: "CN" },  { p: "121.40",  c: "CN" },
+      { p: "117.50",   c: "CN" },  { p: "61.135",  c: "CN" },
+      { p: "188.166",  c: "NL" },  { p: "162.243", c: "NL" },
+      { p: "164.90",   c: "IN" },  { p: "13.232",  c: "IN" },
+      { p: "200.123",  c: "BR" },  { p: "189.84",  c: "BR" },
+      { p: "41.190",   c: "ZA" },  { p: "197.211", c: "NG" }
+    ];
+    var ENDPOINTS = [
+      "/", "/api/login", "/api/users", "/admin", "/wp-admin", "/.env",
+      "/config.php", "/api/v1/auth", "/login", "/api/secret", "/.git/config",
+      "/phpmyadmin", "/api/users/1", "/backup.zip", "/wp-login.php",
+      "/.aws/credentials", "/api/admin", "/server-status", "/api/v2/users",
+      "/admin/index.php", "/owa/auth/logon.aspx"
+    ];
+    var METHODS = ["GET", "POST", "GET", "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"];
+    var USER_AGENTS = ["curl/7.68.0", "python-requests/2.28", "Go-http-client/1.1",
+                       "Mozilla/5.0 (compatible; bot)", "masscan/1.3", "nikto/2.5",
+                       "sqlmap/1.7", "Nmap Scripting Engine"];
+    var ATTACK_VECTORS = ["SYN flood", "HTTP flood", "Slowloris", "DNS amplification",
+                          "NTP reflection", "UDP flood", "GET flood", "Layer 7"];
+    /* v5.48.3 — realistic HTTP response codes, ports, conn states */
+    var PORTS = [":443", ":443", ":443", ":443", ":80", ":80", ":8080", ":8443", ":22", ":3306"];
+    var CODES_OK   = ["200 OK", "204 No Content"];
+    var CODES_BAD  = ["404 Not Found", "401 Unauthorized", "403 Forbidden", "405 Method Not Allowed"];
+    var CODES_RATE = ["429 Too Many Requests"];
+    var CODES_SRV  = ["502 Bad Gateway", "503 Service Unavailable", "504 Gateway Timeout"];
+    var CONN_STATES = ["SYN_SENT", "TIME_WAIT", "CLOSE_WAIT", "FIN_WAIT2", "ESTABLISHED",
+                       "LAST_ACK", "SYN_RECV", "CONN_REFUSED"];
+
+    function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function randIP() {
-      var p = IP_PREFIXES[Math.floor(Math.random() * IP_PREFIXES.length)];
-      return p + "." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256));
+      var entry = randItem(IP_PREFIXES);
+      return {
+        ip: entry.p + "." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256)),
+        country: entry.c
+      };
     }
     function timestamp() {
-      var d = new Date();
-      return d.toISOString().slice(11, 23);  /* HH:MM:SS.mmm */
+      return new Date().toISOString().slice(11, 23);  /* HH:MM:SS.mmm */
+    }
+    function fmt(n) {
+      /* Comma-separated thousands */
+      return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    /* Build overlay */
+    /* ── Build overlay ── */
     var overlay = document.createElement("div");
     overlay.className = "ddos-overlay";
+
     var head = document.createElement("div");
     head.className = "ddos-head";
-    head.innerHTML = "<span class='ddos-blink'>🚨</span> SIMULATED DDoS ATTACK <span class='ddos-blink'>🚨</span>";
-    var meters = document.createElement("div");
-    meters.className = "ddos-meters";
-    meters.innerHTML =
+    head.innerHTML =
+      "<span class='ddos-blink'>🚨</span> " +
+      "<span id='ddos-title'>ANOMALY DETECTED</span> " +
+      "<span class='ddos-blink'>🚨</span>";
+
+    /* Top row: meters + stats panel */
+    var topRow = document.createElement("div");
+    topRow.className = "ddos-top-row";
+
+    var metersBox = document.createElement("div");
+    metersBox.className = "ddos-meters-box";
+    var metersInner = document.createElement("div");
+    metersInner.className = "ddos-meters";
+    metersInner.innerHTML =
       "<div class='ddos-meter'><span>CPU</span><div class='ddos-bar'><div id='ddos-cpu' class='ddos-bar-fill'></div></div></div>" +
+      "<div class='ddos-meter'><span>RAM</span><div class='ddos-bar'><div id='ddos-ram' class='ddos-bar-fill'></div></div></div>" +
       "<div class='ddos-meter'><span>NET</span><div class='ddos-bar'><div id='ddos-net' class='ddos-bar-fill'></div></div></div>" +
-      "<div class='ddos-meter'><span>RPS</span><div class='ddos-bar'><div id='ddos-rps' class='ddos-bar-fill'></div></div></div>";
+      "<div class='ddos-meter'><span>RPS</span><div class='ddos-bar'><div id='ddos-rps' class='ddos-bar-fill'></div></div></div>" +
+      "<div class='ddos-meter'><span>I/O</span><div class='ddos-bar'><div id='ddos-io' class='ddos-bar-fill'></div></div></div>" +
+      "<div class='ddos-meter'><span>LAT</span><div class='ddos-bar'><div id='ddos-lat' class='ddos-bar-fill'></div></div></div>";
+    metersBox.appendChild(metersInner);
+
+    var statsBox = document.createElement("div");
+    statsBox.className = "ddos-stats-box";
+    statsBox.innerHTML =
+      "<div class='ddos-stat'><span>Total requests</span><b id='ddos-stat-total'>0</b></div>" +
+      "<div class='ddos-stat'><span>Unique IPs</span><b id='ddos-stat-ips'>0</b></div>" +
+      "<div class='ddos-stat'><span>Blocked</span><b id='ddos-stat-blocked'>0</b></div>" +
+      "<div class='ddos-stat'><span>Bandwidth</span><b id='ddos-stat-bw'>0.0 Gbps</b></div>" +
+      "<div class='ddos-stat'><span>Downtime</span><b id='ddos-stat-down'>0s</b></div>" +
+      "<div class='ddos-stat'><span>Losses</span><b id='ddos-stat-loss'>$0</b></div>" +
+      "<div class='ddos-stat'><span>Mitigation</span><b id='ddos-stat-mit' class='ddos-mit-off'>OFF</b></div>" +
+      "<div class='ddos-stat'><span>Top vector</span><b id='ddos-stat-vector'>—</b></div>" +
+      "<div class='ddos-stat'><span>Stage</span><b id='ddos-stat-stage'>DETECT</b></div>";
+
+    topRow.appendChild(metersBox);
+    topRow.appendChild(statsBox);
+
     var log = document.createElement("pre");
     log.className = "ddos-log";
     log.id = "ddos-log";
+
+    /* v5.48.3 — "PAGE: UNRESPONSIVE" indicator pulses during peak */
+    var unresp = document.createElement("div");
+    unresp.className = "ddos-unresp";
+    unresp.id = "ddos-unresp";
+    unresp.hidden = true;
+    unresp.innerHTML = "<span class='ddos-blink'>●</span> PAGE: UNRESPONSIVE — connection timeout";
+
     var status = document.createElement("div");
     status.className = "ddos-status";
     status.id = "ddos-status";
-    status.textContent = "⚠ Под атакой. Фильтрация трафика…";
+    status.textContent = "⚠ Аномалия в трафике. Анализ…";
+
     overlay.appendChild(head);
-    overlay.appendChild(meters);
+    overlay.appendChild(topRow);
+    overlay.appendChild(unresp);
     overlay.appendChild(log);
     overlay.appendChild(status);
     document.body.appendChild(overlay);
     document.body.classList.add("ddos-active");
 
+    /* Refs */
+    var titleEl = document.getElementById("ddos-title");
     var cpu = document.getElementById("ddos-cpu");
+    var ram = document.getElementById("ddos-ram");
     var net = document.getElementById("ddos-net");
     var rps = document.getElementById("ddos-rps");
+    var io  = document.getElementById("ddos-io");
+    var lat = document.getElementById("ddos-lat");
+    var stTotal   = document.getElementById("ddos-stat-total");
+    var stIps     = document.getElementById("ddos-stat-ips");
+    var stBlocked = document.getElementById("ddos-stat-blocked");
+    var stBw      = document.getElementById("ddos-stat-bw");
+    var stDown    = document.getElementById("ddos-stat-down");
+    var stLoss    = document.getElementById("ddos-stat-loss");
+    var stMit     = document.getElementById("ddos-stat-mit");
+    var stVector  = document.getElementById("ddos-stat-vector");
+    var stStage   = document.getElementById("ddos-stat-stage");
+    var unrespEl  = document.getElementById("ddos-unresp");
 
-    /* Spam log lines */
-    var lineCount = 0;
+    /* Running counters (v5.48.3 expanded) */
+    var counters = { total: 0, ipSet: {}, blocked: 0,
+                     peakBw: 0, peakRps: 0,
+                     downtimeMs: 0, losses: 0 };
+    var topVector = randItem(ATTACK_VECTORS);
+    stVector.textContent = topVector;
+    var attackStartMs = Date.now();
+
+    /* Stage state — drives intensity (lines/sec) and meter range */
+    var stage = "DETECT";   /* DETECT → RAMP → PEAK → MIT → COOL → DONE */
+    var stageStart = Date.now();
+    var stageMin = { cpu: 5, ram: 30, net: 5, rps: 2, io: 5, lat: 8 };
+    var stageMax = { cpu: 15, ram: 38, net: 12, rps: 8, io: 12, lat: 18 };
+    var burstMin = 1, burstMax = 2;
+    var mitigationActive = false;
+
+    function setStage(name, label) {
+      stage = name;
+      stageStart = Date.now();
+      stStage.textContent = name;
+      titleEl.textContent = label || name;
+      switch (name) {
+        case "DETECT":
+          stageMin = { cpu: 5,  ram: 30, net: 5,  rps: 2,  io: 5,  lat: 8 };
+          stageMax = { cpu: 15, ram: 38, net: 12, rps: 8,  io: 12, lat: 18 };
+          burstMin = 1; burstMax = 2;
+          status.textContent = "⚠ Аномалия в трафике. Анализ…";
+          status.className = "ddos-status";
+          break;
+        case "RAMP":
+          stageMin = { cpu: 30, ram: 45, net: 35, rps: 25, io: 25, lat: 25 };
+          stageMax = { cpu: 60, ram: 60, net: 65, rps: 55, io: 50, lat: 60 };
+          burstMin = 3; burstMax = 5;
+          status.textContent = "🔥 Подтверждённая DDoS атака. Эскалация…";
+          status.className = "ddos-status";
+          break;
+        case "PEAK":
+          stageMin = { cpu: 82, ram: 78, net: 88, rps: 70, io: 75, lat: 80 };
+          stageMax = { cpu: 99, ram: 95, net: 100, rps: 100, io: 95, lat: 100 };
+          burstMin = 6; burstMax = 10;
+          status.textContent = "🚨 Пик атаки. Активирована защита.";
+          status.className = "ddos-status";
+          /* Site goes "unresponsive" during peak */
+          if (unrespEl) unrespEl.hidden = false;
+          break;
+        case "MIT":
+          stageMin = { cpu: 65, ram: 70, net: 55, rps: 55, io: 60, lat: 55 };
+          stageMax = { cpu: 85, ram: 82, net: 78, rps: 85, io: 80, lat: 75 };
+          burstMin = 4; burstMax = 7;
+          mitigationActive = true;
+          stMit.textContent = "ACTIVE";
+          stMit.className = "ddos-mit-on";
+          status.textContent = "🛡 Развёрнуты правила фильтрации. Сбрасываем атаку…";
+          status.className = "ddos-status";
+          if (unrespEl) unrespEl.hidden = true;   /* site responsive again */
+          break;
+        case "COOL":
+          stageMin = { cpu: 20, ram: 50, net: 18, rps: 12, io: 18, lat: 20 };
+          stageMax = { cpu: 40, ram: 60, net: 35, rps: 25, io: 30, lat: 35 };
+          burstMin = 1; burstMax = 3;
+          status.textContent = "✓ Атака стихает. Трафик возвращается в норму.";
+          status.className = "ddos-status";
+          break;
+        case "DONE":
+          stageMin = { cpu: 5, ram: 35, net: 5, rps: 2, io: 5, lat: 8 };
+          stageMax = { cpu: 12, ram: 42, net: 10, rps: 5, io: 10, lat: 14 };
+          burstMin = 0; burstMax = 1;
+          status.textContent = "✓ Атака отбита. Все системы в норме.";
+          status.className = "ddos-status ddos-status-ok";
+          break;
+      }
+    }
+
+    /* ── Log generator ── */
     var logTimer = setInterval(function () {
+      var burst = burstMin + Math.floor(Math.random() * Math.max(1, burstMax - burstMin + 1));
+      if (burst === 0) return;
       var lines = "";
-      var burst = 4 + Math.floor(Math.random() * 4);
       for (var i = 0; i < burst; i++) {
         var roll = Math.random();
-        var ip = randIP();
-        var ep = ENDPOINTS[Math.floor(Math.random() * ENDPOINTS.length)];
-        var mt = METHODS[Math.floor(Math.random() * METHODS.length)];
-        if (roll < 0.15) {
-          lines += "<span class='ddos-err'>" + timestamp() + " " +
-                   ERRORS[Math.floor(Math.random() * ERRORS.length)] +
-                   " Rate limit exceeded from " + ip + "</span>\n";
-        } else if (roll < 0.3) {
-          lines += "<span class='ddos-err'>" + timestamp() + " [DROP] " + ip + " " + mt + " " + ep + " — blacklisted</span>\n";
-        } else {
-          lines += "<span class='ddos-ip'>" + ip + "</span> " + mt + " " + ep +
-                   " <span class='ddos-dim'>(" + timestamp() + ")</span>\n";
+        var info = randIP();
+        counters.total++;
+        counters.ipSet[info.ip] = 1;
+        var ep = randItem(ENDPOINTS);
+        var mt = randItem(METHODS);
+        var ua = randItem(USER_AGENTS);
+
+        /* Mitigation actions inject during MIT stage */
+        if (mitigationActive && roll < 0.18) {
+          var actions = [
+            "[MITIGATION] Deploying rate-limit rule for " + info.ip.replace(/\.\d+$/, "") + ".0/24",
+            "[FIREWALL] Auto-block 1000 RPS/IP threshold engaged",
+            "[CHALLENGE] CAPTCHA injection for suspicious UA: " + ua,
+            "[CDN] Activating edge cache for " + ep,
+            "[WAF] Pattern signature matched: " + topVector + " — blocking",
+            "[NULLROUTE] Sinkholing /24 origin block — " + info.country,
+            "[ANYCAST] Rerouting traffic to scrubbing center: SCB-" + (Math.floor(Math.random() * 9) + 1)
+          ];
+          lines += "<span class='ddos-mit'>" + timestamp() + " " + randItem(actions) + "</span>\n";
+          counters.blocked++;
+          continue;
         }
-        lineCount++;
+        var port = randItem(PORTS);
+        /* Pick HTTP response code by stage: under load → more 5xx errors */
+        var codeRoll = Math.random();
+        var code;
+        if (stage === "PEAK") {
+          code = codeRoll < 0.55 ? randItem(CODES_SRV)
+               : codeRoll < 0.75 ? randItem(CODES_RATE)
+               : codeRoll < 0.9  ? randItem(CODES_BAD)
+               : randItem(CODES_OK);
+        } else if (stage === "MIT") {
+          code = codeRoll < 0.4 ? randItem(CODES_RATE)
+               : codeRoll < 0.6 ? randItem(CODES_SRV)
+               : codeRoll < 0.8 ? randItem(CODES_BAD)
+               : randItem(CODES_OK);
+        } else if (stage === "RAMP") {
+          code = codeRoll < 0.2 ? randItem(CODES_SRV)
+               : codeRoll < 0.4 ? randItem(CODES_RATE)
+               : codeRoll < 0.6 ? randItem(CODES_BAD)
+               : randItem(CODES_OK);
+        } else {
+          code = codeRoll < 0.85 ? randItem(CODES_OK) : randItem(CODES_BAD);
+        }
+        var codeClass = code.charAt(0) === "5" ? "ddos-5xx"
+                      : code.charAt(0) === "4" ? "ddos-4xx" : "ddos-2xx";
+        var connSt = randItem(CONN_STATES);
+
+        if (roll < 0.22) {
+          /* Drop / blocked */
+          lines += "<span class='ddos-err'>" + timestamp() + " [DROP] " +
+                   "<span class='ddos-cc'>[" + info.country + "]</span> " +
+                   info.ip + port + " " + mt + " " + ep + " — " +
+                   (mitigationActive ? "WAF rule" : "rate limit") +
+                   " <span class='ddos-dim'>" + connSt + "</span></span>\n";
+          counters.blocked++;
+        } else {
+          /* Normal incoming */
+          lines += "<span class='ddos-cc'>[" + info.country + "]</span> " +
+                   "<span class='ddos-ip'>" + info.ip + port + "</span> " + mt + " " + ep +
+                   " <span class='" + codeClass + "'>" + code + "</span>" +
+                   " <span class='ddos-ua'>(" + ua + ")</span>" +
+                   " <span class='ddos-dim'>" + connSt + " · " + timestamp() + "</span>\n";
+        }
       }
       log.innerHTML += lines;
-      /* Keep log bounded — cap at ~200 lines */
+      /* Cap to ~250 lines */
       var html = log.innerHTML;
-      var splitPos = -1;
-      for (var k = 0, n = 0; k < html.length; k++) {
-        if (html[k] === "\n") { n++; if (n > 200) { splitPos = k; break; } }
+      var splitPos = -1, n = 0;
+      for (var k = 0; k < html.length; k++) {
+        if (html[k] === "\n") { n++; if (n > 250) { splitPos = k; break; } }
       }
       if (splitPos > 0) log.innerHTML = html.slice(splitPos + 1);
       log.scrollTop = log.scrollHeight;
-    }, 80);
 
-    /* Animate fake meters — random jitter pinned near max */
+      /* Refresh stat counters */
+      stTotal.textContent = fmt(counters.total);
+      stIps.textContent = fmt(Object.keys(counters.ipSet).length);
+      stBlocked.textContent = fmt(counters.blocked);
+    }, 90);
+
+    /* ── Meter animator ── */
+    function pickInRange(min, max) {
+      return min + Math.random() * (max - min);
+    }
     var meterTimer = setInterval(function () {
-      cpu.style.width = (78 + Math.random() * 22) + "%";
-      net.style.width = (85 + Math.random() * 15) + "%";
-      rps.style.width = (60 + Math.random() * 40) + "%";
-    }, 120);
+      cpu.style.width = pickInRange(stageMin.cpu, stageMax.cpu) + "%";
+      ram.style.width = pickInRange(stageMin.ram, stageMax.ram) + "%";
+      net.style.width = pickInRange(stageMin.net, stageMax.net) + "%";
+      rps.style.width = pickInRange(stageMin.rps, stageMax.rps) + "%";
+      io.style.width  = pickInRange(stageMin.io,  stageMax.io)  + "%";
+      lat.style.width = pickInRange(stageMin.lat, stageMax.lat) + "%";
+    }, 130);
 
-    /* Screen flicker — brief filter pulses */
+    /* ── Subtle hue flicker during peak ── */
     var flickerTimer = setInterval(function () {
-      if (Math.random() < 0.3) {
-        document.body.style.filter = "hue-rotate(" + Math.floor(Math.random() * 30 - 15) + "deg) brightness(1.05)";
+      if ((stage === "RAMP" || stage === "PEAK") && Math.random() < 0.25) {
+        document.body.style.filter = "hue-rotate(" + Math.floor(Math.random() * 30 - 15) + "deg) brightness(1.04)";
         setTimeout(function () { document.body.style.filter = ""; }, 60);
       }
+    }, 280);
+
+    /* ── v5.48.3 — slow tick for bandwidth, downtime, money lost ── */
+    var slowTimer = setInterval(function () {
+      /* Bandwidth depends on stage */
+      var bw;
+      if      (stage === "DETECT") bw = 0.2 + Math.random() * 0.8;
+      else if (stage === "RAMP")   bw = 3 + Math.random() * 10;
+      else if (stage === "PEAK")   bw = 80 + Math.random() * 220;   /* 80-300 Gbps */
+      else if (stage === "MIT")    bw = 40 + Math.random() * 80;
+      else if (stage === "COOL")   bw = 5 + Math.random() * 15;
+      else                          bw = 0.3 + Math.random() * 0.5;
+      stBw.textContent = bw.toFixed(1) + " Gbps";
+      if (bw > counters.peakBw) counters.peakBw = bw;
+      /* Peak RPS tracked from total counter delta */
+      var elapsed = (Date.now() - attackStartMs) / 1000;
+      var avgRps = elapsed > 0 ? counters.total / elapsed : 0;
+      if (avgRps > counters.peakRps) counters.peakRps = avgRps;
+      /* Downtime: site is effectively down during PEAK */
+      if (stage === "PEAK") counters.downtimeMs += 250;
+      var dSec = Math.floor(counters.downtimeMs / 1000);
+      stDown.textContent = dSec + "s";
+      /* Losses: ~$80/sec during PEAK + $20/sec during MIT (proxy fees, etc.) */
+      if (stage === "PEAK") counters.losses += 80 * 0.25;       /* 80$/s * 0.25s */
+      else if (stage === "MIT") counters.losses += 20 * 0.25;
+      stLoss.textContent = "$" + fmt(Math.floor(counters.losses));
     }, 250);
 
-    /* Cleanup after 8 seconds */
+    /* ── Stage transitions ── */
+    setTimeout(function () { setStage("RAMP",  "DDoS DETECTED — RAMPING UP"); }, 1500);
+    setTimeout(function () { setStage("PEAK",  "DDoS ATTACK IN PROGRESS"); },    5000);
+    setTimeout(function () { setStage("MIT",   "MITIGATION ENGAGED"); },          9000);
+    setTimeout(function () { setStage("COOL",  "ATTACK SUBSIDING"); },           11500);
+    setTimeout(function () { setStage("DONE",  "ALL CLEAR"); },                  13000);
+
+    /* ── Cleanup + final incident report ── */
     setTimeout(function () {
       clearInterval(logTimer);
       clearInterval(meterTimer);
       clearInterval(flickerTimer);
+      clearInterval(slowTimer);
       document.body.style.filter = "";
-      status.textContent = "✓ Атака отбита. Трафик восстановлен.";
-      status.classList.add("ddos-status-ok");
-      /* Drain meters */
-      cpu.style.width = "12%";
-      net.style.width = "8%";
-      rps.style.width = "5%";
-      /* Hold 1.5s, then fade out */
+      if (unrespEl) unrespEl.hidden = true;
+
+      /* v5.48.3 — incident report overlay. Stays for 4 seconds, then
+         the whole simulation fades out. */
+      var report = document.createElement("div");
+      report.className = "ddos-report";
+      var dur = ((Date.now() - attackStartMs) / 1000).toFixed(1);
+      var blockPct = counters.total > 0
+        ? Math.round(counters.blocked / counters.total * 100) : 0;
+      var uniqueIps = Object.keys(counters.ipSet).length;
+      /* SEO-impact rating heuristic */
+      var seoRating;
+      if (counters.downtimeMs >= 3000)      seoRating = "🔴 Severe";
+      else if (counters.downtimeMs >= 1500) seoRating = "🟠 Moderate";
+      else                                   seoRating = "🟡 Minor";
+
+      report.innerHTML =
+        "<div class='ddos-report-head'>📋 INCIDENT REPORT</div>" +
+        "<div class='ddos-report-grid'>" +
+          "<div><span>Duration</span><b>" + dur + "s</b></div>" +
+          "<div><span>Total requests</span><b>" + fmt(counters.total) + "</b></div>" +
+          "<div><span>Unique IPs</span><b>" + fmt(uniqueIps) + "</b></div>" +
+          "<div><span>Blocked</span><b>" + fmt(counters.blocked) + " (" + blockPct + "%)</b></div>" +
+          "<div><span>Peak bandwidth</span><b>" + counters.peakBw.toFixed(1) + " Gbps</b></div>" +
+          "<div><span>Peak avg RPS</span><b>" + fmt(Math.round(counters.peakRps)) + "</b></div>" +
+          "<div><span>Downtime</span><b>" + Math.floor(counters.downtimeMs / 1000) + "s</b></div>" +
+          "<div><span>Est. losses</span><b>$" + fmt(Math.floor(counters.losses)) + "</b></div>" +
+          "<div><span>Top vector</span><b>" + topVector + "</b></div>" +
+          "<div><span>SEO impact</span><b>" + seoRating + "</b></div>" +
+        "</div>" +
+        "<div class='ddos-report-foot'>⚠ Anomalous data-exfil attempt detected during attack window (distraction-pattern). Investigation required.</div>";
+      overlay.appendChild(report);
+
       setTimeout(function () {
-        overlay.style.transition = "opacity 0.5s ease";
+        overlay.style.transition = "opacity 0.6s ease";
         overlay.style.opacity = "0";
         setTimeout(function () {
           if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
           document.body.classList.remove("ddos-active");
           _ddosActive = false;
-        }, 520);
-      }, 1500);
-    }, 8000);
+        }, 620);
+      }, 4500);
+    }, 14500);
   }
 
   var POWER_TOOLS = [
@@ -4061,12 +4353,13 @@
         document.body.classList.toggle("bf-mirror", _bfMirror);
         return "mirror: " + (_bfMirror ? "ON" : "OFF");
     } },
-    /* v5.48.0 — DDoS attack simulation. Pure UX theater: fullscreen
-       fake terminal-style overlay with scrolling request log, fake
-       CPU/network meters, screen flicker. 8-second run, auto-cleanup.
-       Plays the siren wail for atmosphere. Does NOT actually generate
-       any network traffic. */
-    { textKey: "pwDdos", sound: "siren", run: function () {
+    /* v5.48.1 — DDoS attack simulation, full multi-stage version.
+       No siren (per user request). Stages: detection → ramp-up → peak
+       attack → mitigation → cool-down → all-clear. ~14 sec total.
+       Shows fake meters, log with geographic origins, mitigation
+       actions, attack-vector breakdown, live counters. Zero real
+       network traffic. */
+    { textKey: "pwDdos", sound: "click", run: function () {
         runDdosSimulation();
         return "🚨 ATTACK INCOMING…";
     } }
