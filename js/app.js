@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.51.0";
+  var VERSION = "v5.52.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -7844,6 +7844,42 @@
   var adminLogsClearBtn = document.getElementById("admin-logs-clear");
   var adminLogsCopyBtn  = document.getElementById("admin-logs-copy");
   var adminLogsFilterEl = document.getElementById("admin-logs-filter");
+  /* v5.51.1 — second copy of the same UI as a full-page tab (only visible
+     when creator is signed in, gated via data-min-role="creator" + body
+     class). Renders are mirrored to BOTH outputs. */
+  var tabLogsOutputEl   = document.getElementById("tab-logs-output");
+  var tabLogsCountEl    = document.getElementById("tab-logs-count");
+  var tabLogsPauseBtn   = document.getElementById("tab-logs-pause");
+  var tabLogsClearBtn   = document.getElementById("tab-logs-clear");
+  var tabLogsCopyBtn    = document.getElementById("tab-logs-copy");
+  var tabLogsFilterEl   = document.getElementById("tab-logs-filter");
+  /* v5.52.0 — extended controls + stats */
+  var tabLogsExportBtn  = document.getElementById("tab-logs-export");
+  var tabLogsSearchEl   = document.getElementById("tab-logs-search");
+  var tabLogsAutoEl     = document.getElementById("tab-logs-autoscroll");
+  var tabLogsPersistEl  = document.getElementById("tab-logs-persist");
+  var tabLogsStatsEl    = document.getElementById("tab-logs-stats");
+  var adminLogsExportBtn= document.getElementById("admin-logs-export");
+  var adminLogsSearchEl = document.getElementById("admin-logs-search");
+  var adminLogsAutoEl   = document.getElementById("admin-logs-autoscroll");
+  var adminLogsPersistEl= document.getElementById("admin-logs-persist");
+  var adminLogsStatsEl  = document.getElementById("admin-logs-stats");
+  /* Extra state */
+  var _logSearch     = "";
+  var _logAutoScroll = true;
+  var _logPersist    = false;
+  var _expandedIdx   = -1;   /* which entry is click-expanded (by index) */
+  /* Restore persisted state at boot */
+  try {
+    if (localStorage.getItem("bananafont:logsPersist") === "1") _logPersist = true;
+    if (_logPersist) {
+      var raw = localStorage.getItem("bananafont:logsBuf");
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) _eventLog = parsed.slice(-MAX_LOG_ENTRIES);
+      }
+    }
+  } catch (e) {}
 
   /* Cheap HTML-escape — log entries can contain free-form strings */
   function _escHtml(s) {
@@ -7865,35 +7901,116 @@
   }
   function _scheduleLogRender() {
     if (_logRenderScheduled) return;
-    if (!adminLogsOutputEl) return;
+    if (!adminLogsOutputEl && !tabLogsOutputEl) return;
     _logRenderScheduled = true;
     requestAnimationFrame(function () {
       _logRenderScheduled = false;
       _renderLog();
     });
   }
+  /* v5.52.0 — render mirrors to BOTH outputs. Supports category filter,
+     text search (with hit-highlighting), autoscroll-toggle, persistence,
+     click-to-expand (shows raw entry detail), and stats panel. */
   function _renderLog() {
-    if (!adminLogsOutputEl) return;
-    /* Skip work if admin panel is closed OR not creator (section is hidden
-       anyway, but updating innerHTML on hidden element still costs DOM work). */
-    if (adminPanelEl && adminPanelEl.hasAttribute("hidden")) return;
-    if (_activeRole !== "creator" && !document.body.classList.contains("admin-role-creator")) return;
-
+    /* Filter by category */
     var filtered = _logFilter
       ? _eventLog.filter(function (e) { return e.cat === _logFilter; })
       : _eventLog;
-    var html = filtered.map(function (e) {
-      return "<span class='log-ts'>" + _logTimestamp(e.ts) + "</span>" +
-             "<span class='log-cat log-cat-" + e.cat + "'>[" + e.cat + "]</span>" +
-             "<span class='log-msg'>" + _escHtml(e.msg) + "</span>";
-    }).join("\n");
-    adminLogsOutputEl.innerHTML = html;
-    adminLogsOutputEl.scrollTop = adminLogsOutputEl.scrollHeight;
-    if (adminLogsCountEl) {
-      adminLogsCountEl.textContent = _eventLog.length + " events" +
-        (_logFilter ? " (" + filtered.length + " shown)" : "") +
-        (_logPaused ? " · ⏸ paused" : "");
+    /* Filter by text search (case-insensitive, in msg) */
+    var search = (_logSearch || "").toLowerCase();
+    if (search) {
+      filtered = filtered.filter(function (e) {
+        return e.msg.toLowerCase().indexOf(search) !== -1 ||
+               e.cat.indexOf(search) !== -1;
+      });
     }
+    /* Build HTML with search-hit highlighting */
+    function highlight(s) {
+      if (!search) return _escHtml(s);
+      var escaped = _escHtml(s);
+      var idx = escaped.toLowerCase().indexOf(search);
+      if (idx === -1) return escaped;
+      return escaped.slice(0, idx) +
+             "<mark>" + escaped.slice(idx, idx + search.length) + "</mark>" +
+             escaped.slice(idx + search.length);
+    }
+    var html = filtered.map(function (e, i) {
+      var expanded = (i === _expandedIdx);
+      var detail = expanded
+        ? "<span class='log-detail'>ts: " + e.ts + " · ISO: " + new Date(e.ts).toISOString() +
+          " · cat: " + e.cat + " · len: " + e.msg.length + "</span>"
+        : "";
+      return "<span class='log-entry" + (expanded ? " expanded" : "") + "' data-log-idx='" + i + "'>" +
+             "<span class='log-ts'>" + _logTimestamp(e.ts) + "</span>" +
+             "<span class='log-cat log-cat-" + e.cat + "'>[" + e.cat + "]</span>" +
+             "<span class='log-msg'>" + highlight(e.msg) + "</span>" +
+             detail +
+             "</span>";
+    }).join("\n");
+    var countText = _eventLog.length + " events" +
+      (_logFilter || search ? " (" + filtered.length + " shown)" : "") +
+      (_logPaused ? " · ⏸ paused" : "");
+
+    /* Compute stats once */
+    var statsHtml = _computeStatsHtml();
+
+    function paintInto(outEl, countEl, statsEl) {
+      outEl.innerHTML = html;
+      if (_logAutoScroll) outEl.scrollTop = outEl.scrollHeight;
+      if (countEl) countEl.textContent = countText;
+      if (statsEl) statsEl.innerHTML = statsHtml;
+    }
+
+    /* Admin-panel mirror */
+    if (adminLogsOutputEl) {
+      var panelOpen = !(adminPanelEl && adminPanelEl.hasAttribute("hidden"));
+      var isCreator = (_activeRole === "creator") || document.body.classList.contains("admin-role-creator");
+      if (panelOpen && isCreator) {
+        paintInto(adminLogsOutputEl, adminLogsCountEl, adminLogsStatsEl);
+      }
+    }
+    /* Standalone tab mirror */
+    if (tabLogsOutputEl) {
+      var tabSection = document.getElementById("tab-logs");
+      if (tabSection && !tabSection.hasAttribute("hidden")) {
+        paintInto(tabLogsOutputEl, tabLogsCountEl, tabLogsStatsEl);
+      }
+    }
+  }
+
+  /* Stats: per-category counts, rate, age */
+  function _computeStatsHtml() {
+    if (_eventLog.length === 0) {
+      return "<div class='logs-stat-row'><span>статус</span><b>пусто</b></div>";
+    }
+    var counts = {};
+    var minTs = _eventLog[0].ts, maxTs = _eventLog[0].ts;
+    for (var i = 0; i < _eventLog.length; i++) {
+      var e = _eventLog[i];
+      counts[e.cat] = (counts[e.cat] || 0) + 1;
+      if (e.ts < minTs) minTs = e.ts;
+      if (e.ts > maxTs) maxTs = e.ts;
+    }
+    var span = (maxTs - minTs) / 1000;     /* seconds */
+    var rate = span > 0 ? (_eventLog.length / span).toFixed(1) : "—";
+    var ageSec = Math.floor((Date.now() - minTs) / 1000);
+    /* Find top 3 categories */
+    var sorted = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
+    var top3 = sorted.slice(0, 3).map(function (c) {
+      return "<span class='logs-stat-top-cat log-cat-" + c + "'>" + c + " " + counts[c] + "</span>";
+    }).join("");
+    function fmtAge(s) {
+      if (s < 60) return s + "s";
+      if (s < 3600) return Math.floor(s / 60) + "m " + (s % 60) + "s";
+      return Math.floor(s / 3600) + "h " + Math.floor((s % 3600) / 60) + "m";
+    }
+    return [
+      "<div class='logs-stat-row'><span>total</span><b>" + _eventLog.length + " / " + MAX_LOG_ENTRIES + "</b></div>",
+      "<div class='logs-stat-row'><span>rate</span><b>" + rate + " evt/s</b></div>",
+      "<div class='logs-stat-row'><span>oldest</span><b>" + fmtAge(ageSec) + "</b></div>",
+      "<div class='logs-stat-row'><span>categories</span><b>" + sorted.length + "</b></div>",
+      "<div class='logs-stat-row'><span>top</span><b>" + top3 + "</b></div>"
+    ].join("");
   }
 
   /* ── Controls ── */
@@ -7926,8 +8043,254 @@
   if (adminLogsFilterEl) {
     adminLogsFilterEl.addEventListener("change", function () {
       _logFilter = adminLogsFilterEl.value || "";
+      /* Sync tab filter dropdown too */
+      if (tabLogsFilterEl) tabLogsFilterEl.value = _logFilter;
       _renderLog();
     });
+  }
+  /* v5.51.1 — standalone-tab controls. Same handlers, just on the
+     tab-page copy of the UI. */
+  function _syncLogsPauseLabels() {
+    var label = _logPaused ? "▶ Возобновить" : "⏸ Пауза";
+    if (adminLogsPauseBtn) adminLogsPauseBtn.textContent = label;
+    if (tabLogsPauseBtn)   tabLogsPauseBtn.textContent   = label;
+  }
+  if (tabLogsPauseBtn) {
+    tabLogsPauseBtn.addEventListener("click", function () {
+      _logPaused = !_logPaused;
+      _syncLogsPauseLabels();
+      _renderLog();
+    });
+  }
+  if (tabLogsClearBtn) {
+    tabLogsClearBtn.addEventListener("click", function () {
+      _eventLog = [];
+      _renderLog();
+    });
+  }
+  if (tabLogsCopyBtn) {
+    tabLogsCopyBtn.addEventListener("click", function () {
+      var txt = _eventLog.map(function (e) {
+        return _logTimestamp(e.ts) + " [" + e.cat + "] " + e.msg;
+      }).join("\n");
+      try {
+        navigator.clipboard.writeText(txt);
+        var orig = tabLogsCopyBtn.textContent;
+        tabLogsCopyBtn.textContent = "✓ Скопировано";
+        setTimeout(function () { tabLogsCopyBtn.textContent = orig; }, 1200);
+      } catch (e2) {}
+    });
+  }
+  if (tabLogsFilterEl) {
+    tabLogsFilterEl.addEventListener("change", function () {
+      _logFilter = tabLogsFilterEl.value || "";
+      if (adminLogsFilterEl) adminLogsFilterEl.value = _logFilter;
+      _renderLog();
+    });
+  }
+  /* Force render when user switches TO the logs tab so they see the
+     accumulated history right away (the tab-button click fires before
+     the section becomes visible, hence the small delay). */
+  var _tabLogsBtn = document.getElementById("tab-btn-logs");
+  if (_tabLogsBtn) {
+    _tabLogsBtn.addEventListener("click", function () {
+      setTimeout(_renderLog, 50);
+    });
+  }
+
+  /* ── v5.52.0 — extended controls ── */
+  /* Search input on both copies, synced */
+  function _onSearchInput(srcEl, mirrorEl) {
+    _logSearch = (srcEl.value || "").trim();
+    if (mirrorEl && mirrorEl !== srcEl) mirrorEl.value = _logSearch;
+    _renderLog();
+  }
+  if (adminLogsSearchEl) {
+    adminLogsSearchEl.addEventListener("input", function () {
+      _onSearchInput(adminLogsSearchEl, tabLogsSearchEl);
+    });
+  }
+  if (tabLogsSearchEl) {
+    tabLogsSearchEl.addEventListener("input", function () {
+      _onSearchInput(tabLogsSearchEl, adminLogsSearchEl);
+    });
+  }
+
+  /* JSON export */
+  function _exportLogsJson() {
+    var payload = {
+      exported: new Date().toISOString(),
+      total: _eventLog.length,
+      events: _eventLog
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "banana-logs-" + Date.now() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 100);
+  }
+  if (adminLogsExportBtn) adminLogsExportBtn.addEventListener("click", _exportLogsJson);
+  if (tabLogsExportBtn)   tabLogsExportBtn.addEventListener("click", _exportLogsJson);
+
+  /* Auto-scroll toggle (synced) */
+  function _onAutoToggle(srcEl, mirrorEl) {
+    _logAutoScroll = !!srcEl.checked;
+    if (mirrorEl && mirrorEl !== srcEl) mirrorEl.checked = _logAutoScroll;
+  }
+  if (adminLogsAutoEl) {
+    adminLogsAutoEl.addEventListener("change", function () {
+      _onAutoToggle(adminLogsAutoEl, tabLogsAutoEl);
+    });
+  }
+  if (tabLogsAutoEl) {
+    tabLogsAutoEl.addEventListener("change", function () {
+      _onAutoToggle(tabLogsAutoEl, adminLogsAutoEl);
+    });
+  }
+
+  /* Persistence toggle — when on, ring buffer is saved to localStorage
+     and restored on next load. */
+  function _persistSave() {
+    if (!_logPersist) return;
+    try {
+      localStorage.setItem("bananafont:logsBuf", JSON.stringify(_eventLog));
+    } catch (e) {}
+  }
+  var _persistSaveTimer = null;
+  function _persistSaveDebounced() {
+    if (!_logPersist) return;
+    if (_persistSaveTimer) clearTimeout(_persistSaveTimer);
+    _persistSaveTimer = setTimeout(_persistSave, 1500);
+  }
+  function _onPersistToggle(srcEl, mirrorEl) {
+    _logPersist = !!srcEl.checked;
+    if (mirrorEl && mirrorEl !== srcEl) mirrorEl.checked = _logPersist;
+    try {
+      localStorage.setItem("bananafont:logsPersist", _logPersist ? "1" : "0");
+      if (!_logPersist) localStorage.removeItem("bananafont:logsBuf");
+      else _persistSave();
+    } catch (e) {}
+  }
+  if (adminLogsPersistEl) {
+    adminLogsPersistEl.checked = _logPersist;
+    adminLogsPersistEl.addEventListener("change", function () {
+      _onPersistToggle(adminLogsPersistEl, tabLogsPersistEl);
+    });
+  }
+  if (tabLogsPersistEl) {
+    tabLogsPersistEl.checked = _logPersist;
+    tabLogsPersistEl.addEventListener("change", function () {
+      _onPersistToggle(tabLogsPersistEl, adminLogsPersistEl);
+    });
+  }
+  /* Hook into logEvent to trigger debounced save when persistence on */
+  var _origLogEvent = logEvent;
+  logEvent = function (cat, msg) {
+    _origLogEvent(cat, msg);
+    if (_logPersist) _persistSaveDebounced();
+  };
+
+  /* Click-to-expand on log entries (event delegation) */
+  function _wireExpandClick(outEl) {
+    if (!outEl) return;
+    outEl.addEventListener("click", function (e) {
+      var entry = e.target.closest && e.target.closest(".log-entry");
+      if (!entry) return;
+      var idx = parseInt(entry.dataset.logIdx, 10);
+      if (isNaN(idx)) return;
+      _expandedIdx = (_expandedIdx === idx) ? -1 : idx;
+      _renderLog();
+    });
+  }
+  _wireExpandClick(adminLogsOutputEl);
+  _wireExpandClick(tabLogsOutputEl);
+
+  /* ── v5.52.0 — ADDITIONAL EVENT HOOKS ── */
+  /* Mouse clicks anywhere — sample the target tag/id/class for context */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || t.tagName === "HTML") return;
+    /* Skip clicks INSIDE the log panel itself (would create feedback loops) */
+    if (t.closest && (t.closest(".admin-logs-output") || t.closest("#tab-logs"))) return;
+    var sel = t.tagName.toLowerCase();
+    if (t.id) sel += "#" + t.id;
+    else if (t.className && typeof t.className === "string") {
+      var firstClass = t.className.split(/\s+/)[0];
+      if (firstClass) sel += "." + firstClass;
+    }
+    logEvent("click", sel.slice(0, 60));
+  }, true);
+
+  /* Scroll — debounced to 1/sec */
+  var _scrollLogTimer = null;
+  window.addEventListener("scroll", function () {
+    if (_scrollLogTimer) return;
+    _scrollLogTimer = setTimeout(function () {
+      _scrollLogTimer = null;
+      logEvent("scroll", "y=" + window.scrollY);
+    }, 1000);
+  }, { passive: true });
+
+  /* Page visibility / focus / blur */
+  document.addEventListener("visibilitychange", function () {
+    logEvent("focus", "page-" + document.visibilityState);
+  });
+  window.addEventListener("blur",  function () { logEvent("focus", "window blur"); });
+  window.addEventListener("focus", function () { logEvent("focus", "window focus"); });
+
+  /* Online / offline */
+  window.addEventListener("online",  function () { logEvent("net", "online"); });
+  window.addEventListener("offline", function () { logEvent("net", "offline"); });
+
+  /* Clipboard activity (copy/cut/paste on whole document) */
+  document.addEventListener("copy",  function () { logEvent("clip", "copy"); });
+  document.addEventListener("cut",   function () { logEvent("clip", "cut"); });
+  document.addEventListener("paste", function () { logEvent("clip", "paste"); });
+
+  /* Window resize (debounced) */
+  var _resizeLogTimer = null;
+  window.addEventListener("resize", function () {
+    if (_resizeLogTimer) return;
+    _resizeLogTimer = setTimeout(function () {
+      _resizeLogTimer = null;
+      logEvent("focus", "resize → " + window.innerWidth + "×" + window.innerHeight);
+    }, 500);
+  });
+
+  /* Font tab — hook setFont so each font selection logs */
+  if (typeof setFont === "function") {
+    var _osf = setFont;
+    setFont = function (idx) {
+      var name = (typeof FONTS !== "undefined" && FONTS[idx]) ? FONTS[idx].name : "?";
+      logEvent("font", "select #" + idx + " · " + name);
+      return _osf.apply(this, arguments);
+    };
+  }
+
+  /* Calculator — hook the main operations */
+  if (typeof calcEquals === "function") {
+    var _oce = calcEquals;
+    calcEquals = function () {
+      logEvent("calc", "= → " + (calcState && calcState.display));
+      return _oce.apply(this, arguments);
+    };
+  }
+  if (typeof calcClear === "function") {
+    var _occ = calcClear;
+    calcClear = function () { logEvent("calc", "AC"); return _occ.apply(this, arguments); };
+  }
+
+  /* Utility tools section — hook utilOut so every util fires a log */
+  if (typeof utilOut === "function") {
+    var _ouo = utilOut;
+    utilOut = function (s) {
+      logEvent("util", "out: " + String(s).slice(0, 50));
+      return _ouo.apply(this, arguments);
+    };
   }
 
   /* ── Hook into key functions ── wrapper pattern: capture original,

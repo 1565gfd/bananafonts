@@ -127,6 +127,10 @@
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
       <!-- Secret tab is always kept LAST. Do not reorder. -->
       <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
+      <!-- v5.51.1 — Creator-only tab: live event log. Hidden via CSS
+           data-min-role="creator" — only visible when creator is signed
+           in through service code. -->
+      <button type="button" class="tab-btn" data-tab="logs" data-min-role="creator" role="tab" aria-selected="false" id="tab-btn-logs">📜 Логи</button>
     </nav>
     </div>
 
@@ -730,6 +734,52 @@
       <div id="secret-result" class="secret-result"></div>
     </section>
 
+    <!-- v5.51.1 — Creator-only Live Logs tab. Same UI as the admin-panel
+         section, just rendered as a full page-tab. Hidden by CSS unless
+         body has admin-role-creator class (set by service-code activation). -->
+    <section id="tab-logs" class="tab-content" data-min-role="creator" role="tabpanel" aria-labelledby="tab-btn-logs" hidden>
+      <h1>📜 Live event log</h1>
+      <p class="home-intro">Всё что происходит на сайте — в реальном времени. Ring-buffer на 500 записей, хранится в памяти.</p>
+
+      <!-- v5.52.0 — extended controls + stats panel + search -->
+      <div class="tool-section logs-stats-section">
+        <div id="tab-logs-stats" class="logs-stats"></div>
+      </div>
+      <div class="tool-section">
+        <div class="admin-logs-controls">
+          <button type="button" id="tab-logs-pause" class="settings-btn silent-btn">⏸ Пауза</button>
+          <button type="button" id="tab-logs-clear" class="settings-btn silent-btn">🗑 Очистить</button>
+          <button type="button" id="tab-logs-copy"  class="settings-btn silent-btn">📋 Копировать</button>
+          <button type="button" id="tab-logs-export" class="settings-btn silent-btn">⬇ JSON</button>
+          <select id="tab-logs-filter" class="calc-input admin-logs-filter">
+            <option value="">все категории</option>
+            <option value="theme">🎨 theme</option>
+            <option value="tab">🏷 tab</option>
+            <option value="lang">🌐 lang</option>
+            <option value="sound">🔊 sound</option>
+            <option value="knob">🎚 knob</option>
+            <option value="account">👤 account</option>
+            <option value="admin">👑 admin</option>
+            <option value="secret">🔓 secret</option>
+            <option value="error">❌ error</option>
+            <option value="click">🖱 click</option>
+            <option value="scroll">📜 scroll</option>
+            <option value="focus">👁 focus</option>
+            <option value="net">📡 net</option>
+            <option value="clip">📋 clip</option>
+            <option value="font">🔤 font</option>
+            <option value="calc">🔢 calc</option>
+            <option value="util">🔧 util</option>
+          </select>
+          <input type="text" id="tab-logs-search" class="calc-input admin-logs-search" placeholder="🔎 поиск в сообщениях…" />
+          <label class="logs-toggle"><input type="checkbox" id="tab-logs-autoscroll" checked /><span>auto-scroll</span></label>
+          <label class="logs-toggle"><input type="checkbox" id="tab-logs-persist" /><span>сохранять</span></label>
+          <span id="tab-logs-count" class="admin-logs-count">0 events</span>
+        </div>
+        <pre id="tab-logs-output" class="admin-logs-output"></pre>
+      </div>
+    </section>
+
     <div id="footer-wrap"><footer id="footer"></footer></div>
 
     <!-- NOTE: The school-theme logo SVG used to live here, but the user
@@ -1082,10 +1132,12 @@
       <div class="admin-section" data-min-role="creator">
         <h3 id="admin-logs-title">📜 Live event log</h3>
         <p class="admin-hint" id="admin-logs-hint">Всё что происходит на сайте — в реальном времени. Только для creator. Хранится в памяти, до 500 записей.</p>
+        <div id="admin-logs-stats" class="logs-stats"></div>
         <div class="admin-logs-controls">
           <button type="button" id="admin-logs-pause" class="settings-btn silent-btn">⏸ Пауза</button>
           <button type="button" id="admin-logs-clear" class="settings-btn silent-btn">🗑 Очистить</button>
           <button type="button" id="admin-logs-copy"  class="settings-btn silent-btn">📋 Копировать</button>
+          <button type="button" id="admin-logs-export" class="settings-btn silent-btn">⬇ JSON</button>
           <select id="admin-logs-filter" class="calc-input admin-logs-filter">
             <option value="">все категории</option>
             <option value="theme">🎨 theme</option>
@@ -1097,7 +1149,18 @@
             <option value="admin">👑 admin</option>
             <option value="secret">🔓 secret</option>
             <option value="error">❌ error</option>
+            <option value="click">🖱 click</option>
+            <option value="scroll">📜 scroll</option>
+            <option value="focus">👁 focus</option>
+            <option value="net">📡 net</option>
+            <option value="clip">📋 clip</option>
+            <option value="font">🔤 font</option>
+            <option value="calc">🔢 calc</option>
+            <option value="util">🔧 util</option>
           </select>
+          <input type="text" id="admin-logs-search" class="calc-input admin-logs-search" placeholder="🔎 поиск…" />
+          <label class="logs-toggle"><input type="checkbox" id="admin-logs-autoscroll" checked /><span>auto-scroll</span></label>
+          <label class="logs-toggle"><input type="checkbox" id="admin-logs-persist" /><span>сохранять</span></label>
           <span id="admin-logs-count" class="admin-logs-count">0 events</span>
         </div>
         <pre id="admin-logs-output" class="admin-logs-output"></pre>
