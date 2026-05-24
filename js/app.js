@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.47.3";
+  var VERSION = "v5.47.4";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -2591,12 +2591,12 @@
       return;
     }
     var code = raw.toUpperCase();
-    /* Privileged gate first (not in SECRET_CODES — code stays off-repo) */
-    if (_isPrivilegedCode(code)) {
-      showSecretFeedback("", false);
-      activateAdmin();
-      return;
-    }
+    /* v5.47.5 — privileged gate removed from this Secret-tab path.
+       The service code now ONLY works in the "🔑 Сервисный код" field
+       on the login screen (see acc-admin-submit handler). If someone
+       types the privileged code here, they'll get the same "unknown
+       code" error as any other invalid input — keeps admin trigger
+       off the Secret-tab surface entirely. */
     if (Object.prototype.hasOwnProperty.call(SECRET_CODES, code)) {
       var entry = SECRET_CODES[code];
       var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
@@ -7125,6 +7125,75 @@
   accAdminCode.addEventListener("keydown", function (e) {
     if (e.key === "Enter") { e.preventDefault(); accAdminSubmit.click(); }
   });
+
+  /* ─────────────────────────────────────────────────────────
+     v5.47.4 — auto-create + auto-login the "admin" account when
+     the service code is accepted. Shield SVG avatar on a Discord
+     blurple (#7289da) background. The account's passHash is set
+     to a non-hex sentinel so regular username+password login can
+     NEVER match — admin access stays gated behind the service
+     code only.
+     ───────────────────────────────────────────────────────── */
+  var ADMIN_USERNAME = "admin";
+  var ADMIN_COLOR    = "#7289da";
+  /* SVG shield: outer black silhouette + white inset on the left half.
+     Inline data URL so it ships with one tiny string (no separate asset). */
+  var ADMIN_AVATAR_SVG =
+    "data:image/svg+xml;utf8," +
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>" +
+    "<path d='M32 4 L58 13 V32 C58 48 47 58 32 62 C17 58 6 48 6 32 V13 Z' fill='%23000'/>" +
+    "<path d='M32 10 V58 C18 53 10 45 10 31 V17 L32 10 Z' fill='%23fff'/>" +
+    "</svg>";
+
+  function ensureAdminAccountAndLogin() {
+    var arr = loadAccounts();
+    var existing = null;
+    var idx = -1;
+    for (var i = 0; i < arr.length; i++) {
+      if ((arr[i].username || "").toLowerCase() === ADMIN_USERNAME) {
+        existing = arr[i]; idx = i; break;
+      }
+    }
+    if (!existing) {
+      existing = {
+        id: "acc_admin",
+        username: ADMIN_USERNAME,
+        email: "",
+        salt: _randSalt(),
+        /* Sentinel — not a valid SHA-256 hex string. hashPassword() always
+           returns 64-char hex, so this can never match → regular login is
+           impossible. Admin only via service code. */
+        passHash: "__service_only__",
+        avatar: ADMIN_AVATAR_SVG,
+        color: ADMIN_COLOR,
+        regDate: Date.now(),
+        lastSeen: Date.now(),
+        visits: 1
+      };
+      arr.push(existing);
+    } else {
+      /* Refresh visuals every time — protects against user-edited values
+         from the Профиль tab + bumps visit stats. */
+      existing.avatar   = ADMIN_AVATAR_SVG;
+      existing.color    = ADMIN_COLOR;
+      existing.lastSeen = Date.now();
+      existing.visits   = (existing.visits || 0) + 1;
+      arr[idx] = existing;
+    }
+    saveAccounts(arr);
+    setCurrentAccountId(existing.id);
+    refreshAccountWidget();
+  }
+
+  /* Wrap activateAdmin so the account flow fires after the original
+     admin-unlock side effects (badge + sound + panel open). */
+  if (typeof activateAdmin === "function") {
+    var _origActivateAdmin = activateAdmin;
+    activateAdmin = function () {
+      _origActivateAdmin();
+      ensureAdminAccountAndLogin();
+    };
+  }
 
   /* ── Wire widget + tabs + close ── */
   accWidgetMain.addEventListener("click", function () { openAccountPanel(); });
