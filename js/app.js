@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.39.0";
+  var VERSION = "v5.39.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1371,9 +1371,9 @@
     { id: "mars",          ruLabel: "Марс",                enLabel: "Mars",
       swatch: "linear-gradient(160deg, #1a0808 0%, #5a1808 50%, #a03820 100%)" },
     { id: "jupiter",       ruLabel: "Юпитер",              enLabel: "Jupiter",
-      swatch: "linear-gradient(160deg, #3a2010 0%, #a07050 50%, #d8a878 100%)" },
+      swatch: "linear-gradient(160deg, #2a1408 0%, #6a3820 50%, #4a2010 100%)" },
     { id: "saturn",        ruLabel: "Сатурн",              enLabel: "Saturn",
-      swatch: "linear-gradient(160deg, #f5e8c8 0%, #dac088 50%, #a88840 100%)" },
+      swatch: "linear-gradient(160deg, #fff4dc 0%, #f0d896 50%, #e8c870 100%)" },
     { id: "supernova",     ruLabel: "Сверхновая",          enLabel: "Supernova",
       swatch: "radial-gradient(circle at 50% 50%, #ffee44 0%, #5a3a98 40%, #000018 100%)" },
     { id: "milky-way",     ruLabel: "Млечный путь",        enLabel: "Milky Way",
@@ -1391,7 +1391,7 @@
     { id: "zen",           ruLabel: "Дзен",                enLabel: "Zen",
       swatch: "linear-gradient(160deg, #f0ede2 0%, #dcd8c8 50%, #b8c0a8 100%)" },
     { id: "nostalgia",     ruLabel: "Ностальгия",          enLabel: "Nostalgia",
-      swatch: "linear-gradient(160deg, #f0e0c0 0%, #d8b890 50%, #a88858 100%)" },
+      swatch: "linear-gradient(160deg, #faecd0 0%, #ecd2a8 50%, #d8b890 100%)" },
     { id: "dreamy",        ruLabel: "Дрёма",               enLabel: "Dreamy",
       swatch: "linear-gradient(160deg, #1a0f2a 0%, #3a2858 50%, #5a4088 100%)" },
     { id: "anxiety",       ruLabel: "Тревога",             enLabel: "Anxiety",
@@ -1419,7 +1419,7 @@
     { id: "matcha",        ruLabel: "Матча",               enLabel: "Matcha",
       swatch: "linear-gradient(160deg, #e8f0d0 0%, #bfd8a0 50%, #88a868 100%)" },
     { id: "caramel",       ruLabel: "Карамель",            enLabel: "Caramel",
-      swatch: "linear-gradient(160deg, #1a0a04 0%, #5a3010 50%, #a06820 100%)" },
+      swatch: "linear-gradient(160deg, #1a0a04 0%, #3a1c08 50%, #5a3010 100%)" },
     { id: "mojito",        ruLabel: "Мохито",              enLabel: "Mojito",
       swatch: "linear-gradient(160deg, #e8fff0 0%, #a8e8c0 50%, #5cb888 100%)" },
     { id: "blueberry",     ruLabel: "Черника",             enLabel: "Blueberry",
@@ -1447,7 +1447,7 @@
     { id: "sapphire",      ruLabel: "Сапфир",              enLabel: "Sapphire",
       swatch: "radial-gradient(circle at 30% 30%, #3870ff 0%, transparent 55%), linear-gradient(160deg, #000820 0%, #0a1858 50%, #1a3898 100%)" },
     { id: "emerald",       ruLabel: "Изумруд",             enLabel: "Emerald",
-      swatch: "radial-gradient(circle at 30% 30%, #20d058 0%, transparent 55%), linear-gradient(160deg, #001a10 0%, #0a4828 50%, #188850 100%)" },
+      swatch: "radial-gradient(circle at 30% 30%, #20d058 0%, transparent 55%), linear-gradient(160deg, #001a10 0%, #053820 50%, #0a5028 100%)" },
     { id: "amethyst",      ruLabel: "Аметист",             enLabel: "Amethyst",
       swatch: "radial-gradient(circle at 30% 30%, #b860ff 0%, transparent 55%), linear-gradient(160deg, #1a0820 0%, #48188a 50%, #7028b8 100%)" },
     { id: "opal",          ruLabel: "Опал",                enLabel: "Opal",
