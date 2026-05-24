@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://banana-fonts.vercel.app/sitemap.xml
