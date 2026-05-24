@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.31.4";
+  var VERSION = "v5.31.5";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -4048,9 +4048,9 @@
     return false;
   }
 
-  /* ── lockPageInRed (v5.30.3+ / v5.31.1) ── deep red fullscreen overlay
-     with apology UI + 3-second countdown + 3-strikes limit. If the user
-     doesn't apologize correctly within 3 seconds, OR makes 3 wrong
+  /* ── lockPageInRed (v5.30.3+ / v5.31.5) ── deep red fullscreen overlay
+     with apology UI + 5-second countdown + 3-strikes limit. If the user
+     doesn't apologize correctly within 5 seconds, OR makes 3 wrong
      attempts, ALL bananafont:* localStorage is wiped and the page reloads.
      The only escape is correct SORRY or ПРОСТИ (case-insensitive). */
   function wipeAndReload() {
@@ -4093,10 +4093,10 @@
     title.className = "page-red-title";
     title.textContent = t.apologyTitle;
 
-    /* v5.31.1: big pulsing countdown — 3 → 2 → 1 → wipe */
+    /* v5.31.5: big pulsing countdown — 5 → 4 → 3 → 2 → 1 → wipe */
     var countdown = document.createElement("div");
     countdown.className = "page-red-countdown";
-    countdown.textContent = "3";
+    countdown.textContent = "5";
 
     var hint = document.createElement("p");
     hint.className = "page-red-hint";
@@ -4121,7 +4121,7 @@
     /* ── Timer / attempts state ── */
     var wrongCount = 0;
     var MAX_ATTEMPTS = 3;
-    var COUNTDOWN_TOTAL_MS = 3000;
+    var COUNTDOWN_TOTAL_MS = 5000;        /* v5.31.5: bumped 3s → 5s for fairer reaction time */
     var countdownStartedAt = performance.now();
     var rafId = null;
     var settled = false;        /* true once unlock OR wipe triggered */
