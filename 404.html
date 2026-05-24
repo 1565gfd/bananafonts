@@ -7,11 +7,12 @@
   <meta name="copyright" content="© banana.team" />
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='64' y2='64' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23222949'/><stop offset='1' stop-color='%231c1f3a'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='32' font-family='Arial, sans-serif' font-size='38' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='central'>B</text></svg>" />
+
   <script>
     (function () {
       try {
         var s = localStorage.getItem("bananafont:theme");
-        if (s === "light" || s === "dark") {
+        if (s === "light" || s === "dark" || s === "night") {
           document.documentElement.dataset.theme = s;
           return;
         }
@@ -22,101 +23,10 @@
       }
     })();
   </script>
-  <style>
-    :root, [data-theme="dark"] {
-      --nf-bg:
-        radial-gradient(circle at 18% 25%, rgba(139, 92, 246, 0.42) 0%, transparent 52%),
-        radial-gradient(circle at 82% 75%, rgba(56, 189, 248, 0.32) 0%, transparent 50%),
-        linear-gradient(140deg, #1d2230 0%, #11162a 100%);
-      --glass-bg: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 255, 255, 0.14);
-      --glass-inset: rgba(255, 255, 255, 0.18);
-      --nf-text: #e6ecf5;
-      --nf-title: #f0f4fa;
-      --nf-text-soft: #d4dae2;
-      --nf-code-gradient: linear-gradient(180deg, #d0d6e0 0%, #7d8595 100%);
-      --link: #b8b0ff;
-      --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
-    }
-    [data-theme="light"] {
-      --nf-bg:
-        radial-gradient(circle at 18% 25%, rgba(139, 92, 246, 0.22) 0%, transparent 52%),
-        radial-gradient(circle at 82% 75%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
-        linear-gradient(140deg, #eef2ff 0%, #dde6f5 100%);
-      --glass-bg: rgba(255, 255, 255, 0.5);
-      --glass-border: rgba(255, 255, 255, 0.85);
-      --glass-inset: rgba(255, 255, 255, 0.9);
-      --nf-text: #1a1f3a;
-      --nf-title: #14193a;
-      --nf-text-soft: rgba(26, 31, 58, 0.78);
-      --nf-code-gradient: linear-gradient(180deg, #6a5cff 0%, #b8b0ff 100%);
-      --link: #4f3fcf;
-      --shadow-card: 0 12px 40px rgba(80, 90, 140, 0.22);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      width: 100%;
-      padding: 28px;
-      color: var(--nf-text);
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--nf-bg);
-      background-attachment: fixed;
-    }
-    .not-found-card {
-      max-width: 1080px;
-      width: 100%;
-      background: var(--glass-bg);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
-      backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 28px 36px 32px;
-      text-align: left;
-      box-shadow:
-        var(--shadow-card),
-        inset 0 1px 0 var(--glass-inset);
-    }
-    .not-found-title {
-      margin: 0;
-      font-size: 44px;
-      text-align: center;
-      color: var(--nf-title);
-      font-weight: 700;
-    }
-    .not-found-code {
-      margin: 16px 0 12px;
-      text-align: center;
-      font-size: 180px;
-      line-height: 1;
-      background: var(--nf-code-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .not-found-text {
-      margin: 0 0 14px;
-      font-size: 28px;
-      line-height: 1.45;
-      color: var(--nf-text-soft);
-    }
-    .not-found-link {
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .not-found-link:hover { text-decoration: underline; }
-    @media (max-width: 900px) {
-      .not-found-title { font-size: 30px; }
-      .not-found-code { font-size: 110px; }
-      .not-found-text { font-size: 18px; }
-    }
-  </style>
+
+  <link rel="stylesheet" href="/css/main.css" />
 </head>
-<body>
+<body class="not-found-wrap">
   <main class="not-found-card">
     <h1 class="not-found-title">Page not found · Страница не найдена</h1>
     <div class="not-found-code">404</div>

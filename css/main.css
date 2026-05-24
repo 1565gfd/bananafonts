@@ -1,0 +1,620 @@
+/* ============================================================
+   Banana Font — main stylesheet
+   Themes: light · dark (default) · night (AMOLED + warm accent)
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  --bg-gradient:
+    radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.55) 0%, transparent 48%),
+    radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.42) 0%, transparent 50%),
+    radial-gradient(circle at 72% 88%, rgba(244, 114, 182, 0.36) 0%, transparent 52%),
+    radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.32) 0%, transparent 50%),
+    linear-gradient(135deg, #161b3a 0%, #0d0f24 100%);
+
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.42);
+  --text-soft: rgba(255, 255, 255, 0.85);
+  --text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-soft: rgba(255, 255, 255, 0.1);
+  --glass-inset: rgba(255, 255, 255, 0.18);
+  --glass-inset-soft: rgba(255, 255, 255, 0.06);
+
+  --output-bg: rgba(0, 0, 0, 0.28);
+  --output-border: rgba(255, 255, 255, 0.08);
+  --output-inset-bottom: rgba(0, 0, 0, 0.2);
+
+  --accent: #6a5cff;
+  --accent-bg: rgba(106, 92, 255, 0.45);
+  --accent-border: rgba(133, 122, 255, 0.6);
+  --accent-glow: rgba(106, 92, 255, 0.45);
+
+  --copy-bg: rgba(106, 92, 255, 0.5);
+  --copy-bg-hover: rgba(122, 109, 255, 0.62);
+  --copy-border: rgba(133, 122, 255, 0.6);
+  --copy-border-hover: rgba(160, 150, 255, 0.72);
+  --copied-bg: rgba(69, 196, 104, 0.55);
+  --copied-border: rgba(120, 220, 150, 0.7);
+  --copied-glow: rgba(69, 196, 104, 0.4);
+
+  --link: #b8b0ff;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+  --nf-bg:
+    radial-gradient(circle at 18% 25%, rgba(139, 92, 246, 0.42) 0%, transparent 52%),
+    radial-gradient(circle at 82% 75%, rgba(56, 189, 248, 0.32) 0%, transparent 50%),
+    linear-gradient(140deg, #1d2230 0%, #11162a 100%);
+  --nf-code-gradient: linear-gradient(180deg, #d0d6e0 0%, #7d8595 100%);
+}
+
+[data-theme="light"] {
+  --bg-gradient:
+    radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 72% 88%, rgba(244, 114, 182, 0.18) 0%, transparent 52%),
+    radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.18) 0%, transparent 50%),
+    linear-gradient(135deg, #eef2ff 0%, #dde6f5 100%);
+
+  --text: #1a1f3a;
+  --text-dim: rgba(26, 31, 58, 0.48);
+  --text-soft: rgba(26, 31, 58, 0.85);
+  --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-hover: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-soft: rgba(120, 130, 180, 0.18);
+  --glass-inset: rgba(255, 255, 255, 0.9);
+  --glass-inset-soft: rgba(255, 255, 255, 0.4);
+
+  --output-bg: rgba(255, 255, 255, 0.55);
+  --output-border: rgba(120, 130, 180, 0.18);
+  --output-inset-bottom: rgba(120, 130, 180, 0.08);
+
+  --accent: #6a5cff;
+  --accent-bg: rgba(106, 92, 255, 0.6);
+  --accent-border: rgba(106, 92, 255, 0.75);
+  --accent-glow: rgba(106, 92, 255, 0.35);
+
+  --copy-bg: rgba(106, 92, 255, 0.85);
+  --copy-bg-hover: rgba(122, 109, 255, 0.95);
+  --copy-border: rgba(106, 92, 255, 0.95);
+  --copy-border-hover: rgba(160, 150, 255, 1);
+  --copied-bg: rgba(54, 174, 88, 0.85);
+  --copied-border: rgba(54, 174, 88, 1);
+  --copied-glow: rgba(54, 174, 88, 0.35);
+
+  --link: #4f3fcf;
+  --shadow-card: 0 12px 40px rgba(80, 90, 140, 0.22);
+
+  --nf-bg:
+    radial-gradient(circle at 18% 25%, rgba(139, 92, 246, 0.22) 0%, transparent 52%),
+    radial-gradient(circle at 82% 75%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+    linear-gradient(140deg, #eef2ff 0%, #dde6f5 100%);
+  --nf-code-gradient: linear-gradient(180deg, #6a5cff 0%, #b8b0ff 100%);
+}
+
+[data-theme="night"] {
+  --bg-gradient:
+    radial-gradient(circle at 50% 50%, rgba(255, 140, 60, 0.06) 0%, transparent 65%),
+    #000000;
+
+  --text: #f5ead0;
+  --text-dim: rgba(245, 234, 208, 0.42);
+  --text-soft: rgba(245, 234, 208, 0.85);
+  --text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg-hover: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-soft: rgba(255, 255, 255, 0.06);
+  --glass-inset: rgba(255, 255, 255, 0.1);
+  --glass-inset-soft: rgba(255, 255, 255, 0.04);
+
+  --output-bg: rgba(0, 0, 0, 0.6);
+  --output-border: rgba(255, 157, 68, 0.12);
+  --output-inset-bottom: rgba(0, 0, 0, 0.4);
+
+  --accent: #ff9d44;
+  --accent-bg: rgba(255, 157, 68, 0.3);
+  --accent-border: rgba(255, 157, 68, 0.6);
+  --accent-glow: rgba(255, 157, 68, 0.4);
+
+  --copy-bg: rgba(255, 157, 68, 0.4);
+  --copy-bg-hover: rgba(255, 157, 68, 0.55);
+  --copy-border: rgba(255, 157, 68, 0.65);
+  --copy-border-hover: rgba(255, 180, 100, 0.8);
+  --copied-bg: rgba(120, 200, 100, 0.4);
+  --copied-border: rgba(150, 220, 130, 0.6);
+  --copied-glow: rgba(120, 200, 100, 0.3);
+
+  --link: #ffb56b;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.8);
+
+  --nf-bg:
+    radial-gradient(circle at 50% 50%, rgba(255, 140, 60, 0.06) 0%, transparent 65%),
+    #000000;
+  --nf-code-gradient: linear-gradient(180deg, #ffb56b 0%, #ff7a1f 100%);
+}
+
+/* ============================================================
+   Base + reset
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+footer,
+.lang-switch button,
+.theme-switch button,
+.fonts button,
+.copy-btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  padding: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  transition: color 0.25s ease;
+}
+
+/* ============================================================
+   App card
+   ============================================================ */
+
+.app {
+  width: min(1700px, calc(100vw - 24px));
+  padding: 26px 18px 16px;
+  border-radius: 28px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-inset);
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+/* ============================================================
+   Top bar — theme switch + lang switch
+   ============================================================ */
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.theme-switch,
+.lang-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-switch button,
+.lang-switch button {
+  min-width: 56px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.25s;
+}
+
+.theme-switch button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 12px;
+}
+
+.theme-switch button::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.theme-switch button[data-theme-btn="light"]::before {
+  background: linear-gradient(135deg, #ffffff 0%, #dde6f5 100%);
+  border-color: rgba(80, 90, 140, 0.45);
+}
+
+.theme-switch button[data-theme-btn="dark"]::before {
+  background:
+    radial-gradient(circle at 30% 30%, #8b7dff 0%, transparent 60%),
+    linear-gradient(135deg, #1a1f3a 0%, #6a5cff 100%);
+}
+
+.theme-switch button[data-theme-btn="night"]::before {
+  background:
+    radial-gradient(circle at 70% 70%, #ff9d44 0%, transparent 55%),
+    linear-gradient(135deg, #000000 0%, #1a0f00 100%);
+  border-color: rgba(255, 157, 68, 0.5);
+}
+
+.theme-switch button:hover,
+.lang-switch button:hover {
+  background: var(--glass-bg-hover);
+}
+
+.theme-switch button.active,
+.lang-switch button.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: #ffffff;
+  box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 0 var(--glass-inset);
+}
+
+.theme-switch button.active::before {
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================
+   Header + input
+   ============================================================ */
+
+h1 {
+  text-align: center;
+  margin: 0 0 14px;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-shadow: var(--text-shadow);
+}
+
+textarea {
+  width: 100%;
+  height: 60px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  padding: 14px;
+  font-size: 28px;
+  resize: none;
+  outline: none;
+  margin-bottom: 14px;
+  color: var(--text);
+  caret-color: var(--accent);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
+  transition: border-color 0.2s, background 0.25s, color 0.25s;
+}
+
+textarea::placeholder {
+  color: var(--text-dim);
+}
+
+textarea:focus {
+  border-color: var(--accent-border);
+  background: var(--glass-bg-hover);
+}
+
+/* ============================================================
+   Font grid
+   ============================================================ */
+
+.fonts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fonts button {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border-soft);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--text);
+  font-size: 30px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s, color 0.25s;
+}
+
+.fonts button:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border);
+  transform: translateY(-1px);
+}
+
+.fonts button.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: #ffffff;
+  box-shadow: 0 0 24px var(--accent-glow), inset 0 1px 0 var(--glass-inset);
+}
+
+.fonts-legend {
+  margin: -4px 0 12px;
+  padding: 0 4px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  opacity: 0.78;
+}
+
+.fonts-legend span {
+  display: block;
+}
+
+/* ============================================================
+   Output + copy
+   ============================================================ */
+
+.output {
+  min-height: 78px;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 30px;
+  word-break: break-word;
+  margin-bottom: 12px;
+  color: var(--text);
+  background: var(--output-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--output-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -1px 0 var(--output-inset-bottom);
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.copy-btn {
+  display: block;
+  margin: 0 auto 14px;
+  min-height: 44px;
+  padding: 8px 34px;
+  border-radius: 14px;
+  border: 1px solid var(--copy-border);
+  background: var(--copy-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 22px var(--accent-glow), inset 0 1px 0 var(--glass-inset);
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background: var(--copy-bg-hover);
+  border-color: var(--copy-border-hover);
+  transform: translateY(-1px);
+}
+
+.copy-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.copy-btn.copied {
+  background: var(--copied-bg);
+  border-color: var(--copied-border);
+  box-shadow: 0 6px 22px var(--copied-glow), inset 0 1px 0 var(--glass-inset);
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+
+footer {
+  text-align: center;
+  font-size: 22px;
+  color: var(--text-soft);
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   404 page
+   ============================================================ */
+
+.not-found-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 28px;
+  background: var(--nf-bg);
+  background-attachment: fixed;
+}
+
+.not-found-card {
+  max-width: 1080px;
+  width: 100%;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 28px 36px 32px;
+  text-align: left;
+  color: var(--text);
+  box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-inset);
+}
+
+.not-found-title {
+  margin: 0;
+  font-size: 44px;
+  text-align: center;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.not-found-code {
+  margin: 16px 0 12px;
+  text-align: center;
+  font-size: 180px;
+  line-height: 1;
+  background: var(--nf-code-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.not-found-text {
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.45;
+  color: var(--text-soft);
+}
+
+.not-found-link {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.not-found-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  h1 {
+    font-size: 30px;
+  }
+  textarea,
+  .output,
+  .fonts button {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .not-found-title {
+    font-size: 30px;
+  }
+  .not-found-code {
+    font-size: 110px;
+  }
+  .not-found-text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 700px) {
+  .fonts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .top-bar {
+    justify-content: center;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  footer {
+    font-size: 15px;
+  }
+  textarea,
+  .output,
+  .fonts button {
+    font-size: 16px;
+  }
+  .app {
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app,
+  .fonts button,
+  .lang-switch button,
+  .theme-switch button,
+  .copy-btn,
+  textarea,
+  .output,
+  .not-found-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  [data-theme="dark"] .app,
+  [data-theme="dark"] textarea,
+  [data-theme="dark"] .not-found-card {
+    background: rgba(40, 45, 75, 0.96);
+  }
+  [data-theme="dark"] .output {
+    background: rgba(15, 18, 35, 0.96);
+  }
+  [data-theme="light"] .app,
+  [data-theme="light"] textarea,
+  [data-theme="light"] .not-found-card {
+    background: #ffffff;
+  }
+  [data-theme="light"] .output {
+    background: #f0f3fa;
+  }
+  [data-theme="light"] .fonts button,
+  [data-theme="light"] .lang-switch button,
+  [data-theme="light"] .theme-switch button {
+    background: #e6ebf5;
+  }
+  [data-theme="dark"] .fonts button,
+  [data-theme="dark"] .lang-switch button,
+  [data-theme="dark"] .theme-switch button {
+    background: rgba(80, 85, 120, 0.85);
+  }
+  [data-theme="night"] .app,
+  [data-theme="night"] textarea,
+  [data-theme="night"] .not-found-card {
+    background: rgba(20, 15, 5, 0.98);
+  }
+  [data-theme="night"] .output {
+    background: #000000;
+  }
+  [data-theme="night"] .fonts button,
+  [data-theme="night"] .lang-switch button,
+  [data-theme="night"] .theme-switch button {
+    background: rgba(40, 30, 15, 0.95);
+  }
+}

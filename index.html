@@ -1,10 +1,4 @@
 <!DOCTYPE html>
-<!--
-  Local preview only. NOT deployed.
-  On Vercel the real site is the Next.js app under /app — this file is ignored.
-  Keep this file in sync with app/page.tsx, app/layout.tsx and app/globals.css
-  when you change visuals or behaviour. Otherwise local preview will drift from prod.
--->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -15,11 +9,13 @@
   <meta name="application-name" content="Banana Font" />
   <meta name="description" content="Font preview tool — Word-safe fonts plus Unicode styles for Telegram, Discord, WhatsApp." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='64' y2='64' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23222949'/><stop offset='1' stop-color='%231c1f3a'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='32' font-family='Arial, sans-serif' font-size='38' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='central'>B</text></svg>" />
+
   <script>
+    /* Anti-FOUC theme bootstrap — must run before <body> renders */
     (function () {
       try {
         var s = localStorage.getItem("bananafont:theme");
-        if (s === "light" || s === "dark") {
+        if (s === "light" || s === "dark" || s === "night") {
           document.documentElement.dataset.theme = s;
           return;
         }
@@ -30,522 +26,36 @@
       }
     })();
   </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Open+Sans&family=PT+Sans&family=Roboto&family=Roboto+Mono&display=swap"
-    rel="stylesheet"
-  />
-  <style>
-    :root, [data-theme="dark"] {
-      --bg-gradient:
-        radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.55) 0%, transparent 48%),
-        radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.42) 0%, transparent 50%),
-        radial-gradient(circle at 72% 88%, rgba(244, 114, 182, 0.36) 0%, transparent 52%),
-        radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.32) 0%, transparent 50%),
-        linear-gradient(135deg, #161b3a 0%, #0d0f24 100%);
-      --text: #ffffff;
-      --text-dim: rgba(255, 255, 255, 0.42);
-      --text-soft: rgba(255, 255, 255, 0.85);
-      --text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-      --glass-bg: rgba(255, 255, 255, 0.06);
-      --glass-bg-hover: rgba(255, 255, 255, 0.12);
-      --glass-border: rgba(255, 255, 255, 0.14);
-      --glass-border-soft: rgba(255, 255, 255, 0.1);
-      --glass-inset: rgba(255, 255, 255, 0.18);
-      --glass-inset-soft: rgba(255, 255, 255, 0.06);
-      --output-bg: rgba(0, 0, 0, 0.28);
-      --output-border: rgba(255, 255, 255, 0.08);
-      --output-inset-bottom: rgba(0, 0, 0, 0.2);
-      --accent: #6a5cff;
-      --accent-bg: rgba(106, 92, 255, 0.45);
-      --accent-border: rgba(133, 122, 255, 0.6);
-      --accent-glow: rgba(106, 92, 255, 0.45);
-      --copy-bg: rgba(106, 92, 255, 0.5);
-      --copy-bg-hover: rgba(122, 109, 255, 0.62);
-      --copy-border: rgba(133, 122, 255, 0.6);
-      --copy-border-hover: rgba(160, 150, 255, 0.72);
-      --copied-bg: rgba(69, 196, 104, 0.55);
-      --copied-border: rgba(120, 220, 150, 0.7);
-      --copied-glow: rgba(69, 196, 104, 0.4);
-      --link: #b8b0ff;
-      --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.45);
-    }
-    [data-theme="light"] {
-      --bg-gradient:
-        radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.22) 0%, transparent 48%),
-        radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 72% 88%, rgba(244, 114, 182, 0.18) 0%, transparent 52%),
-        radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.18) 0%, transparent 50%),
-        linear-gradient(135deg, #eef2ff 0%, #dde6f5 100%);
-      --text: #1a1f3a;
-      --text-dim: rgba(26, 31, 58, 0.48);
-      --text-soft: rgba(26, 31, 58, 0.85);
-      --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-      --glass-bg: rgba(255, 255, 255, 0.5);
-      --glass-bg-hover: rgba(255, 255, 255, 0.7);
-      --glass-border: rgba(255, 255, 255, 0.85);
-      --glass-border-soft: rgba(120, 130, 180, 0.18);
-      --glass-inset: rgba(255, 255, 255, 0.9);
-      --glass-inset-soft: rgba(255, 255, 255, 0.4);
-      --output-bg: rgba(255, 255, 255, 0.55);
-      --output-border: rgba(120, 130, 180, 0.18);
-      --output-inset-bottom: rgba(120, 130, 180, 0.08);
-      --accent: #6a5cff;
-      --accent-bg: rgba(106, 92, 255, 0.6);
-      --accent-border: rgba(106, 92, 255, 0.75);
-      --accent-glow: rgba(106, 92, 255, 0.35);
-      --copy-bg: rgba(106, 92, 255, 0.85);
-      --copy-bg-hover: rgba(122, 109, 255, 0.95);
-      --copy-border: rgba(106, 92, 255, 0.95);
-      --copy-border-hover: rgba(160, 150, 255, 1);
-      --copied-bg: rgba(54, 174, 88, 0.85);
-      --copied-border: rgba(54, 174, 88, 1);
-      --copied-glow: rgba(54, 174, 88, 0.35);
-      --link: #4f3fcf;
-      --shadow-card: 0 12px 40px rgba(80, 90, 140, 0.22);
-    }
-    * { box-sizing: border-box; }
-    h1, footer, .lang-switch button, .theme-switch button, .fonts button, .copy-btn {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-    }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      padding: 12px;
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-gradient);
-      background-attachment: fixed;
-      transition: color 0.25s ease;
-    }
-    .app {
-      width: min(1700px, calc(100vw - 24px));
-      padding: 26px 18px 16px;
-      border-radius: 28px;
-      background: var(--glass-bg);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
-      backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-inset);
-      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .theme-switch, .lang-switch { display: flex; gap: 8px; }
-    .theme-switch button, .lang-switch button {
-      min-width: 56px;
-      min-height: 36px;
-      padding: 0 14px;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border);
-      background: var(--glass-bg);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
-      color: var(--text);
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.25s;
-    }
-    .theme-switch button:hover, .lang-switch button:hover {
-      background: var(--glass-bg-hover);
-    }
-    .theme-switch button.active, .lang-switch button.active {
-      background: var(--accent-bg);
-      border-color: var(--accent-border);
-      color: #ffffff;
-      box-shadow:
-        0 0 20px var(--accent-glow),
-        inset 0 1px 0 var(--glass-inset);
-    }
-    h1 {
-      text-align: center;
-      margin: 0 0 14px;
-      font-size: 42px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      text-shadow: var(--text-shadow);
-    }
-    textarea {
-      width: 100%;
-      height: 60px;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border);
-      padding: 14px;
-      font-size: 28px;
-      resize: none;
-      outline: none;
-      margin-bottom: 14px;
-      color: var(--text);
-      caret-color: var(--accent);
-      background: var(--glass-bg);
-      -webkit-backdrop-filter: blur(14px);
-      backdrop-filter: blur(14px);
-      box-shadow: inset 0 1px 0 var(--glass-inset-soft);
-      transition: border-color 0.2s, background 0.25s, color 0.25s;
-    }
-    textarea::placeholder { color: var(--text-dim); }
-    textarea:focus {
-      border-color: var(--accent-border);
-      background: var(--glass-bg-hover);
-    }
-    .fonts {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .fonts button {
-      min-height: 46px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border-soft);
-      background: var(--glass-bg);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
-      color: var(--text);
-      font-size: 30px;
-      cursor: pointer;
-      transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s, color 0.25s;
-    }
-    .fonts button:hover {
-      background: var(--glass-bg-hover);
-      border-color: var(--glass-border);
-      transform: translateY(-1px);
-    }
-    .fonts button.active {
-      background: var(--accent-bg);
-      border-color: var(--accent-border);
-      color: #ffffff;
-      box-shadow:
-        0 0 24px var(--accent-glow),
-        inset 0 1px 0 var(--glass-inset);
-    }
-    .output {
-      min-height: 78px;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-size: 30px;
-      word-break: break-word;
-      margin-bottom: 12px;
-      color: var(--text);
-      background: var(--output-bg);
-      -webkit-backdrop-filter: blur(20px);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--output-border);
-      box-shadow:
-        inset 0 1px 0 var(--glass-inset-soft),
-        inset 0 -1px 0 var(--output-inset-bottom);
-      transition: background 0.25s, border-color 0.25s, color 0.25s;
-    }
-    .copy-btn {
-      display: block;
-      margin: 0 auto 14px;
-      min-height: 44px;
-      padding: 8px 34px;
-      border-radius: 14px;
-      border: 1px solid var(--copy-border);
-      background: var(--copy-bg);
-      -webkit-backdrop-filter: blur(14px);
-      backdrop-filter: blur(14px);
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow:
-        0 6px 22px var(--accent-glow),
-        inset 0 1px 0 var(--glass-inset);
-      transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
-    }
-    .copy-btn:hover:not(:disabled) {
-      background: var(--copy-bg-hover);
-      border-color: var(--copy-border-hover);
-      transform: translateY(-1px);
-    }
-    .copy-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-    .copy-btn.copied {
-      background: var(--copied-bg);
-      border-color: var(--copied-border);
-      box-shadow:
-        0 6px 22px var(--copied-glow),
-        inset 0 1px 0 var(--glass-inset);
-    }
-    footer { text-align: center; font-size: 22px; color: var(--text-soft); }
-    footer a { color: var(--link); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-    @media (max-width: 1100px) {
-      h1 { font-size: 30px; }
-      textarea, .output, .fonts button { font-size: 20px; }
-    }
-    @media (max-width: 700px) {
-      .fonts { grid-template-columns: repeat(2, 1fr); }
-      .top-bar { justify-content: center; }
-      h1 { font-size: 24px; }
-      footer { font-size: 15px; }
-      textarea, .output, .fonts button { font-size: 16px; }
-      .app { -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); }
-    }
-    @media (prefers-reduced-transparency: reduce) {
-      .app, .fonts button, .lang-switch button, .theme-switch button, .copy-btn, textarea, .output {
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
-      }
-      [data-theme="dark"] .app,
-      [data-theme="dark"] textarea { background: rgba(40, 45, 75, 0.96); }
-      [data-theme="dark"] .output { background: rgba(15, 18, 35, 0.96); }
-      [data-theme="dark"] .fonts button,
-      [data-theme="dark"] .lang-switch button,
-      [data-theme="dark"] .theme-switch button { background: rgba(80, 85, 120, 0.85); }
-      [data-theme="light"] .app,
-      [data-theme="light"] textarea { background: #ffffff; }
-      [data-theme="light"] .output { background: #f0f3fa; }
-      [data-theme="light"] .fonts button,
-      [data-theme="light"] .lang-switch button,
-      [data-theme="light"] .theme-switch button { background: #e6ebf5; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Open+Sans&family=PT+Sans&family=Roboto&family=Roboto+Mono&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
   <main class="app">
     <div class="top-bar">
       <div class="theme-switch" role="group" aria-label="Theme">
-        <button type="button" data-theme-btn="light"></button>
-        <button type="button" data-theme-btn="dark"></button>
+        <button type="button" data-theme-btn="light" aria-label="Light theme"></button>
+        <button type="button" data-theme-btn="dark" aria-label="Dark theme"></button>
+        <button type="button" data-theme-btn="night" aria-label="Night theme"></button>
       </div>
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang="ru">RU</button>
         <button type="button" data-lang="en">EN</button>
       </div>
     </div>
+
     <h1 id="title"></h1>
     <textarea id="input"></textarea>
     <div class="fonts" id="fonts"></div>
+    <p class="fonts-legend" id="fonts-legend"></p>
     <div id="output" class="output"></div>
     <button type="button" id="copy-btn" class="copy-btn" disabled></button>
     <footer id="footer"></footer>
   </main>
-  <script>
-    (function () {
-      const TEXT = {
-        ru: {
-          title: "Выбор шрифта текста для Microsoft Word",
-          placeholder: "Введите ваш текст...",
-          footerPrefix: "сделал",
-          footerSuffix: "(banana.team)",
-          copy: "Копировать",
-          copied: "Скопировано!",
-          themeLight: "Светлая",
-          themeDark: "Тёмная"
-        },
-        en: {
-          title: "Text Font Chooser only for Microsoft Word",
-          placeholder: "Enter your text...",
-          footerPrefix: "made by",
-          footerSuffix: "(banana.team)",
-          copy: "Copy",
-          copied: "Copied!",
-          themeLight: "Light",
-          themeDark: "Dark"
-        }
-      };
 
-      const TRANSFORMS = {
-        bold:       { upper: 0x1D3BF, lower: 0x1D3B9, digit: 0x1D79E },
-        italic:     { upper: 0x1D3F3, lower: 0x1D3ED, exceptions: { h: "ℎ" } },
-        bolditalic: { upper: 0x1D427, lower: 0x1D421, digit: 0x1D79E },
-        sansbold:   { upper: 0x1D593, lower: 0x1D58D, digit: 0x1D7BC },
-        sansitalic: { upper: 0x1D5C7, lower: 0x1D5C1 },
-        mono:       { upper: 0x1D62F, lower: 0x1D629, digit: 0x1D7C6 }
-      };
-
-      function applyTransform(text, key) {
-        const t = TRANSFORMS[key];
-        if (!t) return text;
-        let out = "";
-        for (const c of text) {
-          if (t.exceptions && Object.prototype.hasOwnProperty.call(t.exceptions, c)) {
-            out += t.exceptions[c];
-            continue;
-          }
-          const code = c.codePointAt(0);
-          if (code >= 0x41 && code <= 0x5A) {
-            out += String.fromCodePoint(code + t.upper);
-          } else if (code >= 0x61 && code <= 0x7A) {
-            out += String.fromCodePoint(code + t.lower);
-          } else if (code >= 0x30 && code <= 0x39 && t.digit !== undefined) {
-            out += String.fromCodePoint(code + t.digit);
-          } else {
-            out += c;
-          }
-        }
-        return out;
-      }
-
-      const FONTS = [
-        { label: "Arial",        kind: "css", family: "Arial" },
-        { label: "Verdana",      kind: "css", family: "Verdana" },
-        { label: "Tahoma",       kind: "css", family: "Tahoma" },
-        { label: "Trebuchet",    kind: "css", family: "'Trebuchet MS', sans-serif" },
-        { label: "Times",        kind: "css", family: "'Times New Roman', serif" },
-        { label: "Courier",      kind: "css", family: "'Courier New', monospace" },
-        { label: "Roboto",       kind: "css", family: "Roboto, sans-serif" },
-        { label: "Open Sans",    kind: "css", family: "'Open Sans', sans-serif" },
-        { label: "Montserrat",   kind: "css", family: "Montserrat, sans-serif" },
-        { label: "PT Sans",      kind: "css", family: "'PT Sans', sans-serif" },
-        { label: "Merriweather", kind: "css", family: "Merriweather, serif" },
-        { label: "Roboto Mono",  kind: "css", family: "'Roboto Mono', monospace" },
-        { label: "Bold",         kind: "unicode", transform: "bold" },
-        { label: "Italic",       kind: "unicode", transform: "italic" },
-        { label: "Bold Italic",  kind: "unicode", transform: "bolditalic" },
-        { label: "Sans Bold",    kind: "unicode", transform: "sansbold" },
-        { label: "Sans Italic",  kind: "unicode", transform: "sansitalic" },
-        { label: "Mono",         kind: "unicode", transform: "mono" }
-      ];
-
-      const VERSION = "v3.0.0";
-
-      const titleEl   = document.getElementById("title");
-      const inputEl   = document.getElementById("input");
-      const fontsEl   = document.getElementById("fonts");
-      const outputEl  = document.getElementById("output");
-      const footerEl  = document.getElementById("footer");
-      const copyBtn   = document.getElementById("copy-btn");
-      const langButtons  = document.querySelectorAll(".lang-switch button");
-      const themeButtons = document.querySelectorAll(".theme-switch button");
-
-      let currentIdx = 0;
-      let currentLang = "en";
-      let currentTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
-
-      function readSavedLang() {
-        try {
-          const saved = localStorage.getItem("bananafont:lang");
-          if (saved === "ru" || saved === "en") return saved;
-        } catch (e) {}
-        const browserLang = (navigator.language || "").toLowerCase();
-        return browserLang.indexOf("ru") === 0 ? "ru" : "en";
-      }
-
-      function getDisplayText() {
-        const font = FONTS[currentIdx];
-        if (font.kind === "unicode") {
-          return applyTransform(inputEl.value, font.transform);
-        }
-        return inputEl.value;
-      }
-
-      function renderOutput() {
-        const font = FONTS[currentIdx];
-        outputEl.textContent = getDisplayText();
-        outputEl.style.fontFamily = font.kind === "css" ? font.family : "";
-        copyBtn.disabled = !outputEl.textContent;
-      }
-
-      function setLang(lang) {
-        currentLang = lang;
-        document.documentElement.lang = lang;
-        try { localStorage.setItem("bananafont:lang", lang); } catch (e) {}
-        const t = TEXT[lang];
-        titleEl.textContent = t.title;
-        inputEl.placeholder = t.placeholder;
-        copyBtn.textContent = copyBtn.classList.contains("copied") ? t.copied : t.copy;
-        footerEl.innerHTML =
-          t.footerPrefix +
-          ' <a href="https://github.com/1565gfd" target="_blank" rel="noopener noreferrer">1565gfd</a> ' +
-          t.footerSuffix +
-          " · " +
-          VERSION;
-        langButtons.forEach(function (btn) {
-          btn.classList.toggle("active", btn.dataset.lang === lang);
-        });
-        themeButtons.forEach(function (btn) {
-          btn.textContent = btn.dataset.themeBtn === "light" ? t.themeLight : t.themeDark;
-        });
-      }
-
-      function setTheme(theme) {
-        currentTheme = theme;
-        document.documentElement.dataset.theme = theme;
-        try { localStorage.setItem("bananafont:theme", theme); } catch (e) {}
-        themeButtons.forEach(function (btn) {
-          btn.classList.toggle("active", btn.dataset.themeBtn === theme);
-        });
-      }
-
-      function setFont(idx) {
-        currentIdx = idx;
-        fontsEl.querySelectorAll("button").forEach(function (btn) {
-          btn.classList.toggle("active", parseInt(btn.dataset.idx, 10) === idx);
-        });
-        renderOutput();
-      }
-
-      function renderFonts() {
-        fontsEl.innerHTML = FONTS.map(function (item, idx) {
-          const display = item.kind === "unicode"
-            ? applyTransform(item.label, item.transform)
-            : item.label;
-          return '<button type="button" data-idx="' + idx + '">' + display + '</button>';
-        }).join("");
-        fontsEl.querySelectorAll("button").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            setFont(parseInt(btn.dataset.idx, 10));
-          });
-        });
-      }
-
-      function handleCopy() {
-        const text = outputEl.textContent;
-        if (!text) return;
-        function flash() {
-          copyBtn.classList.add("copied");
-          copyBtn.textContent = TEXT[currentLang].copied;
-          setTimeout(function () {
-            copyBtn.classList.remove("copied");
-            copyBtn.textContent = TEXT[currentLang].copy;
-          }, 1500);
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(flash).catch(function () {});
-        } else {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand("copy"); flash(); } catch (e) {}
-          document.body.removeChild(ta);
-        }
-      }
-
-      langButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () { setLang(btn.dataset.lang); });
-      });
-
-      themeButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () { setTheme(btn.dataset.themeBtn); });
-      });
-
-      inputEl.addEventListener("input", renderOutput);
-      copyBtn.addEventListener("click", handleCopy);
-
-      renderFonts();
-      setFont(0);
-      setLang(readSavedLang());
-      setTheme(currentTheme);
-    })();
-  </script>
+  <script src="/js/app.js" defer></script>
 </body>
 </html>
