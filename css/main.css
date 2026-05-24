@@ -8318,12 +8318,11 @@ body.bf-low-gpu * {
   text-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
   margin-bottom: 16px;
 }
-.ddos-blink {
-  display: inline-block;
-  animation: ddosBlink 0.5s infinite;
-}
+.ddos-blink { display: inline-block; animation: ddosBlink 0.8s infinite; }
 @keyframes ddosBlink {
-  0%, 50% { opacity: 1; }
+  0%, 60% { opacity: 1; }
+  61%, 100% { opacity: 0.3; }
+}
   51%, 100% { opacity: 0.2; }
 }
 .ddos-meters {
@@ -8354,15 +8353,14 @@ body.bf-low-gpu * {
 }
 .ddos-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff4040, #ff8000, #ff4040);
-  background-size: 200% 100%;
-  animation: ddosBarSlide 0.6s linear infinite;
+  background: linear-gradient(90deg, #ff4040, #ff8000);
   width: 5%;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
+  transition: width 0.18s linear;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(255, 80, 80, 0.35);
 }
-@keyframes ddosBarSlide {
-  0% { background-position: 0% 0%; }
+/* ddosBarSlide keyframes removed in v5.48.4 — animated bg gradients
+   on 6 bars at 0.6s loops added measurable composite cost. */
   100% { background-position: -200% 0%; }
 }
 .ddos-log {
@@ -8407,12 +8405,11 @@ body.bf-low-gpu * {
   border-color: rgba(45, 209, 106, 0.6);
   color: #6ef098;
 }
-/* Whole page shake while attack is on */
-body.ddos-active {
-  animation: ddosShake 0.1s linear infinite;
-}
-@keyframes ddosShake {
-  0% { transform: translate(0, 0); }
+/* v5.48.4 — body shake removed: it forced a full-page repaint at 10 FPS
+   on every render frame, which murdered CPU/GPU on weak machines. The
+   overlay's own contents are dramatic enough without shaking the host
+   document. body.ddos-active is now just a marker class. */
+body.ddos-active { /* marker only — no animation */ }
   25% { transform: translate(1px, -1px); }
   50% { transform: translate(-1px, 1px); }
   75% { transform: translate(1px, 1px); }
@@ -8609,4 +8606,99 @@ body.ddos-active {
   .ddos-report-grid > div { padding: 6px 10px; }
   .ddos-report-grid > div > b { font-size: 15px; }
   .ddos-report-foot { font-size: 11px; }
+}
+
+
+/* v5.48.5 — DANGER ZONE button styling. Used on power-tools that
+   trigger heavy visual effects (currently: DDoS simulation). Pulsing
+   red glow, biohazard corner badge, uppercase text. Cannot be missed
+   accidentally — clearly signals "this is the big-red-button". */
+.admin-power-grid button.power-danger {
+  background: linear-gradient(135deg, #ff1818 0%, #b00000 100%) !important;
+  color: #fff !important;
+  border: 2px solid #ff5050 !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: visible;
+  animation: dangerPulse 1.4s ease-in-out infinite;
+  box-shadow:
+    0 0 0 2px rgba(255, 30, 30, 0.35),
+    0 4px 16px rgba(255, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  z-index: 1;   /* lift above siblings so the glow doesn't get clipped */
+}
+.admin-power-grid button.power-danger::before {
+  /* Biohazard corner badge */
+  content: "☢";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe040 0%, #ff6600 100%);
+  color: #1a0000;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 100, 0, 0.9), 0 0 4px rgba(255, 200, 0, 0.7);
+  animation: dangerSpin 2s linear infinite;
+  z-index: 2;
+}
+.admin-power-grid button.power-danger::after {
+  /* Diagonal hazard stripes overlay — subtle, only visible on hover */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 8px,
+    rgba(255, 255, 0, 0.12) 8px,
+    rgba(255, 255, 0, 0.12) 12px
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.admin-power-grid button.power-danger:hover {
+  background: linear-gradient(135deg, #ff3535 0%, #d80000 100%) !important;
+  transform: scale(1.04);
+  border-color: #ff8080 !important;
+}
+.admin-power-grid button.power-danger:hover::after { opacity: 1; }
+.admin-power-grid button.power-danger:active {
+  transform: scale(0.98);
+  animation-play-state: paused;
+}
+@keyframes dangerPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(255, 30, 30, 0.35),
+      0 4px 16px rgba(255, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(255, 30, 30, 0.55),
+      0 6px 28px rgba(255, 0, 0, 0.85),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+@keyframes dangerSpin {
+  0%   { transform: rotate(0deg)   scale(1); }
+  50%  { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-power-grid button.power-danger { animation: none; }
+  .admin-power-grid button.power-danger::before { animation: none; }
 }

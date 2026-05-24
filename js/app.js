@@ -143,7 +143,7 @@
       pwSpin: "🌀 Крутануть",
       pwRuler: "📐 Линейка viewport",
       pwMirror: "🪞 Зеркало",
-      pwDdos: "🚨 DDoS-симуляция",
+      pwDdos: "☢ DDoS-АТАКА",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -431,7 +431,7 @@
       pwSpin: "🌀 Spin page",
       pwRuler: "📐 Viewport ruler",
       pwMirror: "🪞 Mirror page",
-      pwDdos: "🚨 DDoS simulation",
+      pwDdos: "☢ DDoS ATTACK",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.48.3";
+  var VERSION = "v5.48.5";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3973,7 +3973,23 @@
       }
     }
 
-    /* ── Log generator ── */
+    /* ── Log generator ──
+       v5.48.4 perf: previously did `log.innerHTML += linesString` every
+       90ms, which re-parses the ENTIRE log each tick (250 lines × N spans)
+       — quadratic and brutal on weak machines. Now each burst becomes
+       one <div> appended once, old <div>s pruned by node removal. Each
+       tick is O(burst), not O(total). */
+    function appendLogBlock(htmlStr) {
+      var block = document.createElement("div");
+      block.innerHTML = htmlStr;
+      log.appendChild(block);
+      /* Cap to 120 line-blocks (was 250 raw lines). Each block has ≤10
+         lines = 1200 lines max — still plenty of scroll history. */
+      while (log.childNodes.length > 120) {
+        log.removeChild(log.firstChild);
+      }
+      log.scrollTop = log.scrollHeight;
+    }
     var logTimer = setInterval(function () {
       var burst = burstMin + Math.floor(Math.random() * Math.max(1, burstMax - burstMin + 1));
       if (burst === 0) return;
@@ -4045,26 +4061,21 @@
                    " <span class='ddos-dim'>" + connSt + " · " + timestamp() + "</span>\n";
         }
       }
-      log.innerHTML += lines;
-      /* Cap to ~250 lines */
-      var html = log.innerHTML;
-      var splitPos = -1, n = 0;
-      for (var k = 0; k < html.length; k++) {
-        if (html[k] === "\n") { n++; if (n > 250) { splitPos = k; break; } }
-      }
-      if (splitPos > 0) log.innerHTML = html.slice(splitPos + 1);
-      log.scrollTop = log.scrollHeight;
+      appendLogBlock(lines);
 
       /* Refresh stat counters */
       stTotal.textContent = fmt(counters.total);
       stIps.textContent = fmt(Object.keys(counters.ipSet).length);
       stBlocked.textContent = fmt(counters.blocked);
-    }, 90);
+    }, 140);   /* v5.48.4 — 90→140ms (~36% fewer ticks, still feels intense) */
 
     /* ── Meter animator ── */
     function pickInRange(min, max) {
       return min + Math.random() * (max - min);
     }
+    /* v5.48.4 — meters at 220ms (was 130ms). Bars use transition so the
+       visual still feels smooth between updates, but timer fires ~40%
+       less often. */
     var meterTimer = setInterval(function () {
       cpu.style.width = pickInRange(stageMin.cpu, stageMax.cpu) + "%";
       ram.style.width = pickInRange(stageMin.ram, stageMax.ram) + "%";
@@ -4072,41 +4083,39 @@
       rps.style.width = pickInRange(stageMin.rps, stageMax.rps) + "%";
       io.style.width  = pickInRange(stageMin.io,  stageMax.io)  + "%";
       lat.style.width = pickInRange(stageMin.lat, stageMax.lat) + "%";
-    }, 130);
+    }, 220);
 
-    /* ── Subtle hue flicker during peak ── */
-    var flickerTimer = setInterval(function () {
-      if ((stage === "RAMP" || stage === "PEAK") && Math.random() < 0.25) {
-        document.body.style.filter = "hue-rotate(" + Math.floor(Math.random() * 30 - 15) + "deg) brightness(1.04)";
-        setTimeout(function () { document.body.style.filter = ""; }, 60);
-      }
-    }, 280);
+    /* v5.48.4 — flicker disabled by default. Filter on <body> forces
+       composite of the whole page, which is too costly on weak GPUs.
+       The PAGE: UNRESPONSIVE banner + meter chaos do the "intensity"
+       work without page-wide effects. */
+    var flickerTimer = null;
 
-    /* ── v5.48.3 — slow tick for bandwidth, downtime, money lost ── */
+    /* v5.48.4 — slow tick at 400ms (was 250ms). Counters increment by
+       the actual elapsed delta so downtime/losses values stay accurate
+       regardless of tick rate. */
+    var SLOW_TICK = 400;
     var slowTimer = setInterval(function () {
-      /* Bandwidth depends on stage */
       var bw;
       if      (stage === "DETECT") bw = 0.2 + Math.random() * 0.8;
       else if (stage === "RAMP")   bw = 3 + Math.random() * 10;
-      else if (stage === "PEAK")   bw = 80 + Math.random() * 220;   /* 80-300 Gbps */
+      else if (stage === "PEAK")   bw = 80 + Math.random() * 220;
       else if (stage === "MIT")    bw = 40 + Math.random() * 80;
       else if (stage === "COOL")   bw = 5 + Math.random() * 15;
       else                          bw = 0.3 + Math.random() * 0.5;
       stBw.textContent = bw.toFixed(1) + " Gbps";
       if (bw > counters.peakBw) counters.peakBw = bw;
-      /* Peak RPS tracked from total counter delta */
       var elapsed = (Date.now() - attackStartMs) / 1000;
       var avgRps = elapsed > 0 ? counters.total / elapsed : 0;
       if (avgRps > counters.peakRps) counters.peakRps = avgRps;
-      /* Downtime: site is effectively down during PEAK */
-      if (stage === "PEAK") counters.downtimeMs += 250;
-      var dSec = Math.floor(counters.downtimeMs / 1000);
-      stDown.textContent = dSec + "s";
-      /* Losses: ~$80/sec during PEAK + $20/sec during MIT (proxy fees, etc.) */
-      if (stage === "PEAK") counters.losses += 80 * 0.25;       /* 80$/s * 0.25s */
-      else if (stage === "MIT") counters.losses += 20 * 0.25;
+      /* Downtime tracks actual tick interval */
+      if (stage === "PEAK") counters.downtimeMs += SLOW_TICK;
+      stDown.textContent = Math.floor(counters.downtimeMs / 1000) + "s";
+      /* Losses scaled to tick interval ($80/s peak, $20/s mit) */
+      if (stage === "PEAK")      counters.losses += 80 * (SLOW_TICK / 1000);
+      else if (stage === "MIT")  counters.losses += 20 * (SLOW_TICK / 1000);
       stLoss.textContent = "$" + fmt(Math.floor(counters.losses));
-    }, 250);
+    }, SLOW_TICK);
 
     /* ── Stage transitions ── */
     setTimeout(function () { setStage("RAMP",  "DDoS DETECTED — RAMPING UP"); }, 1500);
@@ -4119,7 +4128,7 @@
     setTimeout(function () {
       clearInterval(logTimer);
       clearInterval(meterTimer);
-      clearInterval(flickerTimer);
+      if (flickerTimer) clearInterval(flickerTimer);
       clearInterval(slowTimer);
       document.body.style.filter = "";
       if (unrespEl) unrespEl.hidden = true;
@@ -4353,15 +4362,12 @@
         document.body.classList.toggle("bf-mirror", _bfMirror);
         return "mirror: " + (_bfMirror ? "ON" : "OFF");
     } },
-    /* v5.48.1 — DDoS attack simulation, full multi-stage version.
-       No siren (per user request). Stages: detection → ramp-up → peak
-       attack → mitigation → cool-down → all-clear. ~14 sec total.
-       Shows fake meters, log with geographic origins, mitigation
-       actions, attack-vector breakdown, live counters. Zero real
-       network traffic. */
-    { textKey: "pwDdos", sound: "click", run: function () {
+    /* v5.48.5 — DDoS attack simulation, danger-flagged so the builder
+       loop tags the button with .power-danger (red glow + biohazard
+       badge + uppercase). Total run ~14s + 4.5s incident report. */
+    { textKey: "pwDdos", sound: "click", danger: true, run: function () {
         runDdosSimulation();
-        return "🚨 ATTACK INCOMING…";
+        return "☢ ATTACK INCOMING…";
     } }
   ];
   /* Keep ruler label fresh on resize */
@@ -4375,6 +4381,9 @@
       b.type = "button";
       b.className = "settings-btn silent-btn";
       b.textContent = TEXT[currentLang][tool.textKey] || tool.textKey;
+      /* v5.48.5 — tools flagged `danger: true` get the bright-red
+         pulsing treatment (see .power-danger CSS rule). */
+      if (tool.danger) b.classList.add("power-danger");
       b.addEventListener("click", function () {
         try {
           var out = tool.run();
