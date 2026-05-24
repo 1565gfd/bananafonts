@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.30.2";
+  var VERSION = "v5.30.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1983,31 +1983,15 @@
       message: function () { return TEXT[currentLang].secret1488; },
       sound:   "fail",
       action:  function () {
-        /* Stage 1 (0ms): big fullscreen "Так нельзя" */
-        showBigText("Так нельзя", "#ff3344");
-        /* Stage 2 (1.4s): the entire screen goes deep red */
+        /* Stage 1 (0ms): big fullscreen "Так делать нельзя" */
+        showBigText(TEXT[currentLang].apologyTitle, "#ff3344");
+        /* Stage 2 (1.4s): entire screen goes deep red AND locks until
+           the user types SORRY or ПРОСТИ. No auto-reload — the lockout
+           IS the punishment. They must apologize to continue. */
         setTimeout(function () {
-          var red = document.createElement("div");
-          red.className = "page-red-flash";
-          document.body.appendChild(red);
-          requestAnimationFrame(function () {
-            red.classList.add("active");
-          });
-          /* Extra fail sound at the red moment for emphasis */
+          lockPageInRed();
           playUiSound("fail");
         }, 1400);
-        /* Stage 3 (2.8s): wipe ALL bananafont:* localStorage + reload */
-        setTimeout(function () {
-          try {
-            var keys = [];
-            for (var i = 0; i < localStorage.length; i++) {
-              var k = localStorage.key(i);
-              if (k && k.indexOf("bananafont:") === 0) keys.push(k);
-            }
-            keys.forEach(function (k) { localStorage.removeItem(k); });
-          } catch (e) {}
-          location.reload();
-        }, 2800);
       }
     }
     /* NOTE: an additional gated entry-point exists but is NOT registered
@@ -3934,6 +3918,71 @@
     setTimeout(function () {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 3300);
+  }
+
+  /* ── lockPageInRed (v5.30.3) ── deep red fullscreen overlay with
+     apology UI. The only way out is to type SORRY or ПРОСТИ
+     (case-insensitive). No reload — locked until apology. */
+  function lockPageInRed() {
+    if (document.querySelector(".page-red-flash")) return;  /* don't double-lock */
+    var t = TEXT[currentLang];
+
+    var red = document.createElement("div");
+    red.className = "page-red-flash";
+
+    var inner = document.createElement("div");
+    inner.className = "page-red-inner";
+
+    var title = document.createElement("div");
+    title.className = "page-red-title";
+    title.textContent = t.apologyTitle;
+
+    var hint = document.createElement("p");
+    hint.className = "page-red-hint";
+    hint.textContent = t.apologyHint;
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "page-red-input";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.placeholder = t.apologyPlaceholder;
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "page-red-submit silent-btn";
+    btn.textContent = t.apologyBtn;
+
+    function check() {
+      var v = (input.value || "").trim().toUpperCase();
+      /* Accept both Latin SORRY and Cyrillic ПРОСТИ (case-insensitive
+         via toUpperCase — works on both alphabets). */
+      if (v === "SORRY" || v === "ПРОСТИ") {
+        red.classList.add("removing");
+        playUiSound("confirm");
+        setTimeout(function () {
+          if (red.parentNode) red.parentNode.removeChild(red);
+        }, 850);
+      } else {
+        input.classList.add("shake");
+        playUiSound("fail");
+        setTimeout(function () { input.classList.remove("shake"); }, 500);
+      }
+    }
+    btn.addEventListener("click", check);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); check(); }
+    });
+
+    inner.appendChild(title);
+    inner.appendChild(hint);
+    inner.appendChild(input);
+    inner.appendChild(btn);
+    red.appendChild(inner);
+    document.body.appendChild(red);
+
+    requestAnimationFrame(function () { red.classList.add("active"); });
+    setTimeout(function () { input.focus(); }, 400);
   }
 
   /* 🎨 Console banner — greet developers who open DevTools */
