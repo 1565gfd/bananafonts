@@ -9372,3 +9372,54 @@ body {
 @media (prefers-reduced-motion: reduce) and (prefers-reduced-data: reduce) {
   .ddos-overlay, body.ddos-active::before { display: none !important; }
 }
+
+
+/* ============================================================
+   v5.55.1 — STOP THE JUMP on lang switch.
+   Root cause: .tab-btn had no min-width. Russian labels (e.g.
+   'Инструменты' = 11 chars) vs English ('Tools' = 5 chars)
+   created wildly different button widths, so the whole tab
+   nav reflowed every time the language changed — and because
+   the nav lives ABOVE content, every section below visibly
+   shifted up/down. Same problem for theme-switch labels.
+   ============================================================ */
+.tab-btn {
+  min-width: 92px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.theme-switch button {
+  min-width: 110px;       /* fits 'Чернильная бездна' worst-case */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lang-switch button {
+  min-width: 50px;
+  text-align: center;
+}
+/* Settings tab buttons (Reset / Compact / etc.) should also not jump */
+.settings-btn {
+  min-width: 130px;
+  text-align: center;
+}
+/* On very narrow phones, relax the min-widths so they don't force
+   horizontal scroll. */
+@media (max-width: 480px) {
+  .tab-btn { min-width: 70px; }
+  .theme-switch button { min-width: 70px; }
+  .settings-btn { min-width: 100px; }
+}
+@media (max-width: 320px) {
+  .tab-btn { min-width: 56px; }
+  .theme-switch button { min-width: 56px; }
+  .settings-btn { min-width: 80px; }
+}
+/* While text is fading out for lang-swap, freeze widths so the new text
+   inherits the OLD bounding box. Without this, the fade window is the
+   gap where the reflow happens visibly. */
+.lang-fading {
+  /* Keep width stable; only opacity transitions */
+  transition: opacity 0.18s ease !important;
+}
