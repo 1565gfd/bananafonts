@@ -7398,3 +7398,341 @@ body.bf-low-gpu * {
   transition: none !important;
   box-shadow: none !important;
 }
+
+
+/* ============================================================
+   v5.41.0 — KINDA-ACCOUNTS
+   Pure-client account system: localStorage + SHA-256 hashed
+   passwords. No backend, no real auth — but the crypto IS real.
+   ============================================================ */
+
+/* Floating widget — top-right corner, always visible.
+   Sits below admin-badge (z-index 50) and well below modals (10000). */
+.account-widget {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  background: var(--glass-bg, rgba(255,255,255,0.12));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.3));
+  color: var(--text, #fff);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, background 0.18s ease;
+  max-width: 220px;
+}
+.account-widget:hover {
+  transform: translateY(-1px);
+  background: var(--glass-bg-hover, rgba(255,255,255,0.2));
+}
+.account-widget:active { transform: translateY(0); }
+.account-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd166, #ff8a3c);
+  font-size: 16px;
+  flex-shrink: 0;
+  line-height: 1;
+  position: relative;
+}
+.account-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+.account-widget.logged-in .account-avatar::after {
+  /* Green online dot */
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2dd16a;
+  border: 2px solid rgba(20, 20, 30, 0.95);
+  right: -2px;
+  bottom: -2px;
+}
+
+/* Modal — reuses .admin-panel layout (.account-panel uses .admin-panel class) */
+.account-modal {
+  max-width: 480px;
+}
+.account-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding-bottom: 8px;
+}
+.account-tab-btn {
+  flex: 1;
+  min-width: 72px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.account-tab-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.account-tab-btn.active {
+  background: #ffe135;
+  color: #1a1208;
+}
+
+.account-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.account-field > label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 500;
+}
+.account-field > input[type="color"] {
+  width: 60px;
+  height: 36px;
+  padding: 2px;
+  cursor: pointer;
+}
+.account-feedback {
+  min-height: 18px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+}
+.account-feedback.success {
+  background: rgba(45, 209, 106, 0.18);
+  color: #6ef098;
+}
+.account-feedback.error {
+  background: rgba(255, 76, 76, 0.18);
+  color: #ff8888;
+}
+.account-feedback:empty { display: none; }
+
+.account-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.account-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #ffd166, #ff8a3c);
+  line-height: 1;
+}
+.account-profile-info {
+  flex: 1;
+  min-width: 0;
+}
+.account-profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffe135;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-profile-badge {
+  font-size: 11px;
+  font-weight: 600;
+  margin: 2px 0;
+}
+.account-profile-badge:empty { display: none; }
+.account-profile-badge.owner {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd700, #ff8a3c);
+  color: #2a1a00;
+}
+.account-profile-bio {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  word-break: break-word;
+}
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+}
+.account-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  font-size: 12px;
+}
+.account-stat-label { color: rgba(255,255,255,0.6); }
+.account-stat-value {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-weight: 600;
+  color: #ffe135;
+}
+
+.account-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.account-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.account-list-item:hover {
+  background: rgba(255,255,255,0.12);
+}
+.account-list-item.current {
+  border-color: #ffe135;
+  background: rgba(255, 225, 53, 0.12);
+}
+.account-list-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #ffd166, #ff8a3c);
+}
+.account-list-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .account-widget {
+    padding: 5px 10px 5px 5px;
+    font-size: 12px;
+  }
+  .account-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+  .account-name {
+    max-width: 90px;
+  }
+  .account-tabs {
+    gap: 3px;
+  }
+  .account-tab-btn {
+    font-size: 12px;
+    padding: 7px 6px;
+    min-width: 60px;
+  }
+  .account-profile-avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 28px;
+  }
+}
+
+
+/* ── v5.42.0 — sync section styles ── */
+.sync-subsection {
+  padding: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sync-subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffe135;
+}
+.sync-code-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+.sync-code {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,225,53,0.4);
+  border-radius: 8px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffe135;
+  word-break: break-all;
+  user-select: all;
+}
+.sync-btn-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sync-btn-row > .settings-btn {
+  flex: 1;
+  min-width: 130px;
+}
+@media (max-width: 600px) {
+  .sync-subsection { padding: 10px; }
+  .sync-subtitle { font-size: 13px; }
+  .sync-code { font-size: 12px; }
+}

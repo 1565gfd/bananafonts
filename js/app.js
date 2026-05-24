@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.40.3";
+  var VERSION = "v5.42.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -6162,6 +6162,864 @@
     }, 1800);
     setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 2400);
   }
+
+  /* ============================================================
+     v5.41.0 — KINDA-ACCOUNTS (pure-client account system)
+     ============================================================
+     Storage shape in localStorage:
+       bananafont:accounts    = JSON array of account objects
+                                { id, username, salt, passHash, avatar,
+                                  bio, color, regDate, lastSeen, visits }
+       bananafont:currentAcc  = string id of currently-logged-in account
+                                (cleared on logout)
+     SHA-256 via SubtleCrypto with random 8-byte salt per user. Salt is
+     stored alongside the hash (client-side only so technically still
+     trivially crackable — this is "kinda" auth as the user requested).
+     Reserved username: "1565gfd" (case-insensitive) → gets the gold
+     OWNER badge + auto-applies the owner theme on login. */
+
+  /* DOM refs */
+  var accWidget       = document.getElementById("account-widget");
+  var accWidgetAvatar = document.getElementById("account-widget-avatar");
+  var accWidgetName   = document.getElementById("account-widget-name");
+  var accPanel        = document.getElementById("account-panel");
+  var accBackdrop     = document.getElementById("account-backdrop");
+  var accClose        = document.getElementById("account-close");
+  var accTitleEl      = document.getElementById("account-title");
+  var accTabBtns      = document.querySelectorAll(".account-tab-btn");
+  var accSections     = document.querySelectorAll(".account-section");
+  /* Login form */
+  var accLoginUserEl  = document.getElementById("acc-login-username");
+  var accLoginPassEl  = document.getElementById("acc-login-password");
+  var accLoginBtn     = document.getElementById("acc-login-btn");
+  var accLoginFb      = document.getElementById("acc-login-feedback");
+  /* Register form */
+  var accRegUserEl    = document.getElementById("acc-reg-username");
+  var accRegPassEl    = document.getElementById("acc-reg-password");
+  var accRegPass2El   = document.getElementById("acc-reg-password2");
+  var accRegAvatarEl  = document.getElementById("acc-reg-avatar");
+  var accRegBioEl     = document.getElementById("acc-reg-bio");
+  var accRegColorEl   = document.getElementById("acc-reg-color");
+  var accRegisterBtn  = document.getElementById("acc-register-btn");
+  var accRegFb        = document.getElementById("acc-register-feedback");
+  /* Profile */
+  var accProfileAvatar = document.getElementById("acc-profile-avatar");
+  var accProfileName   = document.getElementById("acc-profile-name");
+  var accProfileBadge  = document.getElementById("acc-profile-badge");
+  var accProfileBio    = document.getElementById("acc-profile-bio");
+  var accProfileStats  = document.getElementById("acc-profile-stats");
+  var accEditBtn       = document.getElementById("acc-edit-btn");
+  var accLogoutBtn     = document.getElementById("acc-logout-btn");
+  var accDeleteBtn     = document.getElementById("acc-delete-btn");
+  /* List */
+  var accListGrid     = document.getElementById("acc-list-grid");
+
+  var OWNER_USERNAME = "1565gfd";   /* case-insensitive special-case */
+
+  /* ── State ── */
+  function loadAccounts() {
+    try {
+      var raw = localStorage.getItem("bananafont:accounts");
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function saveAccounts(arr) {
+    try { localStorage.setItem("bananafont:accounts", JSON.stringify(arr)); } catch (e) {}
+  }
+  function getCurrentAccountId() {
+    try { return localStorage.getItem("bananafont:currentAcc") || null; } catch (e) { return null; }
+  }
+  function setCurrentAccountId(id) {
+    try {
+      if (id) localStorage.setItem("bananafont:currentAcc", id);
+      else    localStorage.removeItem("bananafont:currentAcc");
+    } catch (e) {}
+  }
+  function getCurrentAccount() {
+    var id = getCurrentAccountId();
+    if (!id) return null;
+    var arr = loadAccounts();
+    for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i];
+    return null;
+  }
+  function findAccountByUsername(name) {
+    var lc = (name || "").toLowerCase().trim();
+    var arr = loadAccounts();
+    for (var i = 0; i < arr.length; i++) {
+      if ((arr[i].username || "").toLowerCase() === lc) return arr[i];
+    }
+    return null;
+  }
+
+  /* ── Crypto — SHA-256 with salt ── */
+  function _randSalt() {
+    var bytes = new Uint8Array(8);
+    if (window.crypto && window.crypto.getRandomValues) {
+      window.crypto.getRandomValues(bytes);
+    } else {
+      for (var i = 0; i < 8; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    return Array.prototype.map.call(bytes, function (b) {
+      return b.toString(16).padStart(2, "0");
+    }).join("");
+  }
+  function _toHex(buf) {
+    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+      return b.toString(16).padStart(2, "0");
+    }).join("");
+  }
+  /* Async SHA-256 — returns Promise<hexString>. Falls back to a simple
+     non-cryptographic hash if SubtleCrypto unavailable (old browsers). */
+  function hashPassword(password, salt) {
+    var text = salt + ":" + password;
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+      var enc = new TextEncoder();
+      return window.crypto.subtle.digest("SHA-256", enc.encode(text)).then(_toHex);
+    }
+    /* Fallback — djb2 hash, NOT secure, but at least doesn't store plaintext */
+    return Promise.resolve((function () {
+      var h = 5381;
+      for (var i = 0; i < text.length; i++) {
+        h = ((h << 5) + h + text.charCodeAt(i)) | 0;
+      }
+      return "fb" + (h >>> 0).toString(16);
+    })());
+  }
+
+  /* ── Validation ── */
+  function validateUsername(name) {
+    if (!name) return "Имя обязательно";
+    if (name.length < 3) return "Минимум 3 символа";
+    if (name.length > 20) return "Максимум 20 символов";
+    if (!/^[a-zA-Z0-9_]+$/.test(name)) return "Только a-z, 0-9, _";
+    /* Block swear-words in username too */
+    if (typeof containsSwear === "function" && containsSwear(name)) return "Так нельзя";
+    return null;
+  }
+  function validatePassword(p) {
+    if (!p) return "Пароль обязателен";
+    if (p.length < 6) return "Минимум 6 символов";
+    if (p.length > 100) return "Максимум 100 символов";
+    return null;
+  }
+
+  /* ── UI helpers ── */
+  function feedback(el, msg, isError) {
+    if (!el) return;
+    el.textContent = msg || "";
+    el.classList.toggle("error", !!isError && !!msg);
+    el.classList.toggle("success", !isError && !!msg);
+  }
+  function setAccTab(name) {
+    for (var i = 0; i < accTabBtns.length; i++) {
+      accTabBtns[i].classList.toggle("active", accTabBtns[i].dataset.accTab === name);
+    }
+    for (var j = 0; j < accSections.length; j++) {
+      var match = accSections[j].dataset.accSection === name;
+      if (match) accSections[j].removeAttribute("hidden");
+      else       accSections[j].setAttribute("hidden", "");
+    }
+    /* When switching to profile/list, refresh content */
+    if (name === "profile") renderProfile();
+    if (name === "list")    renderAccountList();
+  }
+  function openAccountPanel(initialTab) {
+    accPanel.removeAttribute("hidden");
+    document.body.style.overflow = "hidden";
+    /* If logged in, default to profile; else to login */
+    var current = getCurrentAccount();
+    setAccTab(initialTab || (current ? "profile" : "login"));
+    playUiSound("doorbell");
+  }
+  function closeAccountPanel() {
+    accPanel.setAttribute("hidden", "");
+    document.body.style.overflow = "";
+    feedback(accLoginFb, "", false);
+    feedback(accRegFb, "", false);
+  }
+
+  /* ── Widget rendering ── */
+  function refreshAccountWidget() {
+    var current = getCurrentAccount();
+    accWidget.removeAttribute("hidden");
+    if (current) {
+      accWidget.classList.add("logged-in");
+      accWidgetAvatar.textContent = current.avatar || "🙂";
+      if (current.color) accWidgetAvatar.style.background =
+        "linear-gradient(135deg, " + current.color + ", " + shiftHex(current.color, -25) + ")";
+      accWidgetName.textContent = current.username;
+    } else {
+      accWidget.classList.remove("logged-in");
+      accWidgetAvatar.textContent = "🍌";
+      accWidgetAvatar.style.background = "";
+      accWidgetName.textContent = currentLang === "en" ? "Sign in" : "Войти";
+    }
+  }
+  /* Shift a hex color toward white (positive pct) or black (negative pct) */
+  function shiftHex(hex, pct) {
+    hex = hex.replace(/^#/, "");
+    if (hex.length === 3) hex = hex.split("").map(function(c){return c+c;}).join("");
+    var r = parseInt(hex.slice(0,2), 16),
+        g = parseInt(hex.slice(2,4), 16),
+        b = parseInt(hex.slice(4,6), 16);
+    var target = pct < 0 ? 0 : 255;
+    var p = Math.abs(pct) / 100;
+    function c(v) { return Math.round(v + (target - v) * p); }
+    function hx(v) { return v.toString(16).padStart(2, "0"); }
+    return "#" + hx(c(r)) + hx(c(g)) + hx(c(b));
+  }
+
+  /* ── REGISTER ── */
+  accRegisterBtn.addEventListener("click", function () {
+    var name = (accRegUserEl.value || "").trim();
+    var p1   = accRegPassEl.value || "";
+    var p2   = accRegPass2El.value || "";
+    var avatar = (accRegAvatarEl.value || "🙂").trim().slice(0, 4) || "🙂";
+    var bio  = (accRegBioEl.value || "").trim().slice(0, 100);
+    var color = accRegColorEl.value || "#ffd166";
+
+    var err = validateUsername(name) || validatePassword(p1);
+    if (!err && p1 !== p2) err = "Пароли не совпадают";
+    if (!err && containsSwear(bio)) err = "В био нельзя";
+    if (err) { feedback(accRegFb, err, true); playUiSound("fail"); return; }
+
+    if (findAccountByUsername(name)) {
+      feedback(accRegFb, "Такое имя уже занято", true);
+      playUiSound("fail");
+      return;
+    }
+    feedback(accRegFb, "Создание…", false);
+    accRegisterBtn.disabled = true;
+    var salt = _randSalt();
+    hashPassword(p1, salt).then(function (hash) {
+      var arr = loadAccounts();
+      var newAcc = {
+        id: "acc_" + Date.now() + "_" + Math.floor(Math.random() * 1e6),
+        username: name,
+        salt: salt,
+        passHash: hash,
+        avatar: avatar,
+        bio: bio,
+        color: color,
+        regDate: Date.now(),
+        lastSeen: Date.now(),
+        visits: 1
+      };
+      arr.push(newAcc);
+      saveAccounts(arr);
+      setCurrentAccountId(newAcc.id);
+      /* Owner short-circuit — applies theme automatically */
+      if (name.toLowerCase() === OWNER_USERNAME && typeof setTheme === "function") {
+        setTheme("owner");
+      }
+      refreshAccountWidget();
+      feedback(accRegFb, "Готово! Привет, " + name + " ✓", false);
+      playUiSound("applause");
+      /* Reset form */
+      accRegUserEl.value = "";
+      accRegPassEl.value = "";
+      accRegPass2El.value = "";
+      accRegBioEl.value = "";
+      setTimeout(function () { setAccTab("profile"); }, 500);
+    }).catch(function (e) {
+      feedback(accRegFb, "Ошибка крипто: " + e.message, true);
+      playUiSound("fail");
+    }).then(function () {
+      accRegisterBtn.disabled = false;
+    });
+  });
+
+  /* ── LOGIN ── */
+  accLoginBtn.addEventListener("click", function () {
+    var name = (accLoginUserEl.value || "").trim();
+    var pass = accLoginPassEl.value || "";
+    if (!name || !pass) {
+      feedback(accLoginFb, "Заполни оба поля", true);
+      playUiSound("fail");
+      return;
+    }
+    var acc = findAccountByUsername(name);
+    if (!acc) {
+      feedback(accLoginFb, "Аккаунт не найден", true);
+      playUiSound("fail");
+      return;
+    }
+    feedback(accLoginFb, "Проверяю…", false);
+    accLoginBtn.disabled = true;
+    hashPassword(pass, acc.salt).then(function (hash) {
+      if (hash !== acc.passHash) {
+        feedback(accLoginFb, "Неверный пароль", true);
+        playUiSound("fail");
+        return;
+      }
+      /* Update stats */
+      acc.lastSeen = Date.now();
+      acc.visits = (acc.visits || 0) + 1;
+      var arr = loadAccounts();
+      for (var i = 0; i < arr.length; i++) if (arr[i].id === acc.id) arr[i] = acc;
+      saveAccounts(arr);
+      setCurrentAccountId(acc.id);
+      if (acc.username.toLowerCase() === OWNER_USERNAME && typeof setTheme === "function") {
+        setTheme("owner");
+      }
+      refreshAccountWidget();
+      feedback(accLoginFb, "Привет, " + acc.username + " ✓", false);
+      playUiSound("unlock");
+      accLoginUserEl.value = "";
+      accLoginPassEl.value = "";
+      setTimeout(function () { setAccTab("profile"); }, 500);
+    }).catch(function (e) {
+      feedback(accLoginFb, "Ошибка: " + e.message, true);
+      playUiSound("fail");
+    }).then(function () {
+      accLoginBtn.disabled = false;
+    });
+  });
+
+  /* ── PROFILE rendering ── */
+  function renderProfile() {
+    var acc = getCurrentAccount();
+    if (!acc) {
+      /* Not logged in — switch to login tab */
+      setAccTab("login");
+      return;
+    }
+    accProfileAvatar.textContent = acc.avatar || "🙂";
+    if (acc.color) {
+      accProfileAvatar.style.background =
+        "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
+    }
+    accProfileName.textContent = acc.username;
+    /* Owner badge */
+    if (acc.username.toLowerCase() === OWNER_USERNAME) {
+      accProfileBadge.textContent = "👑 OWNER";
+      accProfileBadge.className = "account-profile-badge owner";
+    } else {
+      accProfileBadge.textContent = "";
+      accProfileBadge.className = "account-profile-badge";
+    }
+    accProfileBio.textContent = acc.bio || (currentLang === "en" ? "(no bio)" : "(без био)");
+    /* Stats */
+    var daysSinceReg = Math.max(0, Math.floor((Date.now() - acc.regDate) / 86400000));
+    var rows = [
+      [currentLang === "en" ? "Registered" : "Зарегистрирован",
+       new Date(acc.regDate).toLocaleDateString()],
+      [currentLang === "en" ? "Days active" : "Дней с регистрации", String(daysSinceReg)],
+      [currentLang === "en" ? "Total visits" : "Заходов", String(acc.visits || 0)],
+      [currentLang === "en" ? "Last seen" : "Последний раз",
+       new Date(acc.lastSeen).toLocaleString()]
+    ];
+    accProfileStats.innerHTML = "";
+    rows.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "account-stat-row";
+      var lbl = document.createElement("span");
+      lbl.className = "account-stat-label";
+      lbl.textContent = row[0];
+      var val = document.createElement("span");
+      val.className = "account-stat-value";
+      val.textContent = row[1];
+      div.appendChild(lbl); div.appendChild(val);
+      accProfileStats.appendChild(div);
+    });
+  }
+
+  /* ── EDIT profile (avatar/bio/color via prompt for simplicity) ── */
+  accEditBtn.addEventListener("click", function () {
+    var acc = getCurrentAccount();
+    if (!acc) return;
+    var newAvatar = prompt(currentLang === "en" ? "New emoji avatar:" : "Новый эмодзи-аватар:", acc.avatar || "🙂");
+    if (newAvatar === null) return;  /* cancelled */
+    var newBio    = prompt(currentLang === "en" ? "Bio (max 100 chars):" : "Био (до 100 симв.):", acc.bio || "");
+    if (newBio === null) return;
+    var newColor  = prompt(currentLang === "en" ? "Hex color (#rrggbb):" : "Hex-цвет (#rrggbb):", acc.color || "#ffd166");
+    if (newColor === null) return;
+
+    if (containsSwear(newBio)) { playUiSound("fail"); return; }
+    if (!/^#[0-9a-f]{6}$/i.test(newColor)) newColor = acc.color;
+
+    acc.avatar = (newAvatar || "🙂").slice(0, 4);
+    acc.bio    = (newBio || "").slice(0, 100);
+    acc.color  = newColor;
+    var arr = loadAccounts();
+    for (var i = 0; i < arr.length; i++) if (arr[i].id === acc.id) arr[i] = acc;
+    saveAccounts(arr);
+    refreshAccountWidget();
+    renderProfile();
+    playUiSound("confirm");
+  });
+
+  /* ── LOGOUT ── */
+  accLogoutBtn.addEventListener("click", function () {
+    setCurrentAccountId(null);
+    refreshAccountWidget();
+    setAccTab("login");
+    playUiSound("knock");
+  });
+
+  /* ── DELETE account ── */
+  accDeleteBtn.addEventListener("click", function () {
+    var acc = getCurrentAccount();
+    if (!acc) return;
+    var ok = confirm(currentLang === "en"
+      ? "Delete account '" + acc.username + "' permanently? This cannot be undone."
+      : "Удалить аккаунт '" + acc.username + "' навсегда? Это нельзя отменить.");
+    if (!ok) return;
+    var arr = loadAccounts().filter(function (a) { return a.id !== acc.id; });
+    saveAccounts(arr);
+    setCurrentAccountId(null);
+    refreshAccountWidget();
+    setAccTab("login");
+    playUiSound("explosion");
+  });
+
+  /* ── ACCOUNT LIST (multi-user switcher) ── */
+  function renderAccountList() {
+    var arr = loadAccounts();
+    var currentId = getCurrentAccountId();
+    accListGrid.innerHTML = "";
+    if (!arr.length) {
+      var empty = document.createElement("div");
+      empty.style.cssText = "grid-column:1/-1;text-align:center;padding:24px;color:rgba(255,255,255,0.5);font-size:13px;";
+      empty.textContent = currentLang === "en" ? "No accounts yet — register one!" : "Нет аккаунтов — зарегистрируй первый!";
+      accListGrid.appendChild(empty);
+      return;
+    }
+    arr.forEach(function (acc) {
+      var item = document.createElement("div");
+      item.className = "account-list-item" + (acc.id === currentId ? " current" : "");
+      var av = document.createElement("span");
+      av.className = "account-list-avatar";
+      av.textContent = acc.avatar || "🙂";
+      if (acc.color) av.style.background =
+        "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
+      var nm = document.createElement("span");
+      nm.className = "account-list-name";
+      nm.textContent = acc.username + (acc.username.toLowerCase() === OWNER_USERNAME ? " 👑" : "");
+      item.appendChild(av); item.appendChild(nm);
+      item.addEventListener("click", function () {
+        /* Click on a list item — if it's the current account, go to profile;
+           otherwise prompt for password to switch (we don't store unhashed
+           passwords so a quick-switch by click would bypass auth). */
+        if (acc.id === currentId) { setAccTab("profile"); return; }
+        accLoginUserEl.value = acc.username;
+        setAccTab("login");
+        accLoginPassEl.focus();
+      });
+      accListGrid.appendChild(item);
+    });
+  }
+
+  /* ── Wire widget + tabs + close ── */
+  accWidget.addEventListener("click", function () { openAccountPanel(); });
+  accClose.addEventListener("click", closeAccountPanel);
+  accBackdrop.addEventListener("click", closeAccountPanel);
+  for (var ti = 0; ti < accTabBtns.length; ti++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        setAccTab(btn.dataset.accTab);
+        playUiSound("click");
+      });
+    })(accTabBtns[ti]);
+  }
+  /* Enter-key submits in login/register forms */
+  accLoginPassEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); accLoginBtn.click(); }
+  });
+  accRegPass2El.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); accRegisterBtn.click(); }
+  });
+
+  /* ============================================================
+     v5.42.0 — SYNC (e2e-encrypted cross-device account transfer)
+     ============================================================
+     Two strategies in one tab:
+       1. CLOUD via jsonblob.com — free public KV store, no signup.
+          Encrypted payload uploaded, returns short sync-code. Other
+          device enters code + password → fetched + decrypted.
+       2. LOCAL FILE — download/upload encrypted .json. Works offline,
+          survives jsonblob.com going dark.
+     Crypto:
+       - Key derivation: PBKDF2(password, salt, 100k iter, SHA-256)
+       - Cipher: AES-256-GCM with 12-byte random IV per encryption
+       - Server only ever sees: { iv, ct (base64), username, salt }
+         — salt+iv are NOT secret (needed for re-derivation), the
+         ciphertext is. Password never leaves the device.
+     ============================================================ */
+
+  var JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob";
+
+  /* DOM refs for sync tab */
+  var accSyncPushBtn   = document.getElementById("acc-sync-push-btn");
+  var accSyncCodeRow   = document.getElementById("acc-sync-code-row");
+  var accSyncCodeEl    = document.getElementById("acc-sync-code");
+  var accSyncCopyBtn   = document.getElementById("acc-sync-copy-btn");
+  var accSyncPullCode  = document.getElementById("acc-sync-pull-code");
+  var accSyncPullPass  = document.getElementById("acc-sync-pull-pass");
+  var accSyncPullBtn   = document.getElementById("acc-sync-pull-btn");
+  var accSyncExportBtn = document.getElementById("acc-sync-export-btn");
+  var accSyncImportBtn = document.getElementById("acc-sync-import-btn");
+  var accSyncImportFile= document.getElementById("acc-sync-import-file");
+  var accSyncFb        = document.getElementById("acc-sync-feedback");
+
+  /* ── PBKDF2 → AES-GCM key derivation ── */
+  function _deriveAesKey(password, saltHex) {
+    if (!window.crypto || !window.crypto.subtle) {
+      return Promise.reject(new Error("SubtleCrypto unavailable — браузер слишком старый для шифровки"));
+    }
+    var enc = new TextEncoder();
+    return window.crypto.subtle.importKey(
+      "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+    ).then(function (baseKey) {
+      return window.crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: enc.encode(saltHex),
+          iterations: 100000,
+          hash: "SHA-256"
+        },
+        baseKey,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+      );
+    });
+  }
+  /* Base64 ↔ Uint8Array (binary-safe, handles long blobs) */
+  function _u8ToB64(u8) {
+    var s = "", CHUNK = 0x8000;
+    for (var i = 0; i < u8.length; i += CHUNK) {
+      s += String.fromCharCode.apply(null, u8.subarray(i, i + CHUNK));
+    }
+    return btoa(s);
+  }
+  function _b64ToU8(b64) {
+    var bin = atob(b64);
+    var u8 = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return u8;
+  }
+  function _bytesToHex(u8) {
+    return Array.prototype.map.call(u8, function (b) {
+      return b.toString(16).padStart(2, "0");
+    }).join("");
+  }
+  function _hexToBytes(hex) {
+    var u8 = new Uint8Array(hex.length / 2);
+    for (var i = 0; i < u8.length; i++) u8[i] = parseInt(hex.substr(i * 2, 2), 16);
+    return u8;
+  }
+
+  /* Encrypt full account → { v, username, salt, iv, ct } payload */
+  function encryptAccount(account, password) {
+    return _deriveAesKey(password, account.salt).then(function (key) {
+      var iv = window.crypto.getRandomValues(new Uint8Array(12));
+      var enc = new TextEncoder();
+      var data = enc.encode(JSON.stringify(account));
+      return window.crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: iv }, key, data
+      ).then(function (ct) {
+        return {
+          v: 1,                                 /* schema version */
+          username: account.username,            /* shown on import, unencrypted */
+          salt: account.salt,                    /* needed for key derivation */
+          iv: _bytesToHex(iv),
+          ct: _u8ToB64(new Uint8Array(ct))
+        };
+      });
+    });
+  }
+  /* Decrypt payload → account object (throws if password wrong) */
+  function decryptAccount(payload, password) {
+    if (!payload || !payload.iv || !payload.ct || !payload.salt) {
+      return Promise.reject(new Error("Битый payload"));
+    }
+    return _deriveAesKey(password, payload.salt).then(function (key) {
+      return window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: _hexToBytes(payload.iv) },
+        key,
+        _b64ToU8(payload.ct)
+      ).then(function (plain) {
+        var json = new TextDecoder().decode(plain);
+        return JSON.parse(json);
+      });
+    });
+  }
+
+  /* ── Cloud transport ── */
+  function cloudPush(payload) {
+    return fetch(JSONBLOB_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      /* jsonblob returns the new blob's path in the Location header */
+      var loc = res.headers.get("Location") || res.headers.get("location");
+      if (!loc) {
+        /* Fallback: some browsers strip Location on CORS — try to read body */
+        return res.json().then(function (b) {
+          if (b && b.id) return b.id;
+          throw new Error("Нет Location header (CORS?)");
+        });
+      }
+      return loc.split("/").pop();   /* "/api/jsonBlob/12345" → "12345" */
+    });
+  }
+  function cloudPull(blobId) {
+    return fetch(JSONBLOB_URL + "/" + encodeURIComponent(blobId), {
+      headers: { "Accept": "application/json" }
+    }).then(function (res) {
+      if (res.status === 404) throw new Error("Sync-код не найден или истёк");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    });
+  }
+
+  /* Sync-code format: "BNN-" prefix + blob id. Easier to copy/recognize. */
+  function _formatSyncCode(id) { return "BNN-" + id; }
+  function _parseSyncCode(code) {
+    var c = (code || "").trim().toUpperCase().replace(/\s+/g, "");
+    if (c.indexOf("BNN-") === 0) c = c.slice(4);
+    return c;
+  }
+
+  function syncFb(msg, isError) {
+    accSyncFb.textContent = msg || "";
+    accSyncFb.classList.toggle("error", !!isError && !!msg);
+    accSyncFb.classList.toggle("success", !isError && !!msg);
+  }
+
+  /* ── PUSH to cloud ── */
+  accSyncPushBtn.addEventListener("click", function () {
+    var acc = getCurrentAccount();
+    if (!acc) {
+      syncFb("Войди в аккаунт сначала", true);
+      playUiSound("fail");
+      return;
+    }
+    var pass = prompt(currentLang === "en"
+      ? "Enter your account password to encrypt:"
+      : "Введи пароль аккаунта для шифровки:");
+    if (!pass) return;
+    /* Verify password first */
+    hashPassword(pass, acc.salt).then(function (hash) {
+      if (hash !== acc.passHash) {
+        syncFb("Неверный пароль", true);
+        playUiSound("fail");
+        throw new Error("__abort_password__");   /* short-circuit */
+      }
+      syncFb("Шифрую…", false);
+      accSyncPushBtn.disabled = true;
+      return encryptAccount(acc, pass);
+    }).then(function (payload) {
+      syncFb("Отправляю в облако…", false);
+      return cloudPush(payload);
+    }).then(function (blobId) {
+      var code = _formatSyncCode(blobId);
+      accSyncCodeEl.textContent = code;
+      accSyncCodeRow.removeAttribute("hidden");
+      syncFb("Готово! Sync-код выше ↑", false);
+      playUiSound("applause");
+      /* Save the code locally too so user can re-show it */
+      try {
+        var arr = loadAccounts();
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i].id === acc.id) { arr[i].syncCode = code; arr[i].syncedAt = Date.now(); }
+        }
+        saveAccounts(arr);
+      } catch (e) {}
+    }).catch(function (e) {
+      if (e && e.message === "__abort_password__") return;
+      syncFb("Ошибка: " + (e && e.message || e), true);
+      playUiSound("fail");
+    }).then(function () {
+      accSyncPushBtn.disabled = false;
+    });
+  });
+
+  /* Copy sync code button */
+  accSyncCopyBtn.addEventListener("click", function () {
+    var code = accSyncCodeEl.textContent || "";
+    if (!code) return;
+    try {
+      navigator.clipboard.writeText(code);
+      var orig = accSyncCopyBtn.textContent;
+      accSyncCopyBtn.textContent = "✓ Скопировано";
+      setTimeout(function () { accSyncCopyBtn.textContent = orig; }, 1200);
+      playUiSound("success");
+    } catch (e) { playUiSound("fail"); }
+  });
+
+  /* ── PULL from cloud ── */
+  accSyncPullBtn.addEventListener("click", function () {
+    var raw = (accSyncPullCode.value || "").trim();
+    var pass = accSyncPullPass.value || "";
+    if (!raw || !pass) {
+      syncFb("Заполни оба поля", true);
+      playUiSound("fail");
+      return;
+    }
+    var blobId = _parseSyncCode(raw);
+    if (!blobId) {
+      syncFb("Битый sync-код", true);
+      playUiSound("fail");
+      return;
+    }
+    syncFb("Скачиваю…", false);
+    accSyncPullBtn.disabled = true;
+    cloudPull(blobId).then(function (payload) {
+      syncFb("Расшифровываю…", false);
+      return decryptAccount(payload, pass);
+    }).then(function (acc) {
+      _importAccount(acc);
+      syncFb("Готово! Аккаунт '" + acc.username + "' импортирован ✓", false);
+      playUiSound("applause");
+      accSyncPullCode.value = "";
+      accSyncPullPass.value = "";
+      refreshAccountWidget();
+    }).catch(function (e) {
+      var msg = e && e.message || "";
+      if (msg.indexOf("OperationError") >= 0 || msg.indexOf("decrypt") >= 0) {
+        syncFb("Неверный пароль или битые данные", true);
+      } else {
+        syncFb("Ошибка: " + msg, true);
+      }
+      playUiSound("fail");
+    }).then(function () {
+      accSyncPullBtn.disabled = false;
+    });
+  });
+
+  /* ── Import decrypted account (shared by cloud-pull + file-import) ── */
+  function _importAccount(acc) {
+    if (!acc || !acc.username || !acc.salt || !acc.passHash) {
+      throw new Error("Битые данные аккаунта");
+    }
+    var arr = loadAccounts();
+    /* Replace if username already exists, else append */
+    var found = -1;
+    for (var i = 0; i < arr.length; i++) {
+      if ((arr[i].username || "").toLowerCase() === acc.username.toLowerCase()) {
+        found = i; break;
+      }
+    }
+    /* Preserve id if same username, else generate new id */
+    if (found >= 0) {
+      acc.id = arr[found].id;
+      arr[found] = acc;
+    } else {
+      acc.id = acc.id || ("acc_" + Date.now() + "_" + Math.floor(Math.random() * 1e6));
+      arr.push(acc);
+    }
+    saveAccounts(arr);
+    setCurrentAccountId(acc.id);
+  }
+
+  /* ── LOCAL backup: download encrypted JSON file ── */
+  accSyncExportBtn.addEventListener("click", function () {
+    var acc = getCurrentAccount();
+    if (!acc) { syncFb("Войди в аккаунт сначала", true); playUiSound("fail"); return; }
+    var pass = prompt(currentLang === "en"
+      ? "Enter password to encrypt the backup file:"
+      : "Введи пароль для шифровки backup-файла:");
+    if (!pass) return;
+    hashPassword(pass, acc.salt).then(function (hash) {
+      if (hash !== acc.passHash) {
+        syncFb("Неверный пароль", true);
+        playUiSound("fail");
+        throw new Error("__abort_password__");
+      }
+      return encryptAccount(acc, pass);
+    }).then(function (payload) {
+      var json = JSON.stringify(payload, null, 2);
+      var blob = new Blob([json], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "bananafont-account-" + acc.username + ".json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 100);
+      syncFb("Backup скачан ✓", false);
+      playUiSound("success");
+    }).catch(function (e) {
+      if (e && e.message === "__abort_password__") return;
+      syncFb("Ошибка: " + (e && e.message || e), true);
+      playUiSound("fail");
+    });
+  });
+
+  accSyncImportBtn.addEventListener("click", function () {
+    accSyncImportFile.click();
+  });
+  accSyncImportFile.addEventListener("change", function () {
+    var file = accSyncImportFile.files && accSyncImportFile.files[0];
+    if (!file) return;
+    var pass = prompt(currentLang === "en"
+      ? "Enter the password used to encrypt this backup:"
+      : "Введи пароль которым backup был зашифрован:");
+    if (!pass) { accSyncImportFile.value = ""; return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var payload;
+      try { payload = JSON.parse(reader.result); }
+      catch (e) { syncFb("Файл не JSON", true); playUiSound("fail"); return; }
+      syncFb("Расшифровываю…", false);
+      decryptAccount(payload, pass).then(function (acc) {
+        _importAccount(acc);
+        syncFb("Готово! Импортирован '" + acc.username + "' ✓", false);
+        playUiSound("applause");
+        refreshAccountWidget();
+      }).catch(function (e) {
+        syncFb("Неверный пароль или битый файл", true);
+        playUiSound("fail");
+      });
+      accSyncImportFile.value = "";
+    };
+    reader.onerror = function () {
+      syncFb("Ошибка чтения файла", true);
+      playUiSound("fail");
+      accSyncImportFile.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  /* When opening the sync tab — if current account already has a saved
+     sync code, show it immediately (saves re-uploading just to re-share). */
+  function _showSavedSyncCodeIfAny() {
+    var acc = getCurrentAccount();
+    if (acc && acc.syncCode) {
+      accSyncCodeEl.textContent = acc.syncCode;
+      accSyncCodeRow.removeAttribute("hidden");
+    } else {
+      accSyncCodeRow.setAttribute("hidden", "");
+    }
+  }
+  /* Hook into setAccTab — already defined above. Wrap it. */
+  var _origSetAccTab = setAccTab;
+  setAccTab = function (name) {
+    _origSetAccTab(name);
+    if (name === "sync") {
+      syncFb("", false);
+      _showSavedSyncCodeIfAny();
+    }
+  };
+
+  /* ── Boot — paint widget on init + apply owner-theme if owner logged in ── */
+  refreshAccountWidget();
+  (function maybeApplyOwnerThemeOnBoot() {
+    var c = getCurrentAccount();
+    if (c && c.username.toLowerCase() === OWNER_USERNAME && currentTheme !== "owner") {
+      /* Don't auto-switch theme on boot if user already picked something else
+         this session — we only apply on login event. */
+    }
+  })();
 
   /* --------- init --------- */
   renderFonts();
