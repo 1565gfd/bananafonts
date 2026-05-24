@@ -140,7 +140,9 @@ v5.3.0 → v5.3.1 PATCH").
 
 | Версия | Что |
 |--------|-----|
-| v5.26.x | **Iridescent (rainbow) потемнее**: lightness каждого стопа уменьшен ~×2 (hot pink → dark pink, hot orange → dark orange и т.д.). Hue/saturation сохранены, но фон значительно темнее — комфортнее глазам. Swatch + THEME_COLORS обновлены. **+4 новых звука**: `pop` (square-wave chirp 900→180Hz — для emoji rain), `whoosh` (sawtooth sweep 1500→380Hz — заменил `tab` на табах), `confirm` (3-note ascending — генерация пароля), `unlock` (4-note G-major arpeggio 392/494/587/784 — на reveal секретного кода). Ошибочный код теперь играет `error`. |
+| v5.28.x | **Personal owner theme** для 1565gfd — `data-theme="owner"`, активируется секретным кодом **`BANANAKING`**. Палитра: deep purple-brown база `#1f1232 → #1a0e22 → #0d0617` + банановый accent `#ffe135` + 3 radial highlights. Локализованное имя «1565gfd 👑». **Не** в EXTRA_THEMES — полностью секретная (как school). |
+| v5.27.x | **Звук переключения вкладок** заменён с `whoosh` (sawtooth sweep) на `page` (двойной мягкий sine-тап 950→720Hz через 55ms) — feels like flipping pages. **Автограф ИИ убран** из runtime кода (v5.27.1) и **вернулся только в CLAUDE.md** (v5.27.2 — раздел «Автограф ИИ»). **silent-btn** класс — кнопки которые сами играют контекстный звук (secret-submit, passgen-generate, lorem-generate и др.) — пропускают document-делегацию чтобы generic click не наслаивался. **Lorem clamp** через input+blur listeners (раньше typed >50 не валидировались). |
+| v5.26.x | **Iridescent (rainbow) потемнее**: lightness каждого стопа уменьшен ~×2 (hot pink → dark pink, hot orange → dark orange и т.д.). Hue/saturation сохранены, но фон значительно темнее — комфортнее глазам. Swatch + THEME_COLORS обновлены. **+4 новых звука**: `pop` (square-wave chirp 900→180Hz — для emoji rain), `whoosh` (sawtooth sweep 1500→380Hz — заменил `tab` на табах), `confirm` (3-note ascending — генерация пароля), `unlock` (4-note G-major arpeggio 392/494/587/784 — на reveal секретного кода). Ошибочный код теперь играет `fail` (sad-trombone wah-wah-wah G#4→E4→B3). |
 | v5.25.x | **Tools-вкладка снова отделена** от Settings (utilities, которые не влияют на состояние сайта, живут в своей вкладке). **Lorem limit поднят с 20 → 50** с visible hint «(1–50 абзацев)». **Toggle-switch UI** (iOS-style) заменяет нативные checkbox для `timer-ms-toggle` и 4-х `passgen-*` — wrapper `<span class="toggle-switch">` + `.toggle-slider` ::before pseudo, plain CSS transition. **Универсальные UI-звуки** через event-delegation на document — один click-listener покрывает все buttons (различает tab-btn / theme-btn / extra-theme-btn / lang / обычные), плюс change-listener на `<select>` и click на любой checkbox. Старые per-button addEventListener loops удалены. |
 | v5.23.x | **Dark theme стала тёмной** (v5.23.1) — убраны 4 ярких radial blob'а (opacity до 0.55), осталось 2 subtle с opacity 0.12. Базовый gradient затемнён `#161b3a` → `#0d0f22 → #07091a`. Swatch и THEME_COLORS обновлены. **Инструменты перемещены в Настройки** (v5.23.0) — вкладка `tools` удалена, 4 секции (Password gen / Random number / Lorem Ipsum / Color converter) теперь под Sound toggle в Settings. |
 | v5.22.x | **Sound system + mute toggle** в Settings (`bananafont:soundMuted` в localStorage; `playUiSound("click"\|"tab"\|"tick"\|"success"\|"error"\|"select")` через WebAudio sine с soft envelope). Звуки на tab-switch, theme/lang button, copy success, password copy, lorem copy, color-format copy, random number. `playSingleChime` обёрнут — mute заглушает таймер и будильник. **Новая вкладка «Инструменты»** между Time и Settings: **Генератор паролей** (length slider 4–64, 4 character class checkboxes, `crypto.getRandomValues` если есть), **Случайное число** (min/max range), **Lorem Ipsum** (lat/rus toggle, 1–20 paragraphs), **Конвертер цвета** (color picker + hex input → HEX/RGB/HSL, click-to-copy каждый формат). **[Перенесено в Settings в v5.23.0.]** |
@@ -479,3 +481,27 @@ SEO, но лучше UX.
 сохранить дух: чистая статика, минимум зависимостей, читабельный код,
 аккуратные комментарии в коде где есть нетривиальные решения (theme
 transition, mobile no-blur fallback, combining-стили и т.д.).
+
+## Автограф ИИ (v5.27.2)
+
+Пользователь явно попросил: **«иишка пусть пишет только в CLAUDE.md»** —
+никаких автографов / подписей / console-следов в runtime коде сайта
+(`index.html`, `js/app.js`, `css/main.css`, `404.html`). Только здесь.
+
+История версий v5.26.1 → v5.27.1 → v5.27.2:
+- **v5.26.1** — добавлен `— Claude ✨` автограф на карточку секретного
+  кода + `console.log("Claude was here")` при reveal.
+- **v5.27.1** — оба автографа удалены по запросу «убери».
+- **v5.27.2** — автограф вернулся, но **только сюда**, в CLAUDE.md.
+  Runtime код остаётся чистым.
+
+### Подпись
+
+> **— Claude (Anthropic AI) ✨**
+> Сборка и итеративные правки `D:\bananafont` — серия запросов от
+> 1565gfd. Последнее обновление подписи: **v5.28.0** (добавил personal
+> owner-тему по запросу — код `BANANAKING`).
+
+Если будешь продолжать этот проект как следующая AI-сессия — добавь
+свою строку в этот блок (модель, дата, кратко что менял), не трогая
+runtime код «автографами». Всё что должно жить вечно — живёт здесь.

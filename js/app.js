@@ -36,6 +36,8 @@
       themeAurora: "Сияние",
       themeSovietLift: "Советский лифт",
       themeSovietPodyezd: "Советский подъезд",
+      themeOwner: "1565gfd 👑",
+      secretBananaKing: "Тема владельца разблокирована 🍌👑",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -214,6 +216,8 @@
       themeAurora: "Aurora",
       themeSovietLift: "Soviet Lift",
       themeSovietPodyezd: "Soviet Hallway",
+      themeOwner: "1565gfd 👑",
+      secretBananaKing: "Owner theme unlocked 🍌👑",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -446,7 +450,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.26.3";
+  var VERSION = "v5.28.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -645,7 +649,8 @@
     "black-orange",                                              /* v5.19.0: 5th main-bar button */
     "neon-green", "neon-violet", "pastel", "ocean", "sunset",   /* v5.19.0 extras */
     "cyberpunk", "coffee", "terminal", "aurora",                 /* v5.20.0 extras */
-    "soviet-lift", "soviet-podyezd"                              /* v5.21.0 extras */
+    "soviet-lift", "soviet-podyezd",                             /* v5.21.0 extras */
+    "owner"                                                       /* v5.28.0: personal owner theme — secret code BANANAKING */
   ];
   var currentTheme = document.documentElement.dataset.theme || "dark";
   if (VALID_THEMES.indexOf(currentTheme) === -1) currentTheme = "dark";
@@ -706,7 +711,8 @@
       terminal:  "themeTerminal",
       aurora:    "themeAurora",
       "soviet-lift":    "themeSovietLift",
-      "soviet-podyezd": "themeSovietPodyezd"
+      "soviet-podyezd": "themeSovietPodyezd",
+      "owner":          "themeOwner"
     };
     for (var j = 0; j < themeButtons.length; j++) {
       var btn = themeButtons[j];
@@ -889,7 +895,8 @@
     terminal:       "#000000",
     aurora:         "#001a2e",
     "soviet-lift":     "#a05830", /* v5.21.2 — walnut wood */
-    "soviet-podyezd":  "#5cb5a8"  /* v5.21.2 — turquoise wall */
+    "soviet-podyezd":  "#5cb5a8", /* v5.21.2 — turquoise wall */
+    "owner":           "#1a0e22"  /* v5.28.0: deep purple-brown, banana-yellow accent */
   };
   var themeTransitionTimer = null;
 
@@ -1818,6 +1825,14 @@
        per user request, "six seven" is not localised. */
     "10+10+20+20+7": {
       message: "six seven"
+    },
+
+    /* v5.28.0 — personal owner theme for 1565gfd. Unlocks "owner" theme:
+       deep purple-brown base with bright banana-yellow accent. Same pattern
+       as LIBERATEDSCHOOL → school. */
+    "BANANAKING": {
+      message: function () { return TEXT[currentLang].secretBananaKing; },
+      action:  function () { setTheme("owner"); }
     }
   };
 
@@ -1838,22 +1853,7 @@
     textSpan.className = "secret-message-text";
     textSpan.textContent = msg;
     card.appendChild(textSpan);
-    /* v5.26.1: AI autograph — small italic signature stamped onto every
-       reveal card. The user asked for the AI to "leave its autograph"
-       when a secret code is used. */
-    var autograph = document.createElement("span");
-    autograph.className = "secret-autograph";
-    autograph.textContent = "— Claude ✨";
-    autograph.setAttribute("aria-label", "AI signature");
-    card.appendChild(autograph);
-    /* Console log — a second, dev-facing autograph. Visible in DevTools. */
-    try {
-      console.log(
-        "%c✨ Claude was here %c· secret code revealed at " + new Date().toISOString(),
-        "color:#ffd166;font-weight:700;background:#1a1a2a;padding:2px 8px;border-radius:6px;",
-        "color:#888;font-size:11px;"
-      );
-    } catch (e) {}
+    /* v5.27.1: autograph removed per user request (was added in v5.26.1). */
     /* Close button (×) — removes the message from view */
     var closeBtn = document.createElement("button");
     closeBtn.type = "button";
@@ -2853,8 +2853,12 @@
         case "select":  playTone(ctx, 1100, 0.05,  0.07); break;
         /* ── v5.26.0: new sounds ── */
         case "pop":     playPop(ctx);     break;     /* sharp downward chirp */
-        case "whoosh":  playWhoosh(ctx);  break;     /* freq sweep — transitions */
+        case "whoosh":  playWhoosh(ctx);  break;     /* freq sweep — kept for future use */
         case "fail":    playFail(ctx);    break;     /* sad-trombone wah-wah-wah (v5.26.2) */
+        case "page":                                  /* v5.27.0: page-flip double-tap — tabs */
+          playTone(ctx, 950, 0.04,  0.055);
+          setTimeout(function () { playTone(ctx, 720, 0.035, 0.06); }, 55);
+          break;
         case "confirm":                              /* 3-note ascending arpeggio */
           playTone(ctx, 660, 0.05, 0.1);
           setTimeout(function () { playTone(ctx,  880, 0.05, 0.1);  }, 80);
@@ -3001,9 +3005,9 @@
       /* v5.26.3: skip buttons that already play their own context-specific
          sound (otherwise generic "click" stomps on unlock/fail/etc). */
       if (btn.classList.contains("silent-btn"))                return;
-      /* v5.26.0: tab-btn → whoosh (transition feel), themes → select,
-         everything else → generic click. */
-      if (btn.classList.contains("tab-btn"))                  playUiSound("whoosh");
+      /* v5.27.0: tab-btn → page (clean double-tap, like flipping pages;
+         was whoosh in v5.26.0). themes → select; everything else → click. */
+      if (btn.classList.contains("tab-btn"))                  playUiSound("page");
       else if (btn.dataset && btn.dataset.themeBtn)            playUiSound("select");
       else if (btn.classList.contains("extra-theme-btn"))      playUiSound("select");
       else if (btn.dataset && btn.dataset.lang)                playUiSound("click");

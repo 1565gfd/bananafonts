@@ -437,6 +437,50 @@
   --nf-code-gradient: linear-gradient(180deg, #00c2cb 0%, #80f0ff 100%);
 }
 
+/* ──────── Owner — personal theme for 1565gfd (v5.28.0). Unlocked via
+            secret code BANANAKING. Deep purple-brown base + bright
+            banana-yellow accent. Distinctive, никто другой не получит. ──────── */
+[data-theme="owner"] {
+  color-scheme: dark;
+  --bg-gradient:
+    /* Big banana-yellow glow up top */
+    radial-gradient(ellipse at 50% 0%, rgba(255, 225, 53, 0.22) 0%, transparent 50%),
+    /* Warm orange highlight bottom-right */
+    radial-gradient(ellipse at 82% 88%, rgba(255, 165, 60, 0.13) 0%, transparent 55%),
+    /* Subtle purple shimmer top-left */
+    radial-gradient(ellipse at 18% 22%, rgba(160, 80, 220, 0.1) 0%, transparent 50%),
+    /* Deep purple-brown base — like dark mahogany */
+    linear-gradient(160deg, #1f1232 0%, #1a0e22 50%, #0d0617 100%);
+  --text: #fff4d4;
+  --text-dim: rgba(255, 244, 212, 0.5);
+  --text-soft: rgba(255, 244, 212, 0.88);
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.65);
+  --glass-bg: rgba(255, 225, 53, 0.07);
+  --glass-bg-hover: rgba(255, 225, 53, 0.14);
+  --glass-border: rgba(255, 225, 53, 0.4);
+  --glass-border-soft: rgba(255, 225, 53, 0.22);
+  --glass-inset: rgba(255, 225, 53, 0.3);
+  --glass-inset-soft: rgba(255, 225, 53, 0.12);
+  --output-bg: rgba(20, 10, 28, 0.85);
+  --output-border: rgba(255, 225, 53, 0.35);
+  --output-inset-bottom: rgba(0, 0, 0, 0.55);
+  --accent: #ffe135;             /* banana yellow */
+  --accent-bg: rgba(255, 225, 53, 0.92);
+  --accent-border: rgba(255, 240, 100, 1);
+  --accent-glow: rgba(255, 225, 53, 0.55);
+  --copy-bg: rgba(255, 225, 53, 0.88);
+  --copy-bg-hover: rgba(255, 240, 100, 0.96);
+  --copy-border: rgba(255, 240, 100, 1);
+  --copy-border-hover: rgba(255, 250, 160, 1);
+  --copied-bg: rgba(120, 220, 100, 0.7);
+  --copied-border: rgba(160, 240, 130, 0.9);
+  --copied-glow: rgba(120, 220, 100, 0.45);
+  --link: #ffe135;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.65);
+  --nf-bg: linear-gradient(160deg, #1f1232 0%, #1a0e22 50%, #0d0617 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffe135 0%, #ffefa0 100%);
+}
+
 /* ──────── Cyberpunk (v5.20.0) — magenta + cyan on near-black ──────── */
 [data-theme="cyberpunk"] {
   color-scheme: dark;
@@ -1408,20 +1452,7 @@ html.theme-transition *::after {
   animation: secretReveal 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-/* v5.26.1: AI autograph stamp on the reveal card */
-.secret-autograph {
-  display: block;
-  margin-top: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.78);
-  text-align: right;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-user-select: text;
-  user-select: text;
-}
+/* (v5.27.1: .secret-autograph rules removed — autograph убран по запросу.) */
 
 .secret-close {
   position: absolute;
@@ -3070,6 +3101,18 @@ footer a:hover {
   [data-theme="soviet-podyezd"] .lang-switch button:not(.active),
   [data-theme="soviet-podyezd"] .theme-switch button:not(.active) {
     background: rgba(232, 230, 216, 0.95);        /* light cream button bg */
+  }
+  /* ── v5.28.0 Owner theme fallback ── */
+  [data-theme="owner"] .app,
+  [data-theme="owner"] textarea,
+  [data-theme="owner"] .not-found-card {
+    background: rgba(28, 18, 40, 0.96);
+  }
+  [data-theme="owner"] .output { background: rgba(15, 8, 22, 0.95); }
+  [data-theme="owner"] .fonts button:not(.active),
+  [data-theme="owner"] .lang-switch button:not(.active),
+  [data-theme="owner"] .theme-switch button:not(.active) {
+    background: rgba(45, 25, 60, 0.92);
   }
 }
 
