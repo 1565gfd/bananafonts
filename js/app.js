@@ -446,7 +446,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.26.2";
+  var VERSION = "v5.26.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -2998,6 +2998,9 @@
     /* If a button (or anything inside one) was clicked */
     var btn = t.closest ? t.closest("button") : null;
     if (btn && !btn.disabled) {
+      /* v5.26.3: skip buttons that already play their own context-specific
+         sound (otherwise generic "click" stomps on unlock/fail/etc). */
+      if (btn.classList.contains("silent-btn"))                return;
       /* v5.26.0: tab-btn → whoosh (transition feel), themes → select,
          everything else → generic click. */
       if (btn.classList.contains("tab-btn"))                  playUiSound("whoosh");
@@ -3139,6 +3142,23 @@
     loremOutputEl.value = paragraphs.join("\n\n");
     playUiSound("success");
   }
+  /* v5.26.3: enforce 1–50 lorem paragraph limit on both input + blur
+     events. HTML max="50" only validates on spinner-step, не на typed
+     values. Without this, user could type "999" and JS silently clamped
+     to 50 при генерации — но input visually держал 999. */
+  function clampLoremInput() {
+    var v = parseInt(loremCountEl.value, 10);
+    if (isNaN(v)) return;            /* allow empty mid-edit */
+    if (v > 50)   loremCountEl.value = 50;
+    else if (v < 1) loremCountEl.value = 1;
+  }
+  loremCountEl.addEventListener("input", clampLoremInput);
+  loremCountEl.addEventListener("blur", function () {
+    /* On blur: also fix empty/NaN by defaulting to 3 */
+    var v = parseInt(loremCountEl.value, 10);
+    if (isNaN(v) || v < 1) loremCountEl.value = 1;
+    else if (v > 50)        loremCountEl.value = 50;
+  });
   loremGenBtn.addEventListener("click", generateLorem);
   loremCopyBtn.addEventListener("click", function () {
     if (!loremOutputEl.value) return;

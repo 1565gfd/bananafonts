@@ -392,8 +392,8 @@
         </div>
         <div class="passgen-output-row">
           <input type="text" id="passgen-output" class="calc-input passgen-output" readonly />
-          <button type="button" id="passgen-generate" class="tool-btn"></button>
-          <button type="button" id="passgen-copy" class="tool-btn"></button>
+          <button type="button" id="passgen-generate" class="tool-btn silent-btn"></button>
+          <button type="button" id="passgen-copy" class="tool-btn silent-btn"></button>
         </div>
       </div>
 
@@ -405,7 +405,7 @@
           <label><span id="randnum-max-text"></span><input type="number" id="randnum-max" class="calc-input" value="100" /></label>
         </div>
         <div class="randnum-controls">
-          <button type="button" id="randnum-generate" class="tool-btn"></button>
+          <button type="button" id="randnum-generate" class="tool-btn silent-btn"></button>
           <div class="randnum-result" id="randnum-result">—</div>
         </div>
       </div>
@@ -423,8 +423,8 @@
             <button type="button" class="tool-btn lorem-lang-btn active" data-lorem-lang="lat">Lorem</button>
             <button type="button" class="tool-btn lorem-lang-btn" data-lorem-lang="rus">Рыба</button>
           </div>
-          <button type="button" id="lorem-generate" class="tool-btn"></button>
-          <button type="button" id="lorem-copy" class="tool-btn"></button>
+          <button type="button" id="lorem-generate" class="tool-btn silent-btn"></button>
+          <button type="button" id="lorem-copy" class="tool-btn silent-btn"></button>
         </div>
         <textarea id="lorem-output" class="home-input lorem-output" readonly></textarea>
       </div>
@@ -507,7 +507,7 @@
         <h3 id="secret-label"></h3>
         <div class="secret-row">
           <input type="text" id="secret-input" class="calc-input" placeholder="" autocomplete="off" spellcheck="false" />
-          <button type="button" id="secret-submit" class="tool-btn"></button>
+          <button type="button" id="secret-submit" class="tool-btn silent-btn"></button>
         </div>
         <div id="secret-feedback" class="secret-feedback"></div>
       </div>
