@@ -39,8 +39,8 @@
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Тема владельца разблокирована 🍌👑",
       secret1488: "Так делать нельзя❌",
-      apologyTitle: "Так делать нельзя",
-      apologyHint: "Чтобы вернуть сайт — напиши слово прощения:",
+      apologyTitle: "Извиняйся перед создателем",
+      apologyHint: "Напиши слово прощения:",
       apologyPlaceholder: "SORRY  или  ПРОСТИ",
       apologyBtn: "Извиниться",
       adminTitle: "👑 Админ-панель",
@@ -257,8 +257,8 @@
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Owner theme unlocked 🍌👑",
       secret1488: "You can't do that❌",
-      apologyTitle: "You can't do that",
-      apologyHint: "To get the site back — type a word of apology:",
+      apologyTitle: "Apologize to the creator",
+      apologyHint: "Type a word of apology:",
       apologyPlaceholder: "SORRY  or  ПРОСТИ",
       apologyBtn: "Apologize",
       adminTitle: "👑 Admin panel",
@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.30.3";
+  var VERSION = "v5.30.5";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1983,15 +1983,12 @@
       message: function () { return TEXT[currentLang].secret1488; },
       sound:   "fail",
       action:  function () {
-        /* Stage 1 (0ms): big fullscreen "Так делать нельзя" */
-        showBigText(TEXT[currentLang].apologyTitle, "#ff3344");
-        /* Stage 2 (1.4s): entire screen goes deep red AND locks until
-           the user types SORRY or ПРОСТИ. No auto-reload — the lockout
-           IS the punishment. They must apologize to continue. */
-        setTimeout(function () {
-          lockPageInRed();
-          playUiSound("fail");
-        }, 1400);
+        /* v5.30.4: skip the intermediate showBigText flash and lock the
+           page IMMEDIATELY. The red overlay's own title is "Так делать
+           нельзя" big and centred — same dramatic effect, but the user
+           sees the apology input right away. No reload — locked until
+           apology (SORRY / ПРОСТИ). */
+        lockPageInRed();
       }
     }
     /* NOTE: an additional gated entry-point exists but is NOT registered
@@ -2026,7 +2023,10 @@
     secretFeedbackEl.style.opacity = text ? "1" : "0";
   }
 
-  function showSecretMessage(msg) {
+  function showSecretMessage(msg, celebrate) {
+    /* v5.30.5: optional celebrate flag — for fail/punishment codes we skip
+       the heart rain + rainbow hue-rotate so they don't fight the
+       red-lockout overlay. */
     /* Replace previous message so animation re-fires */
     secretResultEl.innerHTML = "";
     var card = document.createElement("div");
@@ -2049,9 +2049,12 @@
     });
     card.appendChild(closeBtn);
     secretResultEl.appendChild(card);
-    /* Celebration: heart rain + rainbow flash */
-    if (typeof emojiRain === "function") emojiRain("❤️", 24);
-    triggerRainbow();
+    /* Celebration: heart rain + rainbow flash — SKIPPED для fail-codes
+       (v5.30.5) чтобы hue-rotate filter не цвёл поверх red-lockout. */
+    if (celebrate !== false) {
+      if (typeof emojiRain === "function") emojiRain("❤️", 24);
+      triggerRainbow();
+    }
   }
 
   /* Short rainbow hue-rotate sweep on <html>. Cleans up after itself.
@@ -2085,7 +2088,9 @@
       var entry = SECRET_CODES[code];
       var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
       showSecretFeedback("", false);
-      showSecretMessage(msg);
+      /* v5.30.5: celebrate=false for fail-codes so heart-rain + rainbow
+         hue-rotate filter don't drown out a red-lockout overlay. */
+      showSecretMessage(msg, entry.sound !== "fail");
       /* v5.30.1: per-code sound override (entry.sound). Default = "unlock". */
       playUiSound(entry.sound || "unlock");
       if (typeof entry.action === "function") {
@@ -3920,11 +3925,18 @@
     }, 3300);
   }
 
-  /* ── lockPageInRed (v5.30.3) ── deep red fullscreen overlay with
-     apology UI. The only way out is to type SORRY or ПРОСТИ
-     (case-insensitive). No reload — locked until apology. */
+  /* ── lockPageInRed (v5.30.3 / v5.30.4) ── deep red fullscreen overlay
+     with apology UI. The only way out is to type SORRY or ПРОСТИ
+     (case-insensitive). No reload — locked until apology.
+     v5.30.4: also clears any showBigText overlay so the red lock is the
+     only thing on screen (was overlapping for ~2 seconds before). */
   function lockPageInRed() {
     if (document.querySelector(".page-red-flash")) return;  /* don't double-lock */
+    /* Remove any in-flight showBigText overlays */
+    var existing = document.querySelectorAll(".big-number-overlay");
+    for (var i = 0; i < existing.length; i++) {
+      if (existing[i].parentNode) existing[i].parentNode.removeChild(existing[i]);
+    }
     var t = TEXT[currentLang];
 
     var red = document.createElement("div");
