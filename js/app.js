@@ -24,7 +24,7 @@
       themeNight: "Ночная",
       themeRainbow: "Переливающаяся",
       themeSchool: "Школа",
-      themeBlackOrange: "Чёрно-оранж.",
+      themeBlackOrange: "Чёрно-малин.",
       themeNeonGreen: "Неон зелёный",
       themeNeonViolet: "Неон фиолет",
       themePastel: "Пастель",
@@ -76,6 +76,24 @@
       adminImport: "Импорт из JSON",
       adminImportSuccess: "Импортировано ✓",
       adminImportError: "Ошибка чтения файла",
+      /* v5.38.0 — 5 admin-only sections */
+      adminReplTitle: "🔥 JS-консоль (eval)",
+      adminReplHint: "Опасно. Код выполняется в контексте страницы. Используй с умом.",
+      adminReplRun: "▶ Run",
+      adminReplClear: "Очистить",
+      adminStatsDashTitle: "📊 Аналитика сессии",
+      adminStatsDashReset: "Сбросить статистику",
+      adminBurnTitle: "🎬 Burn-in: автосмена тем",
+      adminBurnHint: "Циклически меняет тему каждые 2 секунды через все 18 тем.",
+      adminBurnStart: "▶ Старт",
+      adminBurnStop: "■ Стоп",
+      adminFilterTitle: "🚫 Фильтр матов",
+      adminFilterHint: "Полностью отключить детекцию мата + плохих людей (только для админа).",
+      adminFilterOn: "Фильтр ВКЛ",
+      adminFilterOff: "Фильтр ВЫКЛ",
+      adminLockoutTitle: "🔴 Триггер red-lockout",
+      adminLockoutHint: "Мгновенно открыть apology-экран — для теста UI.",
+      adminLockoutFire: "Запустить",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -230,7 +248,7 @@
       settingsResetHint: "Очистит сохранённые настройки и перезагрузит страницу.",
       settingsResetConfirm: "Точно сбросить все настройки?",
       settingsAboutLabel: "О сайте",
-      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура) и сложение/вычитание/умножение/деление простых дробей.\n\n• Время: часы Москвы / Еревана / Нью-Йорка, секундомер, таймер с миллисекундами и быстрым добавлением/вычитанием времени, будильник с выбором часового пояса.\n\n• Настройки: 11 дополнительных тем (в т.ч. советский лифт и подъезд), переключатель звуков, генератор паролей, случайные числа, Lorem Ipsum, конвертер цветов.\n\n• Секретные коды: вкладка с 19 скрытыми кодами — emoji-дожди, спецэффекты, мета-код. Найди их сам.\n\n• Темы: 5 видимых (Светлая / Тёмная / Ночь / Чёрно-оранж. / Переливающаяся) + 11 в настройках + 1 секретная (по коду).\n\n• PWA: можно установить на телефон, работает в Telegram-браузере."
+      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура) и сложение/вычитание/умножение/деление простых дробей.\n\n• Время: часы Москвы / Еревана / Нью-Йорка, секундомер, таймер с миллисекундами и быстрым добавлением/вычитанием времени, будильник с выбором часового пояса.\n\n• Настройки: 11 дополнительных тем (в т.ч. советский лифт и подъезд), переключатель звуков, генератор паролей, случайные числа, Lorem Ipsum, конвертер цветов.\n\n• Секретные коды: вкладка с 19 скрытыми кодами — emoji-дожди, спецэффекты, мета-код. Найди их сам.\n\n• Темы: 5 видимых (Светлая / Тёмная / Ночь / Чёрно-малин. / Переливающаяся) + 11 в настройках + 1 секретная (по коду).\n\n• PWA: можно установить на телефон, работает в Telegram-браузере."
     },
     en: {
       title: "Fonts for Word and Telegram",
@@ -244,7 +262,7 @@
       themeNight: "Night",
       themeRainbow: "Iridescent",
       themeSchool: "School",
-      themeBlackOrange: "Black-Orange",
+      themeBlackOrange: "Black-Raspberry",
       themeNeonGreen: "Neon Green",
       themeNeonViolet: "Neon Violet",
       themePastel: "Pastel",
@@ -296,6 +314,24 @@
       adminImport: "Import JSON",
       adminImportSuccess: "Imported ✓",
       adminImportError: "File read error",
+      /* v5.38.0 — 5 admin-only sections */
+      adminReplTitle: "🔥 JS console (eval)",
+      adminReplHint: "Dangerous. Code runs in page context. Use carefully.",
+      adminReplRun: "▶ Run",
+      adminReplClear: "Clear",
+      adminStatsDashTitle: "📊 Session analytics",
+      adminStatsDashReset: "Reset stats",
+      adminBurnTitle: "🎬 Burn-in: auto-cycle themes",
+      adminBurnHint: "Cycles through all 18 themes every 2 seconds.",
+      adminBurnStart: "▶ Start",
+      adminBurnStop: "■ Stop",
+      adminFilterTitle: "🚫 Swear filter",
+      adminFilterHint: "Fully disable mat + bad-people detection (admin override).",
+      adminFilterOn: "Filter ON",
+      adminFilterOff: "Filter OFF",
+      adminLockoutTitle: "🔴 Trigger red-lockout",
+      adminLockoutHint: "Open the apology screen instantly — for UI testing.",
+      adminLockoutFire: "Fire",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -450,7 +486,7 @@
       settingsResetHint: "Clears saved settings and reloads the page.",
       settingsResetConfirm: "Really reset all settings?",
       settingsAboutLabel: "About",
-      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature) and add/subtract/multiply/divide for simple fractions.\n\n• Time: clocks for Moscow / Yerevan / New York, stopwatch, timer with milliseconds and quick add/subtract-time buttons, alarm with timezone picker.\n\n• Settings: 11 extra themes (incl. Soviet lift and hallway), sound toggle, password generator, random numbers, Lorem Ipsum, color converter.\n\n• Secret codes: a tab with 19 hidden codes — emoji rains, special effects, a meta-code. Find them yourself.\n\n• Themes: 5 visible (Light / Dark / Night / Black-Orange / Iridescent) + 11 in Settings + 1 secret (unlocked via code).\n\n• PWA: installable on phones, works inside the Telegram in-app browser."
+      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature) and add/subtract/multiply/divide for simple fractions.\n\n• Time: clocks for Moscow / Yerevan / New York, stopwatch, timer with milliseconds and quick add/subtract-time buttons, alarm with timezone picker.\n\n• Settings: 11 extra themes (incl. Soviet lift and hallway), sound toggle, password generator, random numbers, Lorem Ipsum, color converter.\n\n• Secret codes: a tab with 19 hidden codes — emoji rains, special effects, a meta-code. Find them yourself.\n\n• Themes: 5 visible (Light / Dark / Night / Black-Raspberry / Iridescent) + 11 in Settings + 1 secret (unlocked via code).\n\n• PWA: installable on phones, works inside the Telegram in-app browser."
     }
   };
 
@@ -530,7 +566,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.36.1";
+  var VERSION = "v5.38.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -623,6 +659,25 @@
   var adminExportBtn     = document.getElementById("admin-export");
   var adminImportBtn     = document.getElementById("admin-import");
   var adminImportFileEl  = document.getElementById("admin-import-file");
+  /* v5.38.0 — 5 admin-only sections refs */
+  var adminReplTitleEl   = document.getElementById("admin-repl-title");
+  var adminReplHintEl    = document.getElementById("admin-repl-hint");
+  var adminReplInputEl   = document.getElementById("admin-repl-input");
+  var adminReplOutputEl  = document.getElementById("admin-repl-output");
+  var adminReplRunBtn    = document.getElementById("admin-repl-run");
+  var adminReplClearBtn  = document.getElementById("admin-repl-clear");
+  var adminStatsDashTitleEl = document.getElementById("admin-stats-dash-title");
+  var adminStatsDashEl   = document.getElementById("admin-stats-dash");
+  var adminStatsResetBtn = document.getElementById("admin-stats-reset");
+  var adminBurnTitleEl   = document.getElementById("admin-burn-title");
+  var adminBurnHintEl    = document.getElementById("admin-burn-hint");
+  var adminBurnToggleBtn = document.getElementById("admin-burn-toggle");
+  var adminFilterTitleEl = document.getElementById("admin-filter-title");
+  var adminFilterHintEl  = document.getElementById("admin-filter-hint");
+  var adminFilterToggleBtn = document.getElementById("admin-filter-toggle");
+  var adminLockoutTitleEl= document.getElementById("admin-lockout-title");
+  var adminLockoutHintEl = document.getElementById("admin-lockout-hint");
+  var adminLockoutFireBtn= document.getElementById("admin-lockout-fire");
   /* v5.33.0: Customization knobs */
   var uiScaleEl    = document.getElementById("ui-scale");
   var uiScaleVal   = document.getElementById("ui-scale-val");
@@ -953,6 +1008,21 @@
     adminIoHintEl.textContent      = t.adminIoHint;
     adminExportBtn.textContent     = t.adminExport;
     adminImportBtn.textContent     = t.adminImport;
+    /* v5.38.0 — 5 admin-only labels */
+    adminReplTitleEl.textContent   = t.adminReplTitle;
+    adminReplHintEl.textContent    = t.adminReplHint;
+    adminReplRunBtn.textContent    = t.adminReplRun;
+    adminReplClearBtn.textContent  = t.adminReplClear;
+    adminStatsDashTitleEl.textContent = t.adminStatsDashTitle;
+    adminStatsResetBtn.textContent = t.adminStatsDashReset;
+    adminBurnTitleEl.textContent   = t.adminBurnTitle;
+    adminBurnHintEl.textContent    = t.adminBurnHint;
+    adminFilterTitleEl.textContent = t.adminFilterTitle;
+    adminFilterHintEl.textContent  = t.adminFilterHint;
+    adminLockoutTitleEl.textContent= t.adminLockoutTitle;
+    adminLockoutHintEl.textContent = t.adminLockoutHint;
+    adminLockoutFireBtn.textContent= t.adminLockoutFire;
+    refreshAdminToggleLabels();
     /* Re-render dynamic admin content if panel is open / unlocked */
     if (adminUnlocked) {
       renderAdminPanelContent();
@@ -3147,6 +3217,162 @@
     };
     reader.readAsText(file);
   });
+
+  /* ============================================================
+     v5.38.0 — 5 admin-only features
+     ============================================================ */
+
+  /* ── 1. JS-REPL (eval) ── */
+  adminReplRunBtn.addEventListener("click", function () {
+    var code = adminReplInputEl.value || "";
+    if (!code.trim()) return;
+    try {
+      /* new Function so it runs in global-ish scope without lexical closures */
+      var result = (new Function("return (" + code + ")"))();
+      adminReplOutputEl.textContent = typeof result === "object"
+        ? JSON.stringify(result, null, 2)
+        : String(result);
+      adminReplOutputEl.style.color = "";
+      playUiSound("confirm");
+    } catch (e1) {
+      /* Try as statements rather than expression */
+      try {
+        var stmtResult = (new Function(code))();
+        adminReplOutputEl.textContent = stmtResult === undefined ? "(ok)" : String(stmtResult);
+        adminReplOutputEl.style.color = "";
+        playUiSound("confirm");
+      } catch (e2) {
+        adminReplOutputEl.textContent = "❌ " + (e2.message || e1.message || "error");
+        adminReplOutputEl.style.color = "#ff7a85";
+        playUiSound("fail");
+      }
+    }
+  });
+  adminReplClearBtn.addEventListener("click", function () {
+    adminReplInputEl.value = "";
+    adminReplOutputEl.textContent = "";
+  });
+
+  /* ── 2. Session analytics ── */
+  /* Increment visit count on init */
+  var visitsBundle = { count: 0, first: 0, last: 0 };
+  try {
+    var savedVisits = localStorage.getItem("bananafont:visits");
+    if (savedVisits) {
+      var pv = JSON.parse(savedVisits);
+      if (pv && typeof pv === "object") {
+        visitsBundle.count = pv.count || 0;
+        visitsBundle.first = pv.first || 0;
+        visitsBundle.last  = pv.last  || 0;
+      }
+    }
+  } catch (e) {}
+  var sessionStartedAt = Date.now();
+  visitsBundle.count += 1;
+  if (!visitsBundle.first) visitsBundle.first = sessionStartedAt;
+  visitsBundle.last = sessionStartedAt;
+  try { localStorage.setItem("bananafont:visits", JSON.stringify(visitsBundle)); } catch (e) {}
+
+  function renderAdminStatsDash() {
+    var rows = [
+      ["Всего открытий", String(visitsBundle.count)],
+      ["Первый визит", visitsBundle.first ? new Date(visitsBundle.first).toLocaleString() : "—"],
+      ["Сессия началась", new Date(sessionStartedAt).toLocaleTimeString()],
+      ["Длительность сессии", Math.floor((Date.now() - sessionStartedAt) / 1000) + " сек"],
+      ["Viewport", window.innerWidth + " × " + window.innerHeight],
+      ["Screen", screen.width + " × " + screen.height + " @" + (window.devicePixelRatio || 1) + "x"],
+      ["User-Agent", (navigator.userAgent || "").slice(0, 50) + "…"],
+      ["Online", navigator.onLine ? "✓" : "✗"]
+    ];
+    adminStatsDashEl.innerHTML = "";
+    rows.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "admin-stat-row";
+      var lbl = document.createElement("span");
+      lbl.className = "admin-stat-label";
+      lbl.textContent = row[0];
+      var val = document.createElement("span");
+      val.className = "admin-stat-value";
+      val.textContent = row[1];
+      div.appendChild(lbl); div.appendChild(val);
+      adminStatsDashEl.appendChild(div);
+    });
+  }
+  adminStatsResetBtn.addEventListener("click", function () {
+    if (!confirm("Reset visit stats?")) return;
+    visitsBundle = { count: 0, first: 0, last: 0 };
+    try { localStorage.removeItem("bananafont:visits"); } catch (e) {}
+    sessionStartedAt = Date.now();
+    renderAdminStatsDash();
+    playUiSound("success");
+  });
+
+  /* ── 3. Burn-in: auto-cycle themes ── */
+  var burnInIntervalId = null;
+  function startBurnIn() {
+    if (burnInIntervalId) return;
+    var idx = 0;
+    burnInIntervalId = setInterval(function () {
+      idx = (idx + 1) % VALID_THEMES.length;
+      setTheme(VALID_THEMES[idx]);
+    }, 2000);
+    refreshAdminToggleLabels();
+  }
+  function stopBurnIn() {
+    if (burnInIntervalId) clearInterval(burnInIntervalId);
+    burnInIntervalId = null;
+    refreshAdminToggleLabels();
+  }
+  adminBurnToggleBtn.addEventListener("click", function () {
+    if (burnInIntervalId) stopBurnIn();
+    else                  startBurnIn();
+    playUiSound("click");
+  });
+
+  /* ── 4. Swear filter override ── */
+  var swearFilterDisabled = false;
+  try {
+    if (localStorage.getItem("bananafont:swearOverride") === "1") swearFilterDisabled = true;
+  } catch (e) {}
+  /* Patch containsSwear to honor the override */
+  var _origContainsSwear = containsSwear;
+  containsSwear = function (text) {
+    if (swearFilterDisabled) return false;
+    return _origContainsSwear(text);
+  };
+  adminFilterToggleBtn.addEventListener("click", function () {
+    swearFilterDisabled = !swearFilterDisabled;
+    try {
+      localStorage.setItem("bananafont:swearOverride", swearFilterDisabled ? "1" : "0");
+    } catch (e) {}
+    refreshAdminToggleLabels();
+    playUiSound(swearFilterDisabled ? "fail" : "confirm");
+  });
+
+  /* ── 5. Trigger red lockout (UI test) ── */
+  adminLockoutFireBtn.addEventListener("click", function () {
+    closeAdminPanel();
+    setTimeout(function () {
+      lockPageInRed();
+    }, 200);
+  });
+
+  /* Shared label refresher for the 3 toggle buttons */
+  function refreshAdminToggleLabels() {
+    var t = TEXT[currentLang];
+    adminBurnToggleBtn.textContent   = burnInIntervalId ? t.adminBurnStop : t.adminBurnStart;
+    adminBurnToggleBtn.classList.toggle("settings-btn-danger", !!burnInIntervalId);
+    adminFilterToggleBtn.textContent = swearFilterDisabled ? t.adminFilterOff : t.adminFilterOn;
+    adminFilterToggleBtn.classList.toggle("settings-btn-danger", swearFilterDisabled);
+  }
+
+  /* Wire renderAdminStatsDash into the panel-open flow */
+  var _origRenderPanelContent = renderAdminPanelContent;
+  renderAdminPanelContent = function () {
+    _origRenderPanelContent();
+    renderAdminStatsDash();
+    refreshAdminToggleLabels();
+  };
 
   /* Restore admin badge on load if previously unlocked */
   if (adminUnlocked) adminBadgeEl.removeAttribute("hidden");

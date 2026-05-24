@@ -684,7 +684,7 @@
       <div id="secret-result" class="secret-result"></div>
     </section>
 
-    <footer id="footer"></footer>
+    <div id="footer-wrap"><footer id="footer"></footer></div>
 
     <!-- NOTE: The school-theme logo SVG used to live here, but the user
          asked to remove it after several failed attempts to reproduce
@@ -768,6 +768,50 @@
           <button type="button" id="admin-export" class="settings-btn silent-btn"></button>
           <button type="button" id="admin-import" class="settings-btn silent-btn"></button>
           <input type="file" id="admin-import-file" accept="application/json" hidden />
+        </div>
+      </div>
+
+      <!-- v5.38.0 — 5 admin-only sections -->
+      <div class="admin-section">
+        <h3 id="admin-repl-title"></h3>
+        <p class="admin-hint" id="admin-repl-hint"></p>
+        <textarea id="admin-repl-input" class="admin-repl-input" placeholder="document.title; // или setTheme('owner')"></textarea>
+        <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
+          <button type="button" id="admin-repl-run" class="settings-btn silent-btn"></button>
+          <button type="button" id="admin-repl-clear" class="settings-btn silent-btn"></button>
+        </div>
+        <pre id="admin-repl-output" class="admin-repl-output"></pre>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-stats-dash-title"></h3>
+        <div id="admin-stats-dash" class="admin-stats"></div>
+        <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
+          <button type="button" id="admin-stats-reset" class="settings-btn settings-btn-danger silent-btn"></button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-burn-title"></h3>
+        <p class="admin-hint" id="admin-burn-hint"></p>
+        <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
+          <button type="button" id="admin-burn-toggle" class="settings-btn silent-btn"></button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-filter-title"></h3>
+        <p class="admin-hint" id="admin-filter-hint"></p>
+        <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
+          <button type="button" id="admin-filter-toggle" class="settings-btn silent-btn"></button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-lockout-title"></h3>
+        <p class="admin-hint" id="admin-lockout-hint"></p>
+        <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
+          <button type="button" id="admin-lockout-fire" class="settings-btn settings-btn-danger silent-btn"></button>
         </div>
       </div>
 

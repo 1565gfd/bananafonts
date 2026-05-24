@@ -312,42 +312,43 @@
   --nf-code-gradient: linear-gradient(180deg, #ffaa55 0%, #ffd9a0 100%);
 }
 
-/* ──────── Black-Orange theme (v5.19.0) — pure black + neon orange.
-            5th main-bar theme button. ──────── */
+/* ──────── Black-Raspberry theme (v5.19.0 / v5.37.1 hue −60°: orange → raspberry).
+            data-theme value stays "black-orange" for backward compat with
+            localStorage; only the visual palette + label change. ──────── */
 [data-theme="black-orange"] {
   color-scheme: dark;
   --bg-gradient:
-    radial-gradient(circle at 50% 0%, rgba(255, 107, 0, 0.18) 0%, transparent 55%),
-    radial-gradient(circle at 80% 80%, rgba(255, 80, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 0%, rgba(255, 0, 102, 0.18) 0%, transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255, 0, 90, 0.1) 0%, transparent 50%),
     #000000;
-  --text: #fff5e6;
-  --text-dim: rgba(255, 245, 230, 0.5);
-  --text-soft: rgba(255, 245, 230, 0.88);
+  --text: #ffe6f0;
+  --text-dim: rgba(255, 230, 240, 0.5);
+  --text-soft: rgba(255, 230, 240, 0.88);
   --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  --glass-bg: rgba(255, 107, 0, 0.08);
-  --glass-bg-hover: rgba(255, 107, 0, 0.14);
-  --glass-border: rgba(255, 107, 0, 0.45);
-  --glass-border-soft: rgba(255, 107, 0, 0.25);
-  --glass-inset: rgba(255, 107, 0, 0.3);
-  --glass-inset-soft: rgba(255, 107, 0, 0.15);
-  --output-bg: rgba(20, 10, 0, 0.85);
-  --output-border: rgba(255, 107, 0, 0.35);
+  --glass-bg: rgba(255, 0, 102, 0.08);
+  --glass-bg-hover: rgba(255, 0, 102, 0.14);
+  --glass-border: rgba(255, 0, 102, 0.45);
+  --glass-border-soft: rgba(255, 0, 102, 0.25);
+  --glass-inset: rgba(255, 0, 102, 0.3);
+  --glass-inset-soft: rgba(255, 0, 102, 0.15);
+  --output-bg: rgba(20, 0, 10, 0.85);
+  --output-border: rgba(255, 0, 102, 0.35);
   --output-inset-bottom: rgba(0, 0, 0, 0.6);
-  --accent: #ff6b00;
-  --accent-bg: rgba(255, 107, 0, 0.92);
-  --accent-border: rgba(255, 140, 60, 1);
-  --accent-glow: rgba(255, 107, 0, 0.6);
-  --copy-bg: rgba(255, 107, 0, 0.88);
-  --copy-bg-hover: rgba(255, 130, 30, 0.96);
-  --copy-border: rgba(255, 140, 60, 1);
-  --copy-border-hover: rgba(255, 160, 90, 1);
+  --accent: #ff0066;
+  --accent-bg: rgba(255, 0, 102, 0.92);
+  --accent-border: rgba(255, 60, 140, 1);
+  --accent-glow: rgba(255, 0, 102, 0.6);
+  --copy-bg: rgba(255, 0, 102, 0.88);
+  --copy-bg-hover: rgba(255, 30, 130, 0.96);
+  --copy-border: rgba(255, 60, 140, 1);
+  --copy-border-hover: rgba(255, 90, 160, 1);
   --copied-bg: rgba(80, 220, 130, 0.7);
   --copied-border: rgba(120, 240, 160, 0.9);
   --copied-glow: rgba(80, 220, 130, 0.5);
-  --link: #ff8a3d;
+  --link: #ff3d8a;
   --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.7);
-  --nf-bg: linear-gradient(160deg, #000 0%, #1a0a00 100%);
-  --nf-code-gradient: linear-gradient(180deg, #ff6b00 0%, #ffaa44 100%);
+  --nf-bg: linear-gradient(160deg, #000 0%, #1a000a 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ff0066 0%, #ff44aa 100%);
 }
 
 /* ──────── Neon Green (v5.19.0) — extras, unlocked in Settings ──────── */
@@ -1130,12 +1131,12 @@ html.theme-transition *::after {
   animation: swatchSpin 6s linear infinite;
 }
 
-/* v5.19.0: Black-Orange swatch — radial orange glow on pure black */
+/* v5.19.0 / v5.37.1 — Black-Raspberry swatch (hue −60° from orange) */
 .theme-switch button[data-theme-btn="black-orange"]::before {
   background:
-    radial-gradient(circle at 50% 30%, #ff6b00 0%, transparent 60%),
+    radial-gradient(circle at 50% 30%, #ff0066 0%, transparent 60%),
     #000000;
-  border-color: rgba(255, 107, 0, 0.6);
+  border-color: rgba(255, 0, 102, 0.6);
 }
 
 @keyframes swatchSpin {
@@ -1331,11 +1332,27 @@ html.theme-transition *::after {
   z-index: 1;
 }
 
-.tool-section h3 {
-  margin: 0 0 10px;
-  font-size: 16px;
-  font-weight: 600;
+/* v5.37.0 — Section header with left accent bar */
+.tool-section h3,
+.time-section h3 {
+  position: relative;
+  margin: 0 0 14px;
+  padding-left: 12px;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.tool-section h3::before,
+.time-section h3::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 .home-input {
@@ -1368,31 +1385,57 @@ html.theme-transition *::after {
   background: var(--glass-bg-hover);
 }
 
+/* v5.37.0 — Home stats as glass mini-cards */
 .text-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  margin-top: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .text-stats > span {
-  padding: 10px 12px;
-  border-radius: 12px;
+  position: relative;
+  padding: 16px 12px 12px;
+  border-radius: 18px;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border-soft);
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  -webkit-backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
   text-align: center;
-  font-size: 13px;
-  color: var(--text-soft);
-  line-height: 1.3;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.08),
+    inset 0 1.2px 0.5px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
 }
+.text-stats > span::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 14%; right: 14%; height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.32) 0%, transparent 100%);
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+.text-stats > span > * { position: relative; z-index: 1; }
 
 .text-stats strong {
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   color: var(--accent);
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
 .tool-actions {
@@ -2105,43 +2148,60 @@ html:not(.page-noir) {
    Calculator tab — basic / geometry / units
    ============================================================ */
 
+/* v5.37.0 — Calc modes as glass pill nav (like tabs) */
 .calc-modes {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 14px;
+  display: inline-flex;
+  gap: 4px;
+  margin: 0 auto 16px;
+  padding: 5px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  border-radius: 100px;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1.2px 0.5px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
   flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
 }
 
 .calc-mode-btn {
-  flex: 1;
-  min-width: 80px;
-  min-height: 40px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
+  flex: 1 1 auto;
+  min-width: 70px;
+  min-height: 34px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
   color: var(--text-soft);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s;
+  transition: background 0.18s, color 0.2s, transform 0.1s, box-shadow 0.2s;
   -webkit-user-select: none;
   user-select: none;
 }
 
-.calc-mode-btn:hover {
+.calc-mode-btn:hover:not(.active) {
   background: var(--glass-bg-hover);
   color: var(--text);
 }
 
 .calc-mode-btn.active {
   background: var(--accent-bg);
-  border-color: var(--accent-border);
   color: #ffffff;
+  box-shadow:
+    0 3px 10px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
 }
 
 .calc-mode-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .calc-panel {
@@ -2152,23 +2212,32 @@ html:not(.page-noir) {
   display: none;
 }
 
+/* v5.37.0 — Calculator display as recessed LCD-style block */
 .calc-display {
-  background: var(--output-bg);
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.05) 100%),
+    var(--output-bg);
   border: 1px solid var(--output-border);
-  border-radius: 14px;
-  padding: 18px 22px;
-  margin-bottom: 14px;
-  font-size: 36px;
+  border-radius: 22px;
+  padding: 24px 26px;
+  margin-bottom: 16px;
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 44px;
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
-  min-height: 76px;
+  letter-spacing: -0.5px;
+  min-height: 90px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   word-break: break-all;
   color: var(--text);
-  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.25),
+    inset 0 -1px 0 var(--glass-inset-soft);
   overflow-x: auto;
 }
 
@@ -2574,58 +2643,92 @@ html:not(.page-noir) {
   gap: 12px;
 }
 
+/* v5.37.0 — Clock cards: LCD-style with subtle inner shadow, bigger time */
 .clock-card {
-  background: var(--output-bg);
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, transparent 50%),
+    var(--output-bg);
   border: 1px solid var(--output-border);
-  border-radius: 12px;
-  padding: 14px 12px;
+  border-radius: 20px;
+  padding: 18px 14px 14px;
   text-align: center;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 0 var(--glass-inset-soft);
 }
+.clock-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%; height: 28%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  filter: blur(5px);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.clock-card > * { position: relative; }
 .clock-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--accent-border);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 0 var(--glass-inset-soft),
+    0 6px 18px var(--accent-glow);
 }
 
 .clock-name {
-  font-size: 13px;
-  color: var(--text-soft);
-  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
 }
 
 .clock-time {
   font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
   color: var(--accent);
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 14px var(--accent-glow);
+  line-height: 1.05;
 }
 
 .clock-date {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-dim);
-  margin-top: 4px;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Stopwatch */
+/* v5.37.0 — Stopwatch + Timer: recessed LCD-style display with glow */
 .stopwatch-display,
 .timer-display {
+  position: relative;
   font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
-  font-size: 44px;
-  font-weight: 700;
+  font-size: 52px;
+  font-weight: 800;
   color: var(--accent);
   letter-spacing: 2px;
   text-align: center;
-  padding: 12px 0;
+  padding: 18px 0;
   font-variant-numeric: tabular-nums;
-  background: var(--output-bg);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.05) 100%),
+    var(--output-bg);
   border: 1px solid var(--output-border);
-  border-radius: 12px;
-  margin-bottom: 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 18px var(--accent-glow);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.28),
+    inset 0 -1px 0 var(--glass-inset-soft);
+  overflow: hidden;
 }
 
 .time-controls {
@@ -3146,16 +3249,19 @@ textarea:focus {
     0 0 0 3px var(--accent-glow),
     inset 0 1px 0 var(--glass-inset);
 }
+/* v5.37.0 — Hero preview with stronger recessed LCD-feel */
 .fonts-hero-preview {
-  min-height: 96px;
-  padding: 18px 20px;
-  border-radius: 18px;
+  position: relative;
+  min-height: 110px;
+  padding: 22px 24px;
+  border-radius: 22px;
   background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, transparent 50%),
     linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%),
     var(--output-bg);
   border: 1px solid var(--output-border);
   color: var(--text);
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 500;
   word-break: break-word;
   text-align: center;
@@ -3164,8 +3270,8 @@ textarea:focus {
   justify-content: center;
   margin-bottom: 14px;
   box-shadow:
-    inset 0 1px 0 var(--glass-inset-soft),
-    inset 0 -2px 3px var(--output-inset-bottom);
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 0 var(--glass-inset-soft);
   transition: background 0.25s, color 0.25s, border-color 0.2s;
 }
 .fonts-hero-actions {
@@ -3387,15 +3493,37 @@ textarea:focus {
    Footer
    ============================================================ */
 
+/* v5.37.0 — Footer as centered pill */
 footer {
   text-align: center;
-  font-size: 22px;
-  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  padding: 10px 20px;
+  margin: 20px auto 4px;
+  display: inline-flex;
+  border-radius: 100px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  letter-spacing: 0.3px;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 var(--glass-inset-soft);
+}
+
+/* Footer is inline-flex; wrap in a flex container to center horizontally */
+#footer-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 footer a {
   color: var(--link);
   text-decoration: none;
+  font-weight: 600;
 }
 
 footer a:hover {
@@ -3735,17 +3863,17 @@ footer a:hover {
   [data-theme="school"] .theme-switch button:not(.active) {
     background: rgba(25, 55, 90, 0.92);
   }
-  /* ── v5.19.0: mobile fallbacks for new themes (backdrop-filter off) ── */
+  /* ── v5.19.0 / v5.37.1 — Black-Raspberry mobile fallback (raspberry tint) ── */
   [data-theme="black-orange"] .app,
   [data-theme="black-orange"] textarea,
   [data-theme="black-orange"] .not-found-card {
-    background: rgba(15, 8, 0, 0.96);
+    background: rgba(15, 0, 8, 0.96);
   }
   [data-theme="black-orange"] .output { background: rgba(0, 0, 0, 0.95); }
   [data-theme="black-orange"] .fonts button:not(.active),
   [data-theme="black-orange"] .lang-switch button:not(.active),
   [data-theme="black-orange"] .theme-switch button:not(.active) {
-    background: rgba(40, 22, 5, 0.92);
+    background: rgba(40, 5, 22, 0.92);
   }
   [data-theme="neon-green"] .app,
   [data-theme="neon-green"] textarea,
@@ -4048,23 +4176,27 @@ footer a:hover {
 }
 
 /* --- UI polish for Secret-codes tab (v5.19.0) --- */
-#tab-secret .tool-section {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border-soft);
-  border-radius: 14px;
-  padding: 18px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+/* v5.37.0 — Secret tab hero look */
+#tab-secret .home-intro {
+  font-size: 14px;
+  margin: 0 auto 18px;
+  max-width: 480px;
 }
 #tab-secret .secret-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: stretch;
+  max-width: 540px;
+  margin: 0 auto;
 }
 #tab-secret #secret-input {
   flex: 1;
-  font-size: 16px;
-  letter-spacing: 1px;
+  height: 50px;
+  font-size: 17px;
+  letter-spacing: 2px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  text-align: center;
+  text-transform: uppercase;
 }
 #tab-secret #secret-input:focus {
   border-color: var(--accent);
@@ -4077,6 +4209,8 @@ footer a:hover {
   border-color: var(--accent-border);
   font-weight: 700;
   min-width: 110px;
+  padding: 0 24px;
+  font-size: 15px;
 }
 
 /* --- UI polish for Fonts tab (v5.19.0) ---
@@ -4287,6 +4421,43 @@ footer a:hover {
   font-size: 13px;
   color: #ffe135;
 }
+
+/* v5.38.0 — JS-REPL admin section */
+.admin-repl-input {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.4);
+  color: #c8f0ff;
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  outline: none;
+  resize: vertical;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.admin-repl-input:focus {
+  border-color: rgba(255, 225, 53, 0.55);
+  box-shadow: 0 0 0 2px rgba(255, 225, 53, 0.25);
+}
+.admin-repl-output {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: #b0e0a0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 180px;
+  overflow-y: auto;
+  min-height: 18px;
+}
+.admin-repl-output:empty { display: none; }
 
 /* v5.30.0: admin emoji row */
 .admin-emoji-row {
