@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.31.5";
+  var VERSION = "v5.31.6";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -4182,6 +4182,13 @@
     btn.addEventListener("click", check);
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") { e.preventDefault(); check(); }
+    });
+    /* v5.31.6: auto-accept the moment the user finishes typing SORRY or
+       ПРОСТИ — no submit-click or Enter required. Saves precious time
+       in the 5-second window. */
+    input.addEventListener("input", function () {
+      var v = (input.value || "").trim().toUpperCase();
+      if (v === "SORRY" || v === "ПРОСТИ") check();
     });
 
     inner.appendChild(title);
