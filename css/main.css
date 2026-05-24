@@ -5,6 +5,7 @@
 
 :root,
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg-gradient:
     radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.55) 0%, transparent 48%),
     radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.42) 0%, transparent 50%),
@@ -52,6 +53,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg-gradient:
     radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.22) 0%, transparent 48%),
     radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
@@ -99,6 +101,7 @@
 }
 
 [data-theme="night"] {
+  color-scheme: dark;
   --bg-gradient:
     radial-gradient(circle at 50% 50%, rgba(255, 140, 60, 0.06) 0%, transparent 65%),
     #000000;
@@ -893,6 +896,23 @@ html.theme-transition *::after {
   background: var(--output-bg);
   color: var(--accent);
   font-weight: 700;
+}
+
+/* Native <option> elements can't be styled with var()/glass — they use
+   OS-native dropdown. Set explicit per-theme background + color so the
+   text stays readable in all 3 themes. */
+.calc-select option {
+  background: #1a1f3a;
+  color: #ffffff;
+  padding: 6px 10px;
+}
+[data-theme="light"] .calc-select option {
+  background: #ffffff;
+  color: #1a1f3a;
+}
+[data-theme="night"] .calc-select option {
+  background: #0d0a05;
+  color: #f5ead0;
 }
 
 .calc-inputs {
