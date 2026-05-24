@@ -480,6 +480,22 @@ html.theme-transition *::after {
   font-size: 16px;
 }
 
+.settings-size-sample {
+  margin-top: 12px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  color: var(--text);
+  text-align: center;
+  word-break: break-word;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: font-size 0.12s ease, background 0.25s, border-color 0.25s, color 0.25s;
+}
+
 .settings-hint {
   color: var(--text-dim);
   font-size: 13px;

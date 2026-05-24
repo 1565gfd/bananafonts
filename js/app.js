@@ -119,7 +119,7 @@
     { label: "Mono",         kind: "unicode", transform: "mono" }
   ];
 
-  var VERSION = "v4.2.2";
+  var VERSION = "v4.2.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -134,6 +134,7 @@
   var tabContents  = document.querySelectorAll(".tab-content");
   var sizeSlider   = document.getElementById("preview-size");
   var sizeValueEl  = document.getElementById("settings-size-value");
+  var sizeSampleEl = document.getElementById("settings-size-sample");
   var resetBtn     = document.getElementById("reset-btn");
   /* Settings tab text targets — updated on language change */
   var settingsTitleEl   = document.getElementById("settings-title");
@@ -406,6 +407,7 @@
   function applyPreviewSize(px) {
     outputEl.style.fontSize = px + "px";
     sizeValueEl.textContent = px + "px";
+    if (sizeSampleEl) sizeSampleEl.style.fontSize = px + "px";
   }
   var savedSize = 30;
   try {
