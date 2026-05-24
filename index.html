@@ -563,6 +563,48 @@
         <ul id="admin-codes-list" class="admin-codes-list"></ul>
       </div>
 
+      <!-- v5.30.0: sound test panel -->
+      <div class="admin-section">
+        <h3 id="admin-sounds-title"></h3>
+        <p class="admin-hint" id="admin-sounds-hint"></p>
+        <div id="admin-sounds-grid" class="admin-themes-grid"></div>
+      </div>
+
+      <!-- v5.30.0: easter eggs trigger -->
+      <div class="admin-section">
+        <h3 id="admin-eggs-title"></h3>
+        <p class="admin-hint" id="admin-eggs-hint"></p>
+        <div id="admin-eggs-grid" class="admin-themes-grid"></div>
+      </div>
+
+      <!-- v5.30.0: custom emoji rain -->
+      <div class="admin-section">
+        <h3 id="admin-emoji-title"></h3>
+        <div class="admin-emoji-row">
+          <input type="text" id="admin-emoji-input" class="calc-input" value="🍌" maxlength="4" />
+          <input type="number" id="admin-emoji-count" class="calc-input" value="30" min="1" max="200" />
+          <button type="button" id="admin-emoji-go" class="settings-btn silent-btn"></button>
+        </div>
+      </div>
+
+      <!-- v5.30.0: localStorage inspector -->
+      <div class="admin-section">
+        <h3 id="admin-storage-title"></h3>
+        <p class="admin-hint" id="admin-storage-hint"></p>
+        <table id="admin-storage-table" class="admin-storage-table"></table>
+      </div>
+
+      <!-- v5.30.0: export/import settings -->
+      <div class="admin-section">
+        <h3 id="admin-io-title"></h3>
+        <p class="admin-hint" id="admin-io-hint"></p>
+        <div class="admin-io-row">
+          <button type="button" id="admin-export" class="settings-btn silent-btn"></button>
+          <button type="button" id="admin-import" class="settings-btn silent-btn"></button>
+          <input type="file" id="admin-import-file" accept="application/json" hidden />
+        </div>
+      </div>
+
       <div class="admin-actions">
         <button type="button" id="admin-clear-storage" class="settings-btn settings-btn-danger silent-btn"></button>
         <button type="button" id="admin-logout" class="settings-btn silent-btn"></button>

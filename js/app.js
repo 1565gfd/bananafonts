@@ -38,6 +38,11 @@
       themeSovietPodyezd: "Советский подъезд",
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Тема владельца разблокирована 🍌👑",
+      secret1488: "Так делать нельзя❌",
+      apologyTitle: "Так делать нельзя",
+      apologyHint: "Чтобы вернуть сайт — напиши слово прощения:",
+      apologyPlaceholder: "SORRY  или  ПРОСТИ",
+      apologyBtn: "Извиниться",
       adminTitle: "👑 Админ-панель",
       adminGreeting: "Привет, 1565gfd. Здесь все темы, все коды и быстрые действия.",
       adminStatsTitle: "Статистика",
@@ -55,6 +60,22 @@
       adminClearConfirm: "Удалить ВСЕ записи bananafont:* из localStorage?",
       adminLogout: "Выйти из админа",
       adminActivated: "👑 Админ-режим активирован",
+      adminSoundsTitle: "Тест звуков",
+      adminSoundsHint: "Клик по кнопке проигрывает соответствующий звук.",
+      adminEggsTitle: "Эффекты",
+      adminEggsHint: "Запуск любого визуального эффекта одним кликом.",
+      adminEmojiTitle: "Кастомный emoji-дождь",
+      adminEmojiGo: "Запустить",
+      adminStorageTitle: "Инспектор localStorage",
+      adminStorageHint: "Все записи bananafont:* — можно удалить по одной.",
+      adminStorageEmpty: "(пусто)",
+      adminStorageDelete: "✕",
+      adminIoTitle: "Экспорт / Импорт настроек",
+      adminIoHint: "Сохрани все настройки в JSON или восстанови их.",
+      adminExport: "Экспорт в JSON",
+      adminImport: "Импорт из JSON",
+      adminImportSuccess: "Импортировано ✓",
+      adminImportError: "Ошибка чтения файла",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -235,6 +256,11 @@
       themeSovietPodyezd: "Soviet Hallway",
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Owner theme unlocked 🍌👑",
+      secret1488: "You can't do that❌",
+      apologyTitle: "You can't do that",
+      apologyHint: "To get the site back — type a word of apology:",
+      apologyPlaceholder: "SORRY  or  ПРОСТИ",
+      apologyBtn: "Apologize",
       adminTitle: "👑 Admin panel",
       adminGreeting: "Hi, 1565gfd. All themes, all codes, quick actions — right here.",
       adminStatsTitle: "Stats",
@@ -252,6 +278,22 @@
       adminClearConfirm: "Delete ALL bananafont:* entries from localStorage?",
       adminLogout: "Exit admin",
       adminActivated: "👑 Admin mode activated",
+      adminSoundsTitle: "Sound tester",
+      adminSoundsHint: "Click any button to play that sound.",
+      adminEggsTitle: "Effects",
+      adminEggsHint: "Trigger any visual effect in one click.",
+      adminEmojiTitle: "Custom emoji rain",
+      adminEmojiGo: "Rain it",
+      adminStorageTitle: "localStorage inspector",
+      adminStorageHint: "All bananafont:* entries — delete individually.",
+      adminStorageEmpty: "(empty)",
+      adminStorageDelete: "✕",
+      adminIoTitle: "Export / Import settings",
+      adminIoHint: "Save all settings as JSON or restore them.",
+      adminExport: "Export JSON",
+      adminImport: "Import JSON",
+      adminImportSuccess: "Imported ✓",
+      adminImportError: "File read error",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -484,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.29.1";
+  var VERSION = "v5.30.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -558,6 +600,25 @@
   var adminCodesListEl   = document.getElementById("admin-codes-list");
   var adminClearStorageBtn = document.getElementById("admin-clear-storage");
   var adminLogoutBtn     = document.getElementById("admin-logout");
+  /* v5.30.0 — extended admin panel */
+  var adminSoundsTitleEl = document.getElementById("admin-sounds-title");
+  var adminSoundsHintEl  = document.getElementById("admin-sounds-hint");
+  var adminSoundsGridEl  = document.getElementById("admin-sounds-grid");
+  var adminEggsTitleEl   = document.getElementById("admin-eggs-title");
+  var adminEggsHintEl    = document.getElementById("admin-eggs-hint");
+  var adminEggsGridEl    = document.getElementById("admin-eggs-grid");
+  var adminEmojiTitleEl  = document.getElementById("admin-emoji-title");
+  var adminEmojiInputEl  = document.getElementById("admin-emoji-input");
+  var adminEmojiCountEl  = document.getElementById("admin-emoji-count");
+  var adminEmojiGoBtn    = document.getElementById("admin-emoji-go");
+  var adminStorageTitleEl = document.getElementById("admin-storage-title");
+  var adminStorageHintEl  = document.getElementById("admin-storage-hint");
+  var adminStorageTableEl = document.getElementById("admin-storage-table");
+  var adminIoTitleEl     = document.getElementById("admin-io-title");
+  var adminIoHintEl      = document.getElementById("admin-io-hint");
+  var adminExportBtn     = document.getElementById("admin-export");
+  var adminImportBtn     = document.getElementById("admin-import");
+  var adminImportFileEl  = document.getElementById("admin-import-file");
   /* Sound toggle + volume (v5.22.0 / v5.24.0) */
   var settingsSoundLabelEl       = document.getElementById("settings-sound-label");
   var settingsSoundHintEl        = document.getElementById("settings-sound-hint");
@@ -813,6 +874,19 @@
     adminCodesHintEl.textContent   = t.adminCodesHint;
     adminClearStorageBtn.textContent = t.adminClearStorage;
     adminLogoutBtn.textContent     = t.adminLogout;
+    /* v5.30.0: extended admin labels */
+    adminSoundsTitleEl.textContent = t.adminSoundsTitle;
+    adminSoundsHintEl.textContent  = t.adminSoundsHint;
+    adminEggsTitleEl.textContent   = t.adminEggsTitle;
+    adminEggsHintEl.textContent    = t.adminEggsHint;
+    adminEmojiTitleEl.textContent  = t.adminEmojiTitle;
+    adminEmojiGoBtn.textContent    = t.adminEmojiGo;
+    adminStorageTitleEl.textContent = t.adminStorageTitle;
+    adminStorageHintEl.textContent  = t.adminStorageHint;
+    adminIoTitleEl.textContent     = t.adminIoTitle;
+    adminIoHintEl.textContent      = t.adminIoHint;
+    adminExportBtn.textContent     = t.adminExport;
+    adminImportBtn.textContent     = t.adminImport;
     /* Re-render dynamic admin content if panel is open / unlocked */
     if (adminUnlocked) {
       renderAdminPanelContent();
@@ -1898,6 +1972,43 @@
     "BANANAKING": {
       message: function () { return TEXT[currentLang].secretBananaKing; },
       action:  function () { setTheme("owner"); }
+    },
+
+    /* v5.30.1 — anti-troll: 1488 is a well-known white-supremacist numeric
+       code. If anyone tries it on this site, they get a fullscreen "Так
+       нельзя", a fail-sound, and ALL their bananafont:* localStorage gets
+       wiped, then the page reloads with defaults. No silent accommodation
+       of hate symbols. */
+    "1488": {
+      message: function () { return TEXT[currentLang].secret1488; },
+      sound:   "fail",
+      action:  function () {
+        /* Stage 1 (0ms): big fullscreen "Так нельзя" */
+        showBigText("Так нельзя", "#ff3344");
+        /* Stage 2 (1.4s): the entire screen goes deep red */
+        setTimeout(function () {
+          var red = document.createElement("div");
+          red.className = "page-red-flash";
+          document.body.appendChild(red);
+          requestAnimationFrame(function () {
+            red.classList.add("active");
+          });
+          /* Extra fail sound at the red moment for emphasis */
+          playUiSound("fail");
+        }, 1400);
+        /* Stage 3 (2.8s): wipe ALL bananafont:* localStorage + reload */
+        setTimeout(function () {
+          try {
+            var keys = [];
+            for (var i = 0; i < localStorage.length; i++) {
+              var k = localStorage.key(i);
+              if (k && k.indexOf("bananafont:") === 0) keys.push(k);
+            }
+            keys.forEach(function (k) { localStorage.removeItem(k); });
+          } catch (e) {}
+          location.reload();
+        }, 2800);
+      }
     }
     /* NOTE: an additional gated entry-point exists but is NOT registered
        here. It uses a separate check (see _ax/_ad/_isPrivilegedCode below)
@@ -1991,7 +2102,8 @@
       var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
       showSecretFeedback("", false);
       showSecretMessage(msg);
-      playUiSound("unlock");   /* v5.26.0: magical 4-note arpeggio on reveal */
+      /* v5.30.1: per-code sound override (entry.sound). Default = "unlock". */
+      playUiSound(entry.sound || "unlock");
       if (typeof entry.action === "function") {
         try { entry.action(); } catch (e) {}
       }
@@ -2729,6 +2841,96 @@
       li.title = "Click to fill the secret-code input";
       adminCodesListEl.appendChild(li);
     });
+
+    /* ── v5.30.0: Sound tester ── */
+    var SOUND_NAMES = ["click","tab","tick","select","success","error","pop","whoosh","fail","confirm","unlock","page"];
+    adminSoundsGridEl.innerHTML = "";
+    SOUND_NAMES.forEach(function (name) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "admin-theme-btn silent-btn";
+      btn.textContent = name;
+      btn.addEventListener("click", function () { playUiSound(name); });
+      adminSoundsGridEl.appendChild(btn);
+    });
+
+    /* ── v5.30.0: Easter eggs ── */
+    var EGGS = [
+      ["🍌 banana", function () { bananaRain(30); }],
+      ["❤️ heart",  function () { emojiRain("❤️", 30); }],
+      ["🔍 lupa",   function () { emojiRain("🔍", 30); }],
+      ["✨ chime",  function () { playSingleChime(); }],
+      ["💚 Matrix", function () { matrixRain(); }],
+      ["🔄 flip",   function () { flipPage(); }],
+      ["🌍 shake",  function () { shakePage(); }],
+      ["🎬 noir",   function () { noirPage(); }],
+      ["🌈 sweep",  function () { triggerRainbow(); }],
+      ["🔢 67",     function () { showBigNumber(67, "#1e88ff"); }]
+    ];
+    adminEggsGridEl.innerHTML = "";
+    EGGS.forEach(function (pair) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "admin-theme-btn silent-btn";
+      btn.textContent = pair[0];
+      btn.addEventListener("click", pair[1]);
+      adminEggsGridEl.appendChild(btn);
+    });
+
+    /* ── v5.30.0: localStorage inspector ── */
+    renderAdminStorage();
+  }
+
+  function renderAdminStorage() {
+    var t = TEXT[currentLang];
+    adminStorageTableEl.innerHTML = "";
+    var keys = [];
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("bananafont:") === 0) keys.push(k);
+      }
+    } catch (e) {}
+    keys.sort();
+    if (!keys.length) {
+      var emptyRow = document.createElement("tr");
+      var emptyCell = document.createElement("td");
+      emptyCell.colSpan = 3;
+      emptyCell.className = "admin-storage-empty";
+      emptyCell.textContent = t.adminStorageEmpty;
+      emptyRow.appendChild(emptyCell);
+      adminStorageTableEl.appendChild(emptyRow);
+      return;
+    }
+    keys.forEach(function (key) {
+      var val = "";
+      try { val = localStorage.getItem(key) || ""; } catch (e) {}
+      var tr = document.createElement("tr");
+      var tdKey = document.createElement("td");
+      tdKey.className = "admin-storage-key";
+      tdKey.textContent = key.replace(/^bananafont:/, "");
+      var tdVal = document.createElement("td");
+      tdVal.className = "admin-storage-value";
+      tdVal.textContent = val.length > 60 ? val.slice(0, 60) + "…" : val;
+      tdVal.title = val;
+      var tdAct = document.createElement("td");
+      tdAct.className = "admin-storage-action";
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "admin-storage-del silent-btn";
+      delBtn.textContent = t.adminStorageDelete;
+      delBtn.title = "Удалить ключ";
+      delBtn.addEventListener("click", function () {
+        try { localStorage.removeItem(key); } catch (e) {}
+        playUiSound("click");
+        renderAdminStorage();
+      });
+      tdAct.appendChild(delBtn);
+      tr.appendChild(tdKey);
+      tr.appendChild(tdVal);
+      tr.appendChild(tdAct);
+      adminStorageTableEl.appendChild(tr);
+    });
   }
 
   /* THEME_LABEL_KEY_MAP — copy of the inner-applyLang map, accessible
@@ -2768,6 +2970,69 @@
     if (e.key === "Escape" && !adminPanelEl.hasAttribute("hidden")) {
       closeAdminPanel();
     }
+  });
+
+  /* ── v5.30.0 wiring for new admin tools ── */
+  adminEmojiGoBtn.addEventListener("click", function () {
+    var emoji = (adminEmojiInputEl.value || "🍌").slice(0, 4);
+    var count = parseInt(adminEmojiCountEl.value, 10);
+    if (isNaN(count) || count < 1) count = 30;
+    if (count > 200) count = 200;
+    emojiRain(emoji, count);
+  });
+  adminExportBtn.addEventListener("click", function () {
+    try {
+      var bundle = {};
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("bananafont:") === 0) {
+          bundle[k] = localStorage.getItem(k);
+        }
+      }
+      var blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "bananafont-settings-" + new Date().toISOString().slice(0, 10) + ".json";
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      playUiSound("success");
+    } catch (e) {}
+  });
+  adminImportBtn.addEventListener("click", function () { adminImportFileEl.click(); });
+  adminImportFileEl.addEventListener("change", function () {
+    var file = adminImportFileEl.files && adminImportFileEl.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        var data = JSON.parse(e.target.result);
+        var keys = Object.keys(data);
+        keys.forEach(function (k) {
+          if (k.indexOf("bananafont:") === 0) {
+            localStorage.setItem(k, String(data[k]));
+          }
+        });
+        playUiSound("confirm");
+        /* Re-render + apply on next reload (or partial now) */
+        renderAdminStorage();
+        /* Re-apply theme if changed */
+        try {
+          var newTheme = localStorage.getItem("bananafont:theme");
+          if (newTheme && VALID_THEMES.indexOf(newTheme) !== -1) setTheme(newTheme);
+        } catch (er) {}
+        alert(TEXT[currentLang].adminImportSuccess);
+      } catch (err) {
+        alert(TEXT[currentLang].adminImportError);
+        playUiSound("fail");
+      }
+      adminImportFileEl.value = "";   /* reset so re-uploading the same file fires change */
+    };
+    reader.onerror = function () {
+      alert(TEXT[currentLang].adminImportError);
+      playUiSound("fail");
+    };
+    reader.readAsText(file);
   });
 
   /* Restore admin badge on load if previously unlocked */
@@ -3654,6 +3919,22 @@
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 3300);
   }
+  /* ── Big text overlay (v5.30.1) ── same idea as showBigNumber but for
+     arbitrary text. Smaller font (clamp 60–160px) so multi-character
+     phrases fit. Reuses the .big-number-overlay backdrop for consistency. */
+  function showBigText(text, color) {
+    var overlay = document.createElement("div");
+    overlay.className = "big-number-overlay";
+    var el = document.createElement("div");
+    el.className = "big-text";
+    el.textContent = String(text);
+    if (color) el.style.color = color;
+    overlay.appendChild(el);
+    document.body.appendChild(overlay);
+    setTimeout(function () {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 3300);
+  }
 
   /* 🎨 Console banner — greet developers who open DevTools */
   try {
@@ -3685,6 +3966,7 @@
     window.shakePage     = shakePage;
     window.noirPage      = noirPage;
     window.showBigNumber = showBigNumber;
+    window.showBigText   = showBigText;
   } catch (e) {}
 
   /* 🍌 Click footer 5 times → banana rain */

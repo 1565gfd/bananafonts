@@ -1568,6 +1568,43 @@ html:not(.page-noir) {
   user-select: none;
   animation: bigNumPop 3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
+/* Page-red flash (v5.30.2) — после "Так нельзя" весь экран заливается
+   глубоким красным перед reset+reload. z-index выше big-text overlay
+   так что красное перекрывает всё, кроме самого reset. */
+.page-red-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #c80000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.6, 1);
+  /* faint subtle red-pulse via inner shadow once active */
+  box-shadow: inset 0 0 200px rgba(120, 0, 0, 0.85);
+}
+.page-red-flash.active {
+  opacity: 0.96;
+}
+
+/* Big-text overlay (v5.30.1) — smaller than .big-number so multi-char
+   phrases like "Так нельзя" fit. Defaults to red for warning context. */
+.big-text {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(60px, 14vw, 160px);
+  font-weight: 900;
+  line-height: 1;
+  color: #ff3344;
+  text-shadow:
+    0 0 60px rgba(255, 50, 60, 0.85),
+    0 0 22px rgba(255, 50, 60, 0.6),
+    0 6px 20px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.01em;
+  text-align: center;
+  padding: 0 20px;
+  -webkit-user-select: none;
+  user-select: none;
+  animation: bigNumPop 3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
 @keyframes bigNumPop {
   0%   { transform: scale(0)    rotate(-30deg); opacity: 0; }
   15%  { transform: scale(1.18) rotate(8deg);   opacity: 1; }
@@ -3482,6 +3519,87 @@ footer a:hover {
   font-family: "Roboto Mono", ui-monospace, monospace;
   font-size: 13px;
   color: #ffe135;
+}
+
+/* v5.30.0: admin emoji row */
+.admin-emoji-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+.admin-emoji-row > input[type="text"] {
+  width: 80px;
+  text-align: center;
+  font-size: 22px;
+}
+.admin-emoji-row > input[type="number"] {
+  width: 80px;
+  text-align: center;
+}
+.admin-emoji-row > button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* v5.30.0: localStorage inspector table */
+.admin-storage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+}
+.admin-storage-table tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.admin-storage-table td {
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+.admin-storage-key {
+  color: #ffe135;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-storage-value {
+  color: rgba(255, 255, 255, 0.75);
+  word-break: break-all;
+}
+.admin-storage-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  padding: 18px 0;
+}
+.admin-storage-action {
+  text-align: right;
+  width: 32px;
+}
+.admin-storage-del {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(255, 90, 90, 0.45);
+  border-radius: 50%;
+  background: rgba(255, 90, 90, 0.12);
+  color: #ff9da3;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.admin-storage-del:hover {
+  background: rgba(255, 90, 90, 0.28);
+}
+
+/* v5.30.0: export/import row */
+.admin-io-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-io-row > button {
+  flex: 1;
+  min-width: 140px;
 }
 
 .admin-actions {
