@@ -3043,6 +3043,18 @@ textarea:focus {
    Font grid
    ============================================================ */
 
+/* v5.36.1 — visually hide element but keep in DOM for accessibility +
+   to avoid breaking JS that references its id. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ============================================================
    v5.36.0 — FONTS TAB FULL REDESIGN
    ============================================================ */

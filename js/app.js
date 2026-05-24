@@ -530,7 +530,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.36.0";
+  var VERSION = "v5.36.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");

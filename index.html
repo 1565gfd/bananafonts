@@ -177,6 +177,10 @@
     </section>
 
     <section id="tab-fonts" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-fonts" hidden>
+      <!-- v5.36.1 hotfix: keep id="title" present (visually hidden) so the
+           existing `titleEl.textContent = t.title` line in applyLang doesn't
+           throw and brick the rest of the locale rendering. -->
+      <h1 id="title" class="visually-hidden"></h1>
       <!-- v5.36.0: full Fonts redesign. Hero preview card на самом верху —
            ввод и результат рядом, копирование одним кликом. Ниже — поиск +
            категории-пилюли. Грид карточек каждый показывает preview "Aa"
