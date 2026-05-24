@@ -171,7 +171,68 @@ body {
   justify-content: center;
   background: var(--bg-gradient);
   background-attachment: fixed;
-  transition: color 0.25s ease;
+  transition: color 0.35s ease, background 0.45s ease;
+}
+
+/* ============================================================
+   Language transition — applied by JS to elements whose text
+   changes when the user clicks RU/EN. Fades them out, then
+   the text is swapped and the class is removed → fades in.
+   ============================================================ */
+#title,
+#input,
+#fonts-legend,
+#copy-btn,
+#footer,
+.theme-switch button {
+  transition: opacity 0.18s ease, background 0.2s, border-color 0.2s,
+    box-shadow 0.2s, color 0.25s, transform 0.12s;
+}
+
+.lang-fading {
+  opacity: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-fading {
+    opacity: 1 !important;
+  }
+}
+
+/* ============================================================
+   Theme transition — applied only while theme is switching.
+   Animates EVERYTHING (background, color, border, shadow) across
+   the whole page. Removed by JS after 450ms so hover/click stay
+   snappy at their normal speeds.
+   ============================================================ */
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background 0.4s ease,
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    fill 0.4s ease,
+    text-shadow 0.4s ease,
+    opacity 0.4s ease,
+    caret-color 0.4s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition,
+  html.theme-transition body,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: none !important;
+  }
+  body {
+    transition: none;
+  }
 }
 
 /* ============================================================

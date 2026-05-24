@@ -101,7 +101,7 @@
     { label: "Mono",         kind: "unicode", transform: "mono" }
   ];
 
-  var VERSION = "v3.2.2";
+  var VERSION = "v3.2.6";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -132,7 +132,22 @@
     return browserLang.indexOf("ru") === 0 ? "ru" : "en";
   }
 
-  function setLang(lang) {
+  /* Elements whose text changes when language switches — fade these. */
+  function getFadeTargets() {
+    var list = [titleEl, inputEl, legendEl, footerEl, copyBtn];
+    for (var i = 0; i < themeButtons.length; i++) list.push(themeButtons[i]);
+    return list;
+  }
+
+  /* Update lang-button active state — instant feedback for the click. */
+  function updateLangButtonsActive(lang) {
+    for (var i = 0; i < langButtons.length; i++) {
+      langButtons[i].classList.toggle("active", langButtons[i].dataset.lang === lang);
+    }
+  }
+
+  /* Actually swap all the text. No animation here. */
+  function applyLang(lang) {
     currentLang = lang;
     document.documentElement.lang = lang;
     try { localStorage.setItem("bananafont:lang", lang); } catch (e) {}
@@ -149,9 +164,6 @@
       t.footerSuffix +
       " · " +
       VERSION;
-    for (var i = 0; i < langButtons.length; i++) {
-      langButtons[i].classList.toggle("active", langButtons[i].dataset.lang === lang);
-    }
     for (var j = 0; j < themeButtons.length; j++) {
       var btn = themeButtons[j];
       var key = btn.dataset.themeBtn;
@@ -162,14 +174,58 @@
     setFont(currentIdx);
   }
 
+  var langFadeTimer = null;
+  var langInitialised = false;
+  var prefersReducedMotion = window.matchMedia
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
+  function setLang(lang) {
+    /* First call on page load: no animation. */
+    if (!langInitialised || prefersReducedMotion) {
+      langInitialised = true;
+      updateLangButtonsActive(lang);
+      applyLang(lang);
+      return;
+    }
+
+    /* Lang button gets active-state immediately for instant feedback. */
+    updateLangButtonsActive(lang);
+
+    /* Fade out → swap text → fade in. */
+    var targets = getFadeTargets();
+    for (var i = 0; i < targets.length; i++) {
+      targets[i].classList.add("lang-fading");
+    }
+
+    if (langFadeTimer) clearTimeout(langFadeTimer);
+    langFadeTimer = setTimeout(function () {
+      applyLang(lang);
+      /* Re-fetch targets — renderFonts may have replaced children. */
+      var afterTargets = getFadeTargets();
+      for (var k = 0; k < afterTargets.length; k++) {
+        afterTargets[k].classList.remove("lang-fading");
+      }
+      langFadeTimer = null;
+    }, 180);
+  }
+
   /* --------- theme --------- */
+  var themeTransitionTimer = null;
   function setTheme(theme) {
+    var root = document.documentElement;
+    root.classList.add("theme-transition");
     currentTheme = theme;
-    document.documentElement.dataset.theme = theme;
+    root.dataset.theme = theme;
     try { localStorage.setItem("bananafont:theme", theme); } catch (e) {}
     for (var i = 0; i < themeButtons.length; i++) {
       themeButtons[i].classList.toggle("active", themeButtons[i].dataset.themeBtn === theme);
     }
+    if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
+    themeTransitionTimer = setTimeout(function () {
+      root.classList.remove("theme-transition");
+      themeTransitionTimer = null;
+    }, 450);
   }
 
   /* --------- fonts --------- */
