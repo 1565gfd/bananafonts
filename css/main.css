@@ -7812,17 +7812,34 @@ body.bf-low-gpu * {
   display: block;
   border-radius: 50%;
 }
-.avatar-picker > input[type="text"] {
-  width: 64px;
+.avatar-picker > input[type="text"],
+.avatar-picker > .avatar-emoji-input {
+  width: 72px;
   text-align: center;
-  font-size: 18px;
-  flex: 0 0 64px;
+  font-size: 20px;
+  flex: 0 0 72px;
+  padding: 10px 8px;
 }
-.avatar-picker > .settings-btn {
+.avatar-picker > .settings-btn,
+.avatar-picker > .avatar-btn {
   flex: 0 0 auto;
   min-width: 44px;
+  height: 44px;
   padding: 8px 10px;
-  font-size: 14px;
+  font-size: 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: var(--text, #fff);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-picker > .avatar-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.3);
 }
 
 /* Render data-URL avatars inside any of the existing avatar containers */
@@ -8135,4 +8152,43 @@ body.bf-low-gpu * {
   .auth-eye { width: 32px; height: 32px; right: 6px; }
   .auth-submit { font-size: 14px; padding: 12px 14px; }
   .auth-oauth-btn { font-size: 13px; padding: 11px 14px; }
+}
+
+/* v5.46.0 — color input + secondary buttons in auth-screen style */
+.auth-color-input {
+  width: 60px;
+  height: 44px;
+  padding: 4px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.auth-secondary-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.auth-secondary-btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 10px 12px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.auth-secondary-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+}
+.auth-secondary-btn:active { transform: translateY(1px); }
+@media (max-width: 600px) {
+  .auth-secondary-btn { font-size: 12px; padding: 9px 10px; min-width: 110px; }
 }

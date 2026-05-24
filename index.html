@@ -816,29 +816,48 @@
         <div class="account-feedback" id="acc-login-feedback"></div>
       </section>
 
-      <!-- ── REGISTER (v5.43.0 — real-ish multi-step) ── -->
-      <section class="account-section" data-acc-section="register" hidden>
-        <p class="admin-hint" id="acc-register-hint">Реальная регистрация: e-mail + строгий пароль + код-подтверждение + e2e-облако.</p>
+      <!-- ── REGISTER — v5.46.0: full feature set back, kept in auth-screen style ── -->
+      <section class="account-section auth-screen" data-acc-section="register" hidden>
 
-        <!-- Step 1: form -->
+        <!-- Same pill toggle as login -->
+        <div class="auth-pill" role="tablist">
+          <button type="button" class="auth-pill-btn" data-acc-pill="login" role="tab" aria-selected="false">Вход</button>
+          <button type="button" class="auth-pill-btn active" data-acc-pill="register" role="tab" aria-selected="true">Регистрация</button>
+        </div>
+
+        <!-- Step 1 — main form -->
         <div id="acc-reg-step-form">
-          <div class="account-field">
-            <label for="acc-reg-username">Имя пользователя (3–20 симв., a-z 0-9 _)</label>
-            <input type="text" id="acc-reg-username" class="calc-input" autocomplete="username" maxlength="20" spellcheck="false" />
-            <span class="acc-field-hint" id="acc-reg-username-hint"></span>
+
+          <!-- Avatar -->
+          <div class="auth-field">
+            <label>Аватар</label>
+            <div class="avatar-picker">
+              <div class="avatar-preview" id="acc-reg-avatar-preview">🍌</div>
+              <input type="text" id="acc-reg-avatar" class="auth-input avatar-emoji-input" maxlength="4" value="🍌" placeholder="🍌" />
+              <button type="button" id="acc-reg-avatar-upload-btn" class="avatar-btn" title="Загрузить картинку">📁</button>
+              <button type="button" id="acc-reg-avatar-clear-btn" class="avatar-btn" title="Сбросить" hidden>✕</button>
+              <input type="file" id="acc-reg-avatar-file" accept="image/*" hidden />
+            </div>
           </div>
 
-          <div class="account-field">
+          <!-- Username -->
+          <div class="auth-field">
+            <label for="acc-reg-username">Никнейм</label>
+            <input type="text" id="acc-reg-username" class="auth-input" autocomplete="username" maxlength="20" spellcheck="false" placeholder="username" />
+          </div>
+
+          <!-- Email -->
+          <div class="auth-field">
             <label for="acc-reg-email">E-mail</label>
-            <input type="email" id="acc-reg-email" class="calc-input" autocomplete="email" inputmode="email" />
-            <span class="acc-field-hint" id="acc-reg-email-hint"></span>
+            <input type="email" id="acc-reg-email" class="auth-input" autocomplete="email" inputmode="email" placeholder="ваш@email.com" />
           </div>
 
-          <div class="account-field">
+          <!-- Password + strength meter -->
+          <div class="auth-field">
             <label for="acc-reg-password">Пароль</label>
-            <div class="pwd-row">
-              <input type="password" id="acc-reg-password" class="calc-input" autocomplete="new-password" />
-              <button type="button" id="acc-reg-password-toggle" class="settings-btn silent-btn" title="Показать пароль">👁</button>
+            <div class="auth-pwd-wrap">
+              <input type="password" id="acc-reg-password" class="auth-input" autocomplete="new-password" placeholder="••••••••" />
+              <button type="button" id="acc-reg-password-toggle" class="auth-eye" aria-label="Показать пароль" title="Показать пароль">👁</button>
             </div>
             <div class="pwd-meter" aria-hidden="true"><div class="pwd-meter-bar" id="acc-reg-pwd-bar"></div></div>
             <ul class="pwd-checklist" id="acc-reg-pwd-check">
@@ -850,32 +869,19 @@
             </ul>
           </div>
 
-          <div class="account-field">
+          <!-- Confirm password -->
+          <div class="auth-field">
             <label for="acc-reg-password2">Повтори пароль</label>
-            <input type="password" id="acc-reg-password2" class="calc-input" autocomplete="new-password" />
+            <input type="password" id="acc-reg-password2" class="auth-input" autocomplete="new-password" placeholder="••••••••" />
           </div>
 
-          <div class="account-field">
-            <label>Аватар: эмодзи или картинка</label>
-            <div class="avatar-picker">
-              <div class="avatar-preview" id="acc-reg-avatar-preview">🍌</div>
-              <input type="text" id="acc-reg-avatar" class="calc-input" maxlength="4" value="🍌" placeholder="🍌" />
-              <button type="button" id="acc-reg-avatar-upload-btn" class="settings-btn silent-btn" title="Загрузить картинку">📁</button>
-              <button type="button" id="acc-reg-avatar-clear-btn" class="settings-btn silent-btn" title="Сбросить к эмодзи" hidden>✕</button>
-              <input type="file" id="acc-reg-avatar-file" accept="image/*" hidden />
-            </div>
-          </div>
-
-          <div class="account-field">
-            <label for="acc-reg-bio">Био (необязательно, до 100 симв.)</label>
-            <input type="text" id="acc-reg-bio" class="calc-input" maxlength="100" placeholder="Несколько слов о себе…" />
-          </div>
-
-          <div class="account-field">
+          <!-- Color picker -->
+          <div class="auth-field">
             <label for="acc-reg-color">Цвет фона аватара</label>
-            <input type="color" id="acc-reg-color" class="calc-input" value="#ffd166" />
+            <input type="color" id="acc-reg-color" class="auth-color-input" value="#ffd166" />
           </div>
 
+          <!-- Age + ToS checkboxes -->
           <label class="acc-check">
             <input type="checkbox" id="acc-reg-age" />
             <span>Мне 13 лет или больше</span>
@@ -884,25 +890,21 @@
             <input type="checkbox" id="acc-reg-tos" />
             <span>Соглашаюсь с правилами: без мата, без оскорблений, без HateSpeech</span>
           </label>
-          <label class="acc-check">
-            <input type="checkbox" id="acc-reg-sync" checked />
-            <span>Автоматически синхронизировать аккаунт в облако после регистрации</span>
-          </label>
 
-          <button type="button" id="acc-register-btn" class="settings-btn silent-btn">Создать аккаунт →</button>
+          <button type="button" id="acc-register-btn" class="auth-submit">Создать аккаунт →</button>
         </div>
 
-        <!-- Step 2: email verification code -->
+        <!-- Step 2 — email verification code -->
         <div id="acc-reg-step-verify" hidden>
           <p class="admin-hint">На e-mail отправлен 6-значный код. Введи его чтобы подтвердить адрес.</p>
-          <div class="account-field">
+          <div class="auth-field">
             <label for="acc-reg-code">Код подтверждения</label>
-            <input type="text" id="acc-reg-code" class="calc-input" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="123456" autocomplete="one-time-code" />
+            <input type="text" id="acc-reg-code" class="auth-input" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="123456" autocomplete="one-time-code" />
           </div>
-          <div class="sync-btn-row">
-            <button type="button" id="acc-reg-verify-btn" class="settings-btn silent-btn">Подтвердить →</button>
-            <button type="button" id="acc-reg-resend-btn" class="settings-btn silent-btn">↻ Отправить заново</button>
-            <button type="button" id="acc-reg-back-btn" class="settings-btn silent-btn">← Назад</button>
+          <button type="button" id="acc-reg-verify-btn" class="auth-submit">Подтвердить</button>
+          <div class="auth-secondary-row">
+            <button type="button" id="acc-reg-resend-btn" class="auth-secondary-btn">↻ Отправить заново</button>
+            <button type="button" id="acc-reg-back-btn" class="auth-secondary-btn">← Назад</button>
           </div>
         </div>
 

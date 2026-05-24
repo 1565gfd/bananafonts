@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.44.1";
+  var VERSION = "v5.46.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -6201,13 +6201,11 @@
   var accQuickLoginIcon  = document.getElementById("acc-quick-login-icon");
   var accQuickLoginLabel = document.getElementById("acc-quick-login-label");
   var accAuthDivider     = document.getElementById("acc-auth-divider");
-  /* Register form (v5.43.0 — real-ish multi-step) */
+  /* Register form (v5.46.0 — full feature set in auth-screen style) */
   var accRegStepForm   = document.getElementById("acc-reg-step-form");
   var accRegStepVerify = document.getElementById("acc-reg-step-verify");
   var accRegUserEl     = document.getElementById("acc-reg-username");
-  var accRegUserHint   = document.getElementById("acc-reg-username-hint");
   var accRegEmailEl    = document.getElementById("acc-reg-email");
-  var accRegEmailHint  = document.getElementById("acc-reg-email-hint");
   var accRegPassEl     = document.getElementById("acc-reg-password");
   var accRegPass2El    = document.getElementById("acc-reg-password2");
   var accRegPassToggle = document.getElementById("acc-reg-password-toggle");
@@ -6218,11 +6216,9 @@
   var accRegAvatarUp   = document.getElementById("acc-reg-avatar-upload-btn");
   var accRegAvatarClr  = document.getElementById("acc-reg-avatar-clear-btn");
   var accRegAvatarFile = document.getElementById("acc-reg-avatar-file");
-  var accRegBioEl      = document.getElementById("acc-reg-bio");
   var accRegColorEl    = document.getElementById("acc-reg-color");
   var accRegAgeEl      = document.getElementById("acc-reg-age");
   var accRegTosEl      = document.getElementById("acc-reg-tos");
-  var accRegSyncEl     = document.getElementById("acc-reg-sync");
   var accRegisterBtn   = document.getElementById("acc-register-btn");
   var accRegFb         = document.getElementById("acc-register-feedback");
   /* Step 2 — verification */
@@ -6522,13 +6518,20 @@
   });
   _refreshRegAvatarPreview();
 
-  /* Password toggle */
+  /* Password eye toggle — toggles BOTH password fields together */
   accRegPassToggle.addEventListener("click", function () {
-    var t = accRegPassEl.type === "password" ? "text" : "password";
+    var hidden = accRegPassEl.type === "password";
+    var t = hidden ? "text" : "password";
     accRegPassEl.type = t;
     accRegPass2El.type = t;
-    accRegPassToggle.textContent = t === "password" ? "👁" : "🙈";
+    accRegPassToggle.textContent = hidden ? "🙈" : "👁";
+    accRegPassToggle.setAttribute("aria-label", hidden ? "Скрыть пароль" : "Показать пароль");
   });
+
+  /* Email format check */
+  function _validEmail(s) {
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(s) && s.length <= 254;
+  }
 
   /* Password strength + checklist (live as the user types) */
   function _evalPasswordStrength() {
@@ -6541,79 +6544,24 @@
       digit: /[0-9]/.test(p),
       match: p.length > 0 && p === p2
     };
-    /* Visualize */
     var items = accRegPwdCheck.querySelectorAll("li[data-rule]");
     for (var i = 0; i < items.length; i++) {
-      var r = items[i].dataset.rule;
-      items[i].classList.toggle("ok", !!rules[r]);
+      items[i].classList.toggle("ok", !!rules[items[i].dataset.rule]);
     }
-    var passedCount = 0;
-    for (var k in rules) if (rules[k]) passedCount++;
-    /* Bar width: 0..100% */
-    var pct = (passedCount / 5) * 100;
-    accRegPwdBar.style.width = pct + "%";
+    var passed = 0;
+    for (var k in rules) if (rules[k]) passed++;
+    accRegPwdBar.style.width = (passed / 5 * 100) + "%";
     accRegPwdBar.classList.remove("medium", "strong", "very-strong");
-    if (passedCount >= 5)      accRegPwdBar.classList.add("very-strong");
-    else if (passedCount >= 4) accRegPwdBar.classList.add("strong");
-    else if (passedCount >= 2) accRegPwdBar.classList.add("medium");
+    if (passed >= 5)      accRegPwdBar.classList.add("very-strong");
+    else if (passed >= 4) accRegPwdBar.classList.add("strong");
+    else if (passed >= 2) accRegPwdBar.classList.add("medium");
     return rules;
   }
   accRegPassEl.addEventListener("input", _evalPasswordStrength);
   accRegPass2El.addEventListener("input", _evalPasswordStrength);
 
-  /* Username live availability check (local only) */
-  accRegUserEl.addEventListener("input", function () {
-    var name = (accRegUserEl.value || "").trim();
-    if (!name) {
-      accRegUserHint.textContent = "";
-      accRegUserHint.className = "acc-field-hint";
-      return;
-    }
-    var err = validateUsername(name);
-    if (err) {
-      accRegUserHint.textContent = "✗ " + err;
-      accRegUserHint.className = "acc-field-hint error";
-      return;
-    }
-    if (findAccountByUsername(name)) {
-      accRegUserHint.textContent = "✗ Это имя уже занято на этом устройстве";
-      accRegUserHint.className = "acc-field-hint error";
-    } else {
-      accRegUserHint.textContent = "✓ Имя свободно";
-      accRegUserHint.className = "acc-field-hint success";
-    }
-  });
-
-  /* Email validation + live hint */
-  function _validEmail(s) {
-    /* Pragmatic email regex — catches obvious mistakes without false-rejecting
-       valid edge cases (RFC 5322 is too permissive to enforce reasonably). */
-    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(s) && s.length <= 254;
-  }
-  accRegEmailEl.addEventListener("input", function () {
-    var v = (accRegEmailEl.value || "").trim();
-    if (!v) {
-      accRegEmailHint.textContent = "";
-      accRegEmailHint.className = "acc-field-hint";
-      return;
-    }
-    if (_validEmail(v)) {
-      accRegEmailHint.textContent = "✓ Корректный e-mail";
-      accRegEmailHint.className = "acc-field-hint success";
-    } else {
-      accRegEmailHint.textContent = "✗ Похоже на битый e-mail";
-      accRegEmailHint.className = "acc-field-hint error";
-    }
-  });
-
-  /* ─────────────────────────────────────────────────────────
-     v5.43.0 — REAL-ISH REGISTRATION
-     Step 1: validate everything → generate 6-digit code → "send"
-             (shown via alert + console — no real mail server)
-     Step 2: user enters code → verify → finalize → optional cloud push
-     ───────────────────────────────────────────────────────── */
+  /* ── Verification helpers ── */
   function _gen6digitCode() {
-    /* Crypto-random 6-digit numeric code (000000..999999) */
     if (window.crypto && window.crypto.getRandomValues) {
       var u = new Uint32Array(1);
       window.crypto.getRandomValues(u);
@@ -6622,20 +6570,13 @@
     return String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
   }
   function _sendVerificationCode(email, code) {
-    /* No backend exists for real email. Show the code prominently to the
-       user instead — they're "verifying" their own form. This is the
-       "kinda real" part: the verification ceremony is real, the delivery
-       isn't. In a future version with a backend we'd swap this for an
-       actual sendgrid/postmark API call. */
+    /* Static site = no real SMTP. Show code in alert + console. */
     var msg = (currentLang === "en"
-      ? "Verification code sent to " + email + "\n\nYour code: " + code + "\n\n(Static site has no email server, so the code is shown here. In production this would be emailed.)"
-      : "Код подтверждения для " + email + "\n\nКод: " + code + "\n\n(Сайт статический — почтовика нет, поэтому код показан здесь. В реальной версии он бы пришёл на e-mail.)");
-    /* Defer alert so the UI feedback below renders first */
+      ? "Verification code sent to " + email + "\n\nYour code: " + code + "\n\n(Static site — no email server, so the code is shown here.)"
+      : "Код подтверждения для " + email + "\n\nКод: " + code + "\n\n(Сайт статический — почтовика нет, поэтому код показан здесь.)");
     setTimeout(function () { alert(msg); }, 60);
-    /* Also log to console (for testing) */
     try { console.log("%c[Banana] verification code: " + code, "color:#ffe135;font-weight:700"); } catch (e) {}
   }
-
   function _showRegStep(which) {
     if (which === "verify") {
       accRegStepForm.setAttribute("hidden", "");
@@ -6647,14 +6588,14 @@
     }
   }
 
+  /* ── Step 1: validate → generate code → send ── */
   accRegisterBtn.addEventListener("click", function () {
-    var name  = (accRegUserEl.value || "").trim();
-    var email = (accRegEmailEl.value || "").trim();
-    var p1    = accRegPassEl.value || "";
-    var p2    = accRegPass2El.value || "";
-    var bio   = (accRegBioEl.value || "").trim().slice(0, 100);
-    var color = accRegColorEl.value || "#ffd166";
-    var avatar = _regAvatarValue;
+    var name   = (accRegUserEl.value || "").trim();
+    var email  = (accRegEmailEl.value || "").trim();
+    var p1     = accRegPassEl.value || "";
+    var p2     = accRegPass2El.value || "";
+    var color  = accRegColorEl.value || "#ffd166";
+    var avatar = _regAvatarValue || "🍌";
 
     var err = validateUsername(name);
     if (!err && !_validEmail(email)) err = "Битый e-mail";
@@ -6664,7 +6605,6 @@
     if (!err && !rules.lower) err = "Нужна строчная буква";
     if (!err && !rules.digit) err = "Нужна цифра";
     if (!err && p1 !== p2)    err = "Пароли не совпадают";
-    if (!err && containsSwear(bio)) err = "В био нельзя";
     if (!err && !accRegAgeEl.checked) err = "Подтверди возраст 13+";
     if (!err && !accRegTosEl.checked) err = "Прими правила";
     if (err) {
@@ -6677,16 +6617,13 @@
       playUiSound("fail");
       return;
     }
-    /* Generate verification code + stash pending data */
     var code = _gen6digitCode();
     _regPending = {
       name: name, email: email, password: p1,
-      avatar: avatar, bio: bio, color: color,
-      code: code, sentAt: Date.now(),
-      autoSync: !!accRegSyncEl.checked,
-      attempts: 0
+      avatar: avatar, color: color,
+      code: code, sentAt: Date.now(), attempts: 0
     };
-    feedback(accRegFb, "Код отправлен на " + email + " — проверь почту ✉️", false);
+    feedback(accRegFb, "Код отправлен на " + email + " ✉️", false);
     _sendVerificationCode(email, code);
     _showRegStep("verify");
     accRegCodeEl.value = "";
@@ -6696,13 +6633,16 @@
     _regPending = null;
     _showRegStep("form");
     feedback(accRegFb, "", false);
+    playUiSound("click");
   });
 
   accRegResendBtn.addEventListener("click", function () {
     if (!_regPending) return;
-    /* Anti-spam: max once every 30 seconds */
-    if (Date.now() - _regPending.sentAt < 30000) {
-      feedback(accRegFb, "Подожди немного перед повторной отправкой", true);
+    /* Anti-spam: 30s cooldown */
+    var elapsed = Date.now() - _regPending.sentAt;
+    if (elapsed < 30000) {
+      var wait = Math.ceil((30000 - elapsed) / 1000);
+      feedback(accRegFb, "Подожди ещё " + wait + " сек.", true);
       playUiSound("fail");
       return;
     }
@@ -6714,6 +6654,7 @@
     playUiSound("confirm");
   });
 
+  /* ── Step 2: verify code → finalize ── */
   accRegVerifyBtn.addEventListener("click", function () {
     if (!_regPending) return;
     var entered = (accRegCodeEl.value || "").trim();
@@ -6722,7 +6663,7 @@
       playUiSound("fail");
       return;
     }
-    /* Expire after 10 minutes */
+    /* TTL: 10 minutes */
     if (Date.now() - _regPending.sentAt > 600000) {
       feedback(accRegFb, "Код истёк — запроси новый", true);
       playUiSound("fail");
@@ -6737,7 +6678,7 @@
         _showRegStep("form");
         return;
       }
-      feedback(accRegFb, "Неверный код (попыток осталось: " + (5 - _regPending.attempts) + ")", true);
+      feedback(accRegFb, "Неверный код (осталось попыток: " + (5 - _regPending.attempts) + ")", true);
       playUiSound("fail");
       return;
     }
@@ -6755,7 +6696,6 @@
         salt: salt,
         passHash: hash,
         avatar: rp.avatar,
-        bio: rp.bio,
         color: rp.color,
         regDate: Date.now(),
         lastSeen: Date.now(),
@@ -6769,43 +6709,25 @@
         setTheme("owner");
       }
       refreshAccountWidget();
+      feedback(accRegFb, "Готово! Привет, " + rp.name + " ✓", false);
       playUiSound("applause");
-      /* Optional auto-sync to cloud */
-      if (rp.autoSync) {
-        feedback(accRegFb, "Регистрация ✓ — синхронизирую в облако…", false);
-        return encryptAccount(newAcc, rp.password).then(cloudPush).then(function (blobId) {
-          var code2 = _formatSyncCode(blobId);
-          /* Save sync code on the account */
-          var arr2 = loadAccounts();
-          for (var i = 0; i < arr2.length; i++) {
-            if (arr2[i].id === newAcc.id) { arr2[i].syncCode = code2; arr2[i].syncedAt = Date.now(); }
-          }
-          saveAccounts(arr2);
-          feedback(accRegFb, "Готово! Sync-код: " + code2 + " ✓", false);
-        }).catch(function (e) {
-          feedback(accRegFb, "Аккаунт создан, но облако недоступно: " + (e.message || e), true);
-        });
-      } else {
-        feedback(accRegFb, "Готово! Привет, " + rp.name + " ✓", false);
-      }
-    }).then(function () {
       _regPending = null;
       /* Reset form */
       accRegUserEl.value = "";
       accRegEmailEl.value = "";
       accRegPassEl.value = "";
       accRegPass2El.value = "";
-      accRegBioEl.value = "";
       accRegCodeEl.value = "";
       accRegAgeEl.checked = false;
       accRegTosEl.checked = false;
+      accRegPassEl.type = "password";
+      accRegPass2El.type = "password";
+      accRegPassToggle.textContent = "👁";
       _regAvatarValue = "🍌";
       _refreshRegAvatarPreview();
       _evalPasswordStrength();
-      accRegUserHint.textContent = ""; accRegUserHint.className = "acc-field-hint";
-      accRegEmailHint.textContent = ""; accRegEmailHint.className = "acc-field-hint";
       _showRegStep("form");
-      setTimeout(function () { setAccTab("profile"); }, 1500);
+      setTimeout(function () { setAccTab("profile"); }, 800);
     }).catch(function (e) {
       feedback(accRegFb, "Ошибка: " + (e && e.message || e), true);
       playUiSound("fail");
@@ -6813,7 +6735,11 @@
       accRegVerifyBtn.disabled = false;
     });
   });
-  /* Enter in code field submits verify */
+
+  /* Enter shortcuts */
+  accRegPass2El.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); accRegisterBtn.click(); }
+  });
   accRegCodeEl.addEventListener("keydown", function (e) {
     if (e.key === "Enter") { e.preventDefault(); accRegVerifyBtn.click(); }
   });
