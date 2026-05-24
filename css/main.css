@@ -9459,3 +9459,86 @@ body {
   color: #6ef098;
   border: 1px solid rgba(45, 209, 106, 0.4);
 }
+
+
+/* ============================================================
+   v5.55.3 — FINAL STOP to layout jumps on lang switch.
+   v5.55.1 added min-widths but tabs/nav still re-wrapped because
+   different language label lengths still varied per-item. Real fix:
+   make all tab items grow EQUALLY via flex:1, with hard max so they
+   never push the container into a new wrap state. Same for top-bar.
+   Also: cut fade duration so the swap is too quick to perceive as
+   a jump.
+   ============================================================ */
+
+/* Tab-nav: equal-distribution flex. Every button gets the same width
+   regardless of its text length. RU vs EN doesn't change widths. */
+.tabs {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  /* Lock min-height so even if tabs wrap to 2 rows, the nav doesn't
+     visibly resize between RU/EN (same wrap config in both langs now). */
+}
+.tab-btn {
+  flex: 1 1 auto;
+  min-width: 92px;
+  max-width: 140px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+.tab-btn[data-min-role="creator"] {
+  /* Logs tab — same width treatment, kept narrow to fit row */
+  flex: 1 1 auto;
+}
+
+/* Theme-switch buttons: same equal-flex treatment. Worst-case RU
+   theme name 'Чернильная бездна' truncates with ellipsis instead
+   of expanding the button. */
+.theme-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.theme-switch button {
+  flex: 1 1 auto;
+  min-width: 96px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* Lang switch: 2 fixed buttons */
+.lang-switch button {
+  flex: 0 0 50px;
+  text-align: center;
+}
+
+/* Settings buttons stay at uniform width — already in v5.55.1 */
+
+/* Title h1: reserve min-height to prevent vertical shift when title
+   text length differs between langs (Banana — помощник vs helper). */
+h1 {
+  min-height: 1.4em;
+  line-height: 1.2;
+}
+
+/* Lang-fade: SHORTER duration. 180ms gave the eye time to track
+   the layout shift. 70ms is sub-perceptual. */
+.lang-fading {
+  opacity: 0.3 !important;
+  transition: opacity 0.07s linear !important;
+}
+
+/* Make footer text reflow predictably — its multi-line height may differ
+   between RU and EN. Reserve generous height so it doesn't bump content
+   above when re-rendering. */
+#footer {
+  min-height: 50px;
+}

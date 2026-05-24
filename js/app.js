@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.55.2";
+  var VERSION = "v5.55.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1281,15 +1281,18 @@
     }
 
     if (langFadeTimer) clearTimeout(langFadeTimer);
+    /* v5.55.3 — cut fade from 180ms to 70ms. The longer window gave the
+       eye time to track layout shifts during the swap, which felt like
+       elements were "jumping". 70ms is below the perceptual threshold
+       for layout-shift annoyance. */
     langFadeTimer = setTimeout(function () {
       applyLang(lang);
-      /* Re-fetch targets — renderFonts may have replaced children. */
       var afterTargets = getFadeTargets();
       for (var k = 0; k < afterTargets.length; k++) {
         afterTargets[k].classList.remove("lang-fading");
       }
       langFadeTimer = null;
-    }, 180);
+    }, 70);
   }
 
   /* --------- theme --------- */
