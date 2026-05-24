@@ -3298,7 +3298,16 @@ footer a:hover {
   }
 }
 
-/* ──────── Admin panel (v5.29.0) ──────── */
+/* ──────── Admin panel (v5.29.0 / v5.29.1 hidden-fix) ────────
+   IMPORTANT: .admin-panel and .admin-badge both use `display: flex`,
+   which clobbers the `display: none` that the [hidden] HTML attribute
+   normally applies. Without the explicit [hidden] rule below the panel
+   would show on every page load and never hide on close. */
+.admin-panel[hidden],
+.admin-badge[hidden] {
+  display: none !important;
+}
+
 .admin-badge {
   margin-left: 8px;
   background: linear-gradient(135deg, #ffe135 0%, #ffaa33 100%);
