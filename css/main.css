@@ -586,80 +586,98 @@
   --nf-code-gradient: linear-gradient(180deg, #7fc6a8 0%, #dce8e2 100%);
 }
 
-/* ──────── Soviet Lift (v5.21.0) — gray-green painted metal, scuffed.
-            Faded enamel paint over concrete-and-steel cabin. ──────── */
+/* ──────── Soviet Lift (v5.21.2 — redesigned to match the user's photo
+            reference: warm walnut-wood paneling Otis-style cabin with
+            yellow ceiling spotlights). Wood-grain illusion via vertical
+            stripes of warm reddish-brown shades + a bright glow up top. ──────── */
 [data-theme="soviet-lift"] {
   color-scheme: dark;
   --bg-gradient:
-    radial-gradient(circle at 50% 0%, rgba(180, 200, 190, 0.06) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 90%, rgba(40, 50, 45, 0.4) 0%, transparent 60%),
-    linear-gradient(180deg, #4a5a55 0%, #3a4845 45%, #2a3835 100%);
-  --text: #e8eae0;
-  --text-dim: rgba(232, 234, 224, 0.5);
-  --text-soft: rgba(232, 234, 224, 0.85);
-  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  --glass-bg: rgba(60, 75, 70, 0.45);
-  --glass-bg-hover: rgba(80, 95, 88, 0.55);
-  --glass-border: rgba(150, 165, 155, 0.4);
-  --glass-border-soft: rgba(150, 165, 155, 0.22);
-  --glass-inset: rgba(220, 220, 200, 0.25);
-  --glass-inset-soft: rgba(220, 220, 200, 0.1);
-  --output-bg: rgba(30, 40, 38, 0.85);
-  --output-border: rgba(150, 165, 155, 0.35);
-  --output-inset-bottom: rgba(0, 0, 0, 0.6);
-  --accent: #d4b85a;            /* faded yellow — like the lift floor indicator */
-  --accent-bg: rgba(212, 184, 90, 0.88);
-  --accent-border: rgba(230, 200, 110, 1);
-  --accent-glow: rgba(212, 184, 90, 0.45);
-  --copy-bg: rgba(212, 184, 90, 0.85);
-  --copy-bg-hover: rgba(230, 200, 110, 0.95);
-  --copy-border: rgba(230, 200, 110, 1);
-  --copy-border-hover: rgba(245, 220, 140, 1);
-  --copied-bg: rgba(80, 180, 100, 0.65);
-  --copied-border: rgba(120, 210, 140, 0.85);
-  --copied-glow: rgba(80, 180, 100, 0.4);
-  --link: #d4b85a;
-  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.65);
-  --nf-bg: linear-gradient(180deg, #4a5a55 0%, #2a3835 100%);
-  --nf-code-gradient: linear-gradient(180deg, #d4b85a 0%, #f0d878 100%);
+    /* two ceiling spotlight glows at the top corners */
+    radial-gradient(ellipse 30% 25% at 20% 0%, rgba(255, 230, 160, 0.35) 0%, transparent 80%),
+    radial-gradient(ellipse 30% 25% at 80% 0%, rgba(255, 230, 160, 0.35) 0%, transparent 80%),
+    /* central ceiling warm highlight */
+    radial-gradient(ellipse at 50% 5%, rgba(255, 200, 130, 0.25) 0%, transparent 45%),
+    /* vertical wood-grain stripes — slight hue variation suggests paneling */
+    repeating-linear-gradient(90deg,
+      #b8703a 0%, #c8804a 1.5%, #a86430 3%, #b8703a 4.5%, #cc8a52 6%, #ad6a38 7.5%, #b8703a 9%),
+    /* base wood color */
+    linear-gradient(180deg, #c47840 0%, #a05830 60%, #7a4220 100%);
+  --text: #fff2dc;
+  --text-dim: rgba(255, 242, 220, 0.55);
+  --text-soft: rgba(255, 242, 220, 0.9);
+  --text-shadow: 0 2px 6px rgba(80, 30, 0, 0.6);
+  --glass-bg: rgba(80, 40, 15, 0.32);
+  --glass-bg-hover: rgba(100, 55, 22, 0.45);
+  --glass-border: rgba(255, 200, 130, 0.4);
+  --glass-border-soft: rgba(255, 200, 130, 0.22);
+  --glass-inset: rgba(255, 230, 180, 0.3);
+  --glass-inset-soft: rgba(255, 230, 180, 0.12);
+  --output-bg: rgba(60, 30, 10, 0.85);
+  --output-border: rgba(255, 200, 130, 0.32);
+  --output-inset-bottom: rgba(0, 0, 0, 0.5);
+  --accent: #ffc870;            /* warm spotlight yellow */
+  --accent-bg: rgba(255, 200, 110, 0.92);
+  --accent-border: rgba(255, 220, 150, 1);
+  --accent-glow: rgba(255, 200, 110, 0.55);
+  --copy-bg: rgba(255, 200, 110, 0.88);
+  --copy-bg-hover: rgba(255, 220, 140, 0.96);
+  --copy-border: rgba(255, 220, 150, 1);
+  --copy-border-hover: rgba(255, 235, 180, 1);
+  --copied-bg: rgba(140, 200, 80, 0.7);
+  --copied-border: rgba(170, 220, 110, 0.9);
+  --copied-glow: rgba(140, 200, 80, 0.45);
+  --link: #ffc870;
+  --shadow-card: 0 12px 40px rgba(60, 20, 0, 0.7);
+  --nf-bg: linear-gradient(180deg, #c47840 0%, #7a4220 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffc870 0%, #fff0c0 100%);
 }
 
-/* ──────── Soviet Podyezd (v5.21.0) — dim entrance hall, single yellow
-            bulb on a high ceiling, brown-greenish walls, smell of cabbage. ──────── */
+/* ──────── Soviet Podyezd (v5.21.2 — redesigned to match the user's
+            photo reference: classic white-top / turquoise-bottom painted
+            walls, the iconic Soviet-era panel-house entrance hall look.
+            Hard horizontal line where the colors meet (panyolnaya
+            pokraska). Wooden stair handrail = warm brown accent. ──────── */
 [data-theme="soviet-podyezd"] {
-  color-scheme: dark;
+  color-scheme: light;
   --bg-gradient:
-    radial-gradient(ellipse at 50% 8%, rgba(255, 215, 100, 0.22) 0%, transparent 38%),  /* the bulb */
-    radial-gradient(ellipse at 50% 12%, rgba(255, 200, 80, 0.1) 0%, transparent 55%),   /* halo  */
-    linear-gradient(180deg, #4a3820 0%, #3d2f1c 50%, #1f1810 100%);
-  --text: #e8d4a0;
-  --text-dim: rgba(232, 212, 160, 0.45);
-  --text-soft: rgba(232, 212, 160, 0.82);
-  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-  --glass-bg: rgba(120, 95, 60, 0.18);
-  --glass-bg-hover: rgba(140, 110, 70, 0.28);
-  --glass-border: rgba(200, 165, 100, 0.35);
-  --glass-border-soft: rgba(200, 165, 100, 0.2);
-  --glass-inset: rgba(232, 212, 160, 0.25);
-  --glass-inset-soft: rgba(232, 212, 160, 0.1);
-  --output-bg: rgba(30, 22, 12, 0.88);
-  --output-border: rgba(200, 165, 100, 0.3);
-  --output-inset-bottom: rgba(0, 0, 0, 0.65);
-  --accent: #e8c468;            /* dim warm yellow — single lightbulb */
-  --accent-bg: rgba(232, 196, 104, 0.88);
-  --accent-border: rgba(245, 215, 130, 1);
-  --accent-glow: rgba(232, 196, 104, 0.5);
-  --copy-bg: rgba(232, 196, 104, 0.85);
-  --copy-bg-hover: rgba(245, 215, 130, 0.95);
-  --copy-border: rgba(245, 215, 130, 1);
-  --copy-border-hover: rgba(255, 230, 160, 1);
-  --copied-bg: rgba(140, 180, 80, 0.65);
-  --copied-border: rgba(170, 210, 110, 0.85);
-  --copied-glow: rgba(140, 180, 80, 0.4);
-  --link: #e8c468;
-  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.75);
-  --nf-bg: linear-gradient(180deg, #4a3820 0%, #1f1810 100%);
-  --nf-code-gradient: linear-gradient(180deg, #e8c468 0%, #f5dca0 100%);
+    /* faint floor shadow at the bottom */
+    radial-gradient(ellipse at 50% 100%, rgba(60, 50, 40, 0.18) 0%, transparent 40%),
+    /* the iconic split: cream-white above ~30%, bright teal below. Hard line. */
+    linear-gradient(180deg,
+      #e8e6d8   0%,
+      #e8e6d8  28%,
+      #5cb5a8  32%,                /* the line */
+      #4ea696  70%,
+      #3d8a7d 100%);
+  --text: #2a1f12;                 /* dark wood brown (handrail) */
+  --text-dim: rgba(42, 31, 18, 0.55);
+  --text-soft: rgba(42, 31, 18, 0.82);
+  --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(255, 252, 240, 0.65);
+  --glass-bg-hover: rgba(255, 252, 240, 0.85);
+  --glass-border: rgba(60, 50, 40, 0.35);
+  --glass-border-soft: rgba(60, 50, 40, 0.2);
+  --glass-inset: rgba(255, 255, 255, 0.9);
+  --glass-inset-soft: rgba(255, 255, 255, 0.5);
+  --output-bg: rgba(255, 254, 245, 0.85);
+  --output-border: rgba(92, 181, 168, 0.5);
+  --output-inset-bottom: rgba(60, 50, 40, 0.12);
+  --accent: #8b5a3c;               /* warm wood-brown handrail */
+  --accent-bg: rgba(139, 90, 60, 0.92);
+  --accent-border: rgba(160, 110, 70, 1);
+  --accent-glow: rgba(139, 90, 60, 0.35);
+  --copy-bg: rgba(139, 90, 60, 0.88);
+  --copy-bg-hover: rgba(160, 110, 70, 0.96);
+  --copy-border: rgba(160, 110, 70, 1);
+  --copy-border-hover: rgba(180, 130, 90, 1);
+  --copied-bg: rgba(80, 170, 110, 0.72);
+  --copied-border: rgba(120, 200, 140, 0.92);
+  --copied-glow: rgba(80, 170, 110, 0.35);
+  --link: #8b5a3c;
+  --shadow-card: 0 10px 30px rgba(60, 50, 40, 0.25);
+  --nf-bg: linear-gradient(180deg, #e8e6d8 0%, #e8e6d8 30%, #5cb5a8 32%, #3d8a7d 100%);
+  --nf-code-gradient: linear-gradient(180deg, #8b5a3c 0%, #c08b65 100%);
 }
 
 /* ──────── Sunset (v5.19.0) — purple → pink → orange ──────── */
@@ -2962,28 +2980,28 @@ footer a:hover {
   [data-theme="aurora"] .theme-switch button:not(.active) {
     background: rgba(20, 60, 90, 0.9);
   }
-  /* ── v5.21.0 Soviet themes fallbacks ── */
+  /* ── v5.21.2 Soviet themes fallbacks (redesigned palettes) ── */
   [data-theme="soviet-lift"] .app,
   [data-theme="soviet-lift"] textarea,
   [data-theme="soviet-lift"] .not-found-card {
-    background: rgba(50, 65, 60, 0.96);
+    background: rgba(140, 80, 45, 0.96);          /* walnut wood */
   }
-  [data-theme="soviet-lift"] .output { background: rgba(30, 42, 38, 0.95); }
+  [data-theme="soviet-lift"] .output { background: rgba(80, 40, 18, 0.92); }
   [data-theme="soviet-lift"] .fonts button:not(.active),
   [data-theme="soviet-lift"] .lang-switch button:not(.active),
   [data-theme="soviet-lift"] .theme-switch button:not(.active) {
-    background: rgba(70, 88, 80, 0.93);
+    background: rgba(180, 110, 60, 0.92);
   }
   [data-theme="soviet-podyezd"] .app,
   [data-theme="soviet-podyezd"] textarea,
   [data-theme="soviet-podyezd"] .not-found-card {
-    background: rgba(50, 38, 22, 0.96);
+    background: rgba(255, 254, 245, 0.95);        /* the cream-white upper wall */
   }
-  [data-theme="soviet-podyezd"] .output { background: rgba(30, 22, 12, 0.95); }
+  [data-theme="soviet-podyezd"] .output { background: rgba(255, 254, 245, 0.92); }
   [data-theme="soviet-podyezd"] .fonts button:not(.active),
   [data-theme="soviet-podyezd"] .lang-switch button:not(.active),
   [data-theme="soviet-podyezd"] .theme-switch button:not(.active) {
-    background: rgba(80, 62, 38, 0.92);
+    background: rgba(232, 230, 216, 0.95);        /* light cream button bg */
   }
 }
 
@@ -3167,6 +3185,190 @@ footer a:hover {
     width: 48px;
     height: 48px;
   }
+}
+
+/* --- Sound toggle button (v5.22.0) --- */
+#sound-toggle-btn {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+#sound-toggle-btn.sound-off {
+  background: rgba(120, 120, 130, 0.18);
+  border-color: rgba(160, 160, 170, 0.4);
+  color: var(--text-soft);
+}
+
+/* ──────── Tools tab (v5.22.0) ──────── */
+.passgen-row { margin-bottom: 12px; }
+.passgen-len-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+.passgen-len-label > input[type="range"] {
+  flex: 1;
+  min-width: 140px;
+}
+.passgen-checks {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.passgen-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.passgen-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.passgen-output-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+.passgen-output {
+  flex: 1;
+  min-width: 200px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.randnum-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.randnum-row > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-soft);
+  min-width: 100px;
+}
+.randnum-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.randnum-result {
+  flex: 1;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+}
+
+.lorem-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.lorem-controls > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+.lorem-controls > label > input {
+  width: 80px;
+}
+.lorem-lang-toggle {
+  display: flex;
+  gap: 4px;
+}
+.lorem-lang-btn {
+  min-width: 70px;
+  opacity: 0.6;
+}
+.lorem-lang-btn.active {
+  background: var(--accent-bg);
+  color: #ffffff;
+  border-color: var(--accent-border);
+  opacity: 1;
+}
+.lorem-output {
+  width: 100%;
+  min-height: 180px;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.color-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.color-picker {
+  width: 64px;
+  height: 48px;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  padding: 2px;
+}
+.color-hex {
+  flex: 1;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+.color-formats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+.color-format {
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.color-format-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.color-format-value {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--text);
+  transition: background 0.2s ease;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin: 0 -4px;
 }
 
 /* --- Reset / danger-zone section (v5.20.0) --- */

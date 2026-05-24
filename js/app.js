@@ -39,6 +39,31 @@
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
+      /* v5.22.0 — sound + tools tab */
+      settingsSoundLabel: "Звуки",
+      settingsSoundHint: "Включить или отключить звуковые уведомления (клики, переключения, таймер, будильник).",
+      soundOn: "🔊 Звук включён",
+      soundOff: "🔇 Звук выключен",
+      passgenLabel: "Генератор паролей",
+      passgenLenText: "Длина:",
+      passgenLower: "a–z",
+      passgenUpper: "A–Z",
+      passgenDigit: "0–9",
+      passgenSymbol: "!@#",
+      passgenGenerate: "Сгенерировать",
+      passgenCopy: "Копировать",
+      passgenCopied: "Скопировано!",
+      passgenError: "Выбери хотя бы один тип символов.",
+      randnumLabel: "Случайное число",
+      randnumMin: "от",
+      randnumMax: "до",
+      randnumGenerate: "Случайное",
+      randnumError: "min должно быть меньше или равно max.",
+      loremLabel: "Lorem Ipsum (рыба-текст)",
+      loremCount: "Абзацев:",
+      loremGenerate: "Сгенерировать",
+      loremCopy: "Копировать",
+      colorLabel: "Конвертер цвета",
       ttUniversal: "🇷🇺 🇬🇧 Поддерживает кириллицу и латиницу",
       ttUnicode: "🇬🇧 Только латиница и цифры. В Telegram Desktop Windows может не работать (нормализация Unicode)",
       ttCombining: "🇷🇺 🇬🇧 Подчёркнутый/зачёркнутый — работает везде, включая Telegram Desktop Windows и кириллицу",
@@ -159,7 +184,7 @@
       settingsResetHint: "Очистит сохранённые настройки и перезагрузит страницу.",
       settingsResetConfirm: "Точно сбросить все настройки?",
       settingsAboutLabel: "О сайте",
-      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура) и сложение/вычитание/умножение/деление простых дробей.\n\n• Время: часы Москвы / Еревана / Нью-Йорка, секундомер, таймер с миллисекундами и быстрым добавлением времени, будильник с выбором часового пояса.\n\n• Секретные коды: вкладка с 19 скрытыми кодами — emoji-дожди, спецэффекты, мета-код. Найди их сам.\n\n• Темы: 4 видимые (Светлая / Тёмная / Ночь / Радужная анимированная) + одна секретная, разблокируется кодом.\n\n• PWA: можно установить на телефон, работает в Telegram-браузере."
+      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура) и сложение/вычитание/умножение/деление простых дробей.\n\n• Время: часы Москвы / Еревана / Нью-Йорка, секундомер, таймер с миллисекундами и быстрым добавлением/вычитанием времени, будильник с выбором часового пояса.\n\n• Настройки: 11 дополнительных тем (в т.ч. советский лифт и подъезд), переключатель звуков, генератор паролей, случайные числа, Lorem Ipsum, конвертер цветов.\n\n• Секретные коды: вкладка с 19 скрытыми кодами — emoji-дожди, спецэффекты, мета-код. Найди их сам.\n\n• Темы: 5 видимых (Светлая / Тёмная / Ночь / Чёрно-оранж. / Переливающаяся) + 11 в настройках + 1 секретная (по коду).\n\n• PWA: можно установить на телефон, работает в Telegram-браузере."
     },
     en: {
       title: "Fonts for Word and Telegram",
@@ -188,6 +213,31 @@
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
+      /* v5.22.0 — sound + tools tab */
+      settingsSoundLabel: "Sounds",
+      settingsSoundHint: "Turn UI feedback sounds (clicks, switches, timer, alarm) on or off.",
+      soundOn: "🔊 Sound is on",
+      soundOff: "🔇 Sound is off",
+      passgenLabel: "Password generator",
+      passgenLenText: "Length:",
+      passgenLower: "a–z",
+      passgenUpper: "A–Z",
+      passgenDigit: "0–9",
+      passgenSymbol: "!@#",
+      passgenGenerate: "Generate",
+      passgenCopy: "Copy",
+      passgenCopied: "Copied!",
+      passgenError: "Pick at least one character type.",
+      randnumLabel: "Random number",
+      randnumMin: "from",
+      randnumMax: "to",
+      randnumGenerate: "Random",
+      randnumError: "min must be ≤ max.",
+      loremLabel: "Lorem Ipsum",
+      loremCount: "Paragraphs:",
+      loremGenerate: "Generate",
+      loremCopy: "Copy",
+      colorLabel: "Color converter",
       ttUniversal: "🇷🇺 🇬🇧 Supports Cyrillic and Latin",
       ttUnicode: "🇬🇧 Latin and digits only. May not work in Telegram Desktop Windows (Unicode normalization)",
       ttCombining: "🇷🇺 🇬🇧 Underline/strikethrough — works everywhere including Telegram Desktop Windows and Cyrillic",
@@ -308,7 +358,7 @@
       settingsResetHint: "Clears saved settings and reloads the page.",
       settingsResetConfirm: "Really reset all settings?",
       settingsAboutLabel: "About",
-      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature) and add/subtract/multiply/divide for simple fractions.\n\n• Time: clocks for Moscow / Yerevan / New York, stopwatch, timer with milliseconds and quick add-time buttons, alarm with timezone picker.\n\n• Secret codes: a tab with 19 hidden codes — emoji rains, special effects, a meta-code. Find them yourself.\n\n• Themes: 4 visible (Light / Dark / Night / animated Rainbow) + a secret one unlocked via a code.\n\n• PWA: installable on phones, works inside the Telegram in-app browser."
+      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature) and add/subtract/multiply/divide for simple fractions.\n\n• Time: clocks for Moscow / Yerevan / New York, stopwatch, timer with milliseconds and quick add/subtract-time buttons, alarm with timezone picker.\n\n• Settings: 11 extra themes (incl. Soviet lift and hallway), sound toggle, password generator, random numbers, Lorem Ipsum, color converter.\n\n• Secret codes: a tab with 19 hidden codes — emoji rains, special effects, a meta-code. Find them yourself.\n\n• Themes: 5 visible (Light / Dark / Night / Black-Orange / Iridescent) + 11 in Settings + 1 secret (unlocked via code).\n\n• PWA: installable on phones, works inside the Telegram in-app browser."
     }
   };
 
@@ -388,7 +438,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.21.1";
+  var VERSION = "v5.23.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -445,6 +495,51 @@
   var extraThemesGridEl          = document.getElementById("extra-themes-grid");
   /* Reset warning (v5.20.0) */
   var settingsResetWarningEl     = document.getElementById("settings-reset-warning");
+  /* Sound toggle (v5.22.0) */
+  var settingsSoundLabelEl       = document.getElementById("settings-sound-label");
+  var settingsSoundHintEl        = document.getElementById("settings-sound-hint");
+  var soundToggleBtn             = document.getElementById("sound-toggle-btn");
+  /* v5.23.0: Tools tab removed — utility functions moved into Settings.
+     Refs below now point to elements inside #tab-settings. */
+  /* Password generator */
+  var passgenLabelEl   = document.getElementById("passgen-label");
+  var passgenLenTextEl = document.getElementById("passgen-len-text");
+  var passgenLenEl     = document.getElementById("passgen-len");
+  var passgenLenValueEl= document.getElementById("passgen-len-value");
+  var passgenLowerEl   = document.getElementById("passgen-lower");
+  var passgenUpperEl   = document.getElementById("passgen-upper");
+  var passgenDigitEl   = document.getElementById("passgen-digit");
+  var passgenSymbolEl  = document.getElementById("passgen-symbol");
+  var passgenLowerTxt  = document.getElementById("passgen-lower-text");
+  var passgenUpperTxt  = document.getElementById("passgen-upper-text");
+  var passgenDigitTxt  = document.getElementById("passgen-digit-text");
+  var passgenSymbolTxt = document.getElementById("passgen-symbol-text");
+  var passgenOutputEl  = document.getElementById("passgen-output");
+  var passgenGenerate  = document.getElementById("passgen-generate");
+  var passgenCopy      = document.getElementById("passgen-copy");
+  /* Random number */
+  var randnumLabelEl   = document.getElementById("randnum-label");
+  var randnumMinTextEl = document.getElementById("randnum-min-text");
+  var randnumMaxTextEl = document.getElementById("randnum-max-text");
+  var randnumMinEl     = document.getElementById("randnum-min");
+  var randnumMaxEl     = document.getElementById("randnum-max");
+  var randnumGenBtn    = document.getElementById("randnum-generate");
+  var randnumResultEl  = document.getElementById("randnum-result");
+  /* Lorem ipsum */
+  var loremLabelEl     = document.getElementById("lorem-label");
+  var loremCountTextEl = document.getElementById("lorem-count-text");
+  var loremCountEl     = document.getElementById("lorem-count");
+  var loremLangBtns    = document.querySelectorAll(".lorem-lang-btn");
+  var loremGenBtn      = document.getElementById("lorem-generate");
+  var loremCopyBtn     = document.getElementById("lorem-copy");
+  var loremOutputEl    = document.getElementById("lorem-output");
+  /* Color converter */
+  var colorLabelEl     = document.getElementById("color-label");
+  var colorPickerEl    = document.getElementById("color-picker");
+  var colorHexEl       = document.getElementById("color-hex");
+  var colorHexDisplay  = document.getElementById("color-hex-display");
+  var colorRgbEl       = document.getElementById("color-rgb");
+  var colorHslEl       = document.getElementById("color-hsl");
   var tabBtnFonts       = document.getElementById("tab-btn-fonts");
   var tabBtnSettings    = document.getElementById("tab-btn-settings");
   var tabBtnCalc        = document.getElementById("tab-btn-calc");
@@ -612,6 +707,28 @@
     tabBtnTime.textContent        = t.tabTime;
     tabBtnSecret.textContent      = t.tabSecret;
     tabBtnSettings.textContent    = t.tabSettings;
+    /* Utility functions inside Settings (v5.23.0 — moved from removed Tools tab) */
+    passgenLabelEl.textContent    = t.passgenLabel;
+    passgenLenTextEl.textContent  = t.passgenLenText;
+    passgenLowerTxt.textContent   = t.passgenLower;
+    passgenUpperTxt.textContent   = t.passgenUpper;
+    passgenDigitTxt.textContent   = t.passgenDigit;
+    passgenSymbolTxt.textContent  = t.passgenSymbol;
+    passgenGenerate.textContent   = t.passgenGenerate;
+    passgenCopy.textContent       = t.passgenCopy;
+    randnumLabelEl.textContent    = t.randnumLabel;
+    randnumMinTextEl.textContent  = t.randnumMin;
+    randnumMaxTextEl.textContent  = t.randnumMax;
+    randnumGenBtn.textContent     = t.randnumGenerate;
+    loremLabelEl.textContent      = t.loremLabel;
+    loremCountTextEl.textContent  = t.loremCount;
+    loremGenBtn.textContent       = t.loremGenerate;
+    loremCopyBtn.textContent      = t.loremCopy;
+    colorLabelEl.textContent      = t.colorLabel;
+    /* Sound toggle labels */
+    settingsSoundLabelEl.textContent = t.settingsSoundLabel;
+    settingsSoundHintEl.textContent  = t.settingsSoundHint;
+    refreshSoundButtonLabel();
     /* Secret tab labels */
     secretTitleEl.textContent     = t.secretTitle;
     secretIntroEl.textContent     = t.secretIntro;
@@ -754,8 +871,8 @@
     coffee:         "#1a0e08",
     terminal:       "#000000",
     aurora:         "#001a2e",
-    "soviet-lift":     "#3a4845", /* v5.21.0 — gray-green metal */
-    "soviet-podyezd":  "#3d2f1c"  /* v5.21.0 — dim yellow-brown */
+    "soviet-lift":     "#a05830", /* v5.21.2 — walnut wood */
+    "soviet-podyezd":  "#5cb5a8"  /* v5.21.2 — turquoise wall */
   };
   var themeTransitionTimer = null;
 
@@ -797,11 +914,13 @@
       swatch: "radial-gradient(circle at 30% 30%, #00ff66 0%, transparent 50%), #000000" },
     { id: "aurora",      ruLabel: "Сияние",       enLabel: "Aurora",
       swatch: "linear-gradient(135deg, #0a1830 0%, #2d5e5b 35%, #1f5a7a 65%, #4a3865 100%)" },
-    /* v5.21.0 — Soviet themes */
+    /* v5.21.0 / v5.21.2 — Soviet themes redesigned to match user's photo refs */
     { id: "soviet-lift",    ruLabel: "Советский лифт",    enLabel: "Soviet Lift",
-      swatch: "linear-gradient(180deg, #5a6a64 0%, #3a4845 50%, #2a3835 100%)" },
+      /* Wood-panel + warm ceiling glow */
+      swatch: "radial-gradient(ellipse at 50% 0%, rgba(255,220,140,0.4) 0%, transparent 50%), linear-gradient(180deg, #c47840 0%, #a05830 50%, #7a4220 100%)" },
     { id: "soviet-podyezd", ruLabel: "Советский подъезд", enLabel: "Soviet Hallway",
-      swatch: "radial-gradient(circle at 50% 30%, #e8c468 0%, #5a4530 50%, #2a1f10 100%)" }
+      /* Iconic white-top / teal-bottom split */
+      swatch: "linear-gradient(180deg, #e8e6d8 0%, #e8e6d8 32%, #5cb5a8 35%, #3d8a7d 100%)" }
   ];
 
   function rebuildExtraThemesGrid() {
@@ -2661,6 +2780,280 @@
     updateAlarmTzTime();
     alarmTick();
   }, 1000);
+
+  /* ============================================================
+     SOUND SYSTEM (v5.22.0) — global mute toggle + UI feedback sounds.
+     Persists in localStorage. beepDone() and playSingleChime() also
+     respect this gate (so muting kills the timer/alarm chime too).
+     ============================================================ */
+  var soundEnabled = true;
+  try {
+    if (localStorage.getItem("bananafont:soundMuted") === "1") soundEnabled = false;
+  } catch (e) {}
+
+  function playUiSound(name) {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var ctx = audioCtx;
+      if (ctx.state === "suspended") { try { ctx.resume(); } catch (e) {} }
+      switch (name) {
+        case "click":   playTone(ctx, 880,  0.045, 0.06); break;
+        case "tab":     playTone(ctx, 660,  0.05,  0.09); break;
+        case "tick":    playTone(ctx, 1400, 0.03,  0.04); break;
+        case "success":
+          playTone(ctx, 880, 0.06, 0.1);
+          setTimeout(function () { playTone(ctx, 1320, 0.06, 0.1); }, 70);
+          break;
+        case "error":   playTone(ctx, 220,  0.08,  0.18); break;
+        case "select":  playTone(ctx, 1100, 0.05,  0.07); break;
+      }
+    } catch (e) {}
+  }
+  function playTone(ctx, freq, peakGain, dur) {
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    var t0 = ctx.currentTime;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(peakGain, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+
+  function refreshSoundButtonLabel() {
+    var t = TEXT[currentLang];
+    soundToggleBtn.textContent = soundEnabled ? t.soundOn : t.soundOff;
+    soundToggleBtn.classList.toggle("sound-off", !soundEnabled);
+  }
+  soundToggleBtn.addEventListener("click", function () {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("bananafont:soundMuted", soundEnabled ? "0" : "1"); } catch (e) {}
+    refreshSoundButtonLabel();
+    if (soundEnabled) playUiSound("click"); /* audible confirmation */
+  });
+  /* Wire UI sounds into key actions */
+  for (var ti = 0; ti < tabButtons.length; ti++) {
+    tabButtons[ti].addEventListener("click", function () { playUiSound("tab"); });
+  }
+  for (var thi = 0; thi < themeButtons.length; thi++) {
+    themeButtons[thi].addEventListener("click", function () { playUiSound("select"); });
+  }
+  for (var lgi = 0; lgi < langButtons.length; lgi++) {
+    langButtons[lgi].addEventListener("click", function () { playUiSound("click"); });
+  }
+  /* Gate the existing beepDone through the sound toggle */
+  var originalPlaySingleChime = playSingleChime;
+  playSingleChime = function () {
+    if (!soundEnabled) return;
+    return originalPlaySingleChime.apply(this, arguments);
+  };
+
+  /* ============================================================
+     TOOLS TAB (v5.22.0) — password gen, random number, lorem ipsum,
+     color converter. Each is self-contained.
+     ============================================================ */
+
+  /* ── Password generator ── */
+  function generatePassword() {
+    var len = parseInt(passgenLenEl.value, 10) || 16;
+    var pool = "";
+    if (passgenLowerEl.checked)  pool += "abcdefghijklmnopqrstuvwxyz";
+    if (passgenUpperEl.checked)  pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (passgenDigitEl.checked)  pool += "0123456789";
+    if (passgenSymbolEl.checked) pool += "!@#$%^&*()-_=+[]{}<>?/.,;:";
+    if (!pool) {
+      passgenOutputEl.value = "";
+      passgenOutputEl.placeholder = TEXT[currentLang].passgenError;
+      playUiSound("error");
+      return;
+    }
+    /* Use crypto.getRandomValues for proper entropy */
+    var out = "";
+    var randBytes;
+    try {
+      randBytes = new Uint32Array(len);
+      window.crypto.getRandomValues(randBytes);
+    } catch (e) {
+      randBytes = null;
+    }
+    for (var i = 0; i < len; i++) {
+      var idx = randBytes ? randBytes[i] % pool.length : Math.floor(Math.random() * pool.length);
+      out += pool.charAt(idx);
+    }
+    passgenOutputEl.value = out;
+    playUiSound("success");
+  }
+  passgenLenEl.addEventListener("input", function () {
+    passgenLenValueEl.textContent = passgenLenEl.value;
+  });
+  passgenGenerate.addEventListener("click", generatePassword);
+  passgenCopy.addEventListener("click", function () {
+    if (!passgenOutputEl.value) return;
+    try {
+      navigator.clipboard.writeText(passgenOutputEl.value);
+      var orig = passgenCopy.textContent;
+      passgenCopy.textContent = TEXT[currentLang].passgenCopied;
+      setTimeout(function () { passgenCopy.textContent = orig; }, 1200);
+      playUiSound("success");
+    } catch (e) {
+      passgenOutputEl.select();
+      document.execCommand("copy");
+    }
+  });
+  generatePassword();   /* initial preview */
+
+  /* ── Random number ── */
+  function generateRandomNumber() {
+    var lo = parseInt(randnumMinEl.value, 10);
+    var hi = parseInt(randnumMaxEl.value, 10);
+    if (isNaN(lo) || isNaN(hi) || lo > hi) {
+      randnumResultEl.textContent = "—";
+      randnumResultEl.style.color = "#ff7a85";
+      randnumResultEl.title = TEXT[currentLang].randnumError;
+      playUiSound("error");
+      return;
+    }
+    var n;
+    try {
+      var buf = new Uint32Array(1);
+      window.crypto.getRandomValues(buf);
+      n = lo + (buf[0] % (hi - lo + 1));
+    } catch (e) {
+      n = lo + Math.floor(Math.random() * (hi - lo + 1));
+    }
+    randnumResultEl.textContent = n;
+    randnumResultEl.style.color = "";
+    randnumResultEl.title = "";
+    playUiSound("tick");
+  }
+  randnumGenBtn.addEventListener("click", generateRandomNumber);
+
+  /* ── Lorem ipsum ── */
+  var LOREM_LAT_WORDS = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod " +
+    "tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud " +
+    "exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in " +
+    "reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint " +
+    "occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est " +
+    "laborum at vero eos accusamus iusto odio dignissimos ducimus blanditiis praesentium").split(" ");
+  var LOREM_RUS_WORDS = ("рыба текст пример наполнение страница макет шрифт абзац слово предложение " +
+    "заголовок верстка дизайн интерфейс кнопка форма поле ввод вывод результат проверка " +
+    "стиль цвет фон граница отступ выравнивание шапка подвал контейнер блок элемент модуль " +
+    "сетка колонка строка ячейка таблица список ссылка изображение картинка иконка анимация " +
+    "переход эффект градиент тень тип размер вес жирный курсив подчёркнутый").split(" ");
+  var currentLoremLang = "lat";
+  function generateLorem() {
+    var count = Math.max(1, Math.min(20, parseInt(loremCountEl.value, 10) || 3));
+    var words = currentLoremLang === "rus" ? LOREM_RUS_WORDS : LOREM_LAT_WORDS;
+    var paragraphs = [];
+    for (var p = 0; p < count; p++) {
+      var sentenceCount = 3 + Math.floor(Math.random() * 4);
+      var sentences = [];
+      for (var s = 0; s < sentenceCount; s++) {
+        var wordCount = 6 + Math.floor(Math.random() * 12);
+        var picked = [];
+        for (var w = 0; w < wordCount; w++) {
+          picked.push(words[Math.floor(Math.random() * words.length)]);
+        }
+        var sent = picked.join(" ");
+        sent = sent.charAt(0).toUpperCase() + sent.slice(1);
+        sentences.push(sent + ".");
+      }
+      paragraphs.push(sentences.join(" "));
+    }
+    loremOutputEl.value = paragraphs.join("\n\n");
+    playUiSound("success");
+  }
+  loremGenBtn.addEventListener("click", generateLorem);
+  loremCopyBtn.addEventListener("click", function () {
+    if (!loremOutputEl.value) return;
+    try {
+      navigator.clipboard.writeText(loremOutputEl.value);
+      var orig = loremCopyBtn.textContent;
+      loremCopyBtn.textContent = TEXT[currentLang].passgenCopied;
+      setTimeout(function () { loremCopyBtn.textContent = orig; }, 1200);
+      playUiSound("success");
+    } catch (e) {}
+  });
+  for (var li = 0; li < loremLangBtns.length; li++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        currentLoremLang = btn.dataset.loremLang;
+        for (var k = 0; k < loremLangBtns.length; k++) {
+          loremLangBtns[k].classList.toggle("active", loremLangBtns[k] === btn);
+        }
+        playUiSound("click");
+      });
+    })(loremLangBtns[li]);
+  }
+  generateLorem();   /* initial preview */
+
+  /* ── Color converter ── */
+  function hexToRgb(hex) {
+    var m = /^#?([a-f\d]{6})$/i.exec(hex);
+    if (!m) return null;
+    var n = parseInt(m[1], 16);
+    return { r: (n >> 16) & 0xff, g: (n >> 8) & 0xff, b: n & 0xff };
+  }
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    return {
+      h: Math.round(h * 360),
+      s: Math.round(s * 100),
+      l: Math.round(l * 100)
+    };
+  }
+  function updateColorDisplay(hex) {
+    var rgb = hexToRgb(hex);
+    if (!rgb) return;
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    colorHexDisplay.textContent = hex.toUpperCase();
+    colorRgbEl.textContent = "rgb(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
+    colorHslEl.textContent = "hsl(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%)";
+  }
+  colorPickerEl.addEventListener("input", function () {
+    colorHexEl.value = colorPickerEl.value;
+    updateColorDisplay(colorPickerEl.value);
+  });
+  colorHexEl.addEventListener("input", function () {
+    var v = colorHexEl.value.trim();
+    if (!v.startsWith("#")) v = "#" + v;
+    if (/^#[a-f\d]{6}$/i.test(v)) {
+      colorPickerEl.value = v;
+      updateColorDisplay(v);
+    }
+  });
+  /* Click on any color-format value to copy */
+  [colorHexDisplay, colorRgbEl, colorHslEl].forEach(function (el) {
+    el.style.cursor = "pointer";
+    el.title = "Click to copy";
+    el.addEventListener("click", function () {
+      try {
+        navigator.clipboard.writeText(el.textContent);
+        var orig = el.style.background;
+        el.style.background = "rgba(80, 220, 130, 0.3)";
+        setTimeout(function () { el.style.background = orig; }, 600);
+        playUiSound("success");
+      } catch (e) {}
+    });
+  });
+  updateColorDisplay(colorPickerEl.value);  /* initial paint */
 
   /* ============================================================
      EASTER EGGS — hidden features for the curious.
