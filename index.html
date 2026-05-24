@@ -1075,6 +1075,34 @@
         <pre id="admin-power-output" class="admin-power-output"></pre>
       </div>
 
+      <!-- v5.51.0 — Creator-only live event log. Streams everything
+           happening on the page (theme switches, sounds, account
+           events, secret codes, admin actions). Ring-buffered to
+           500 entries in memory; nothing persisted. -->
+      <div class="admin-section" data-min-role="creator">
+        <h3 id="admin-logs-title">📜 Live event log</h3>
+        <p class="admin-hint" id="admin-logs-hint">Всё что происходит на сайте — в реальном времени. Только для creator. Хранится в памяти, до 500 записей.</p>
+        <div class="admin-logs-controls">
+          <button type="button" id="admin-logs-pause" class="settings-btn silent-btn">⏸ Пауза</button>
+          <button type="button" id="admin-logs-clear" class="settings-btn silent-btn">🗑 Очистить</button>
+          <button type="button" id="admin-logs-copy"  class="settings-btn silent-btn">📋 Копировать</button>
+          <select id="admin-logs-filter" class="calc-input admin-logs-filter">
+            <option value="">все категории</option>
+            <option value="theme">🎨 theme</option>
+            <option value="tab">🏷 tab</option>
+            <option value="lang">🌐 lang</option>
+            <option value="sound">🔊 sound</option>
+            <option value="knob">🎚 knob</option>
+            <option value="account">👤 account</option>
+            <option value="admin">👑 admin</option>
+            <option value="secret">🔓 secret</option>
+            <option value="error">❌ error</option>
+          </select>
+          <span id="admin-logs-count" class="admin-logs-count">0 events</span>
+        </div>
+        <pre id="admin-logs-output" class="admin-logs-output"></pre>
+      </div>
+
       <div class="admin-actions">
         <button type="button" id="admin-clear-storage" data-min-role="creator" class="settings-btn settings-btn-danger silent-btn"></button>
         <button type="button" id="admin-logout" class="settings-btn silent-btn"></button>

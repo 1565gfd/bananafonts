@@ -8742,3 +8742,95 @@ body.admin-role-helper [data-min-role="creator"],
 body.admin-role-admin     [data-min-role="creator"] {
   display: none !important;
 }
+
+
+/* ============================================================
+   v5.51.0 — Live event log (creator-only admin section).
+   Terminal-style display with category colour coding.
+   ============================================================ */
+.admin-logs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.admin-logs-controls > .settings-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.admin-logs-filter {
+  font-size: 12px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text);
+  border-radius: 8px;
+}
+.admin-logs-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.admin-logs-output {
+  margin: 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 225, 53, 0.25);
+  border-radius: 8px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #d0d8e0;
+  max-height: 320px;
+  min-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.admin-logs-output:empty::before {
+  content: "(пока ничего не происходит — взаимодействуй с сайтом)";
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+.admin-logs-output .log-ts {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+.admin-logs-output .log-cat {
+  display: inline-block;
+  min-width: 110px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-weight: 700;
+  margin: 0 6px;
+}
+.admin-logs-output .log-cat-theme   { background: rgba(255, 100, 200, 0.15); color: #ff9adb; }
+.admin-logs-output .log-cat-tab     { background: rgba(100, 200, 255, 0.15); color: #88d4ff; }
+.admin-logs-output .log-cat-lang    { background: rgba(255, 200, 100, 0.15); color: #ffce7a; }
+.admin-logs-output .log-cat-sound   { background: rgba(150, 220, 150, 0.15); color: #aeefae; }
+.admin-logs-output .log-cat-knob    { background: rgba(180, 150, 240, 0.15); color: #c8b0ff; }
+.admin-logs-output .log-cat-account { background: rgba(255, 215, 0, 0.15);   color: #ffe060; }
+.admin-logs-output .log-cat-admin   { background: rgba(255, 100, 100, 0.15); color: #ff9090; }
+.admin-logs-output .log-cat-secret  { background: rgba(140, 250, 200, 0.15); color: #88f0c6; }
+.admin-logs-output .log-cat-random  { background: rgba(255, 255, 255, 0.08); color: #b8c0d0; }
+.admin-logs-output .log-cat-error   { background: rgba(255, 50, 50, 0.25);   color: #ff5050; font-weight: 800; }
+.admin-logs-output .log-msg {
+  color: #e8edf2;
+}
+.admin-logs-output .log-paused-marker {
+  display: block;
+  text-align: center;
+  padding: 4px;
+  margin: 6px 0;
+  color: rgba(255, 200, 80, 0.7);
+  background: rgba(255, 200, 80, 0.1);
+  border-radius: 4px;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+  .admin-logs-output { font-size: 10px; padding: 8px; }
+  .admin-logs-output .log-cat { min-width: 85px; }
+  .admin-logs-controls > .settings-btn { font-size: 11px; padding: 5px 10px; }
+}

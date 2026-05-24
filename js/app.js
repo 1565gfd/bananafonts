@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.50.2";
+  var VERSION = "v5.51.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -7821,6 +7821,252 @@
       feedback(accLoginFb, "", false);
     }
   };
+
+  /* ─────────────────────────────────────────────────────────
+     v5.51.0 — LIVE EVENT LOG (creator-only).
+     Ring-buffered in-memory feed of everything happening on the page.
+     Categories: theme · tab · lang · sound · knob · account · admin ·
+     secret · random · error. Display lives inside an admin-panel
+     section that's gated to `data-min-role="creator"`. Admin and helper
+     never see this — but events still get logged (so a creator opening
+     the panel later can review history).
+     ───────────────────────────────────────────────────────── */
+  var MAX_LOG_ENTRIES = 500;
+  var _eventLog       = [];
+  var _logPaused      = false;
+  var _logFilter      = "";
+  var _logRenderScheduled = false;
+
+  /* DOM refs (may be null on first call if HTML not parsed yet, hence guards) */
+  var adminLogsOutputEl = document.getElementById("admin-logs-output");
+  var adminLogsCountEl  = document.getElementById("admin-logs-count");
+  var adminLogsPauseBtn = document.getElementById("admin-logs-pause");
+  var adminLogsClearBtn = document.getElementById("admin-logs-clear");
+  var adminLogsCopyBtn  = document.getElementById("admin-logs-copy");
+  var adminLogsFilterEl = document.getElementById("admin-logs-filter");
+
+  /* Cheap HTML-escape — log entries can contain free-form strings */
+  function _escHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+  function _logTimestamp(ms) {
+    var d = new Date(ms);
+    return d.toISOString().slice(11, 23);   /* HH:MM:SS.mmm */
+  }
+  function logEvent(cat, msg) {
+    if (_logPaused) return;
+    _eventLog.push({ ts: Date.now(), cat: cat, msg: String(msg == null ? "" : msg) });
+    while (_eventLog.length > MAX_LOG_ENTRIES) _eventLog.shift();
+    _scheduleLogRender();
+  }
+  function _scheduleLogRender() {
+    if (_logRenderScheduled) return;
+    if (!adminLogsOutputEl) return;
+    _logRenderScheduled = true;
+    requestAnimationFrame(function () {
+      _logRenderScheduled = false;
+      _renderLog();
+    });
+  }
+  function _renderLog() {
+    if (!adminLogsOutputEl) return;
+    /* Skip work if admin panel is closed OR not creator (section is hidden
+       anyway, but updating innerHTML on hidden element still costs DOM work). */
+    if (adminPanelEl && adminPanelEl.hasAttribute("hidden")) return;
+    if (_activeRole !== "creator" && !document.body.classList.contains("admin-role-creator")) return;
+
+    var filtered = _logFilter
+      ? _eventLog.filter(function (e) { return e.cat === _logFilter; })
+      : _eventLog;
+    var html = filtered.map(function (e) {
+      return "<span class='log-ts'>" + _logTimestamp(e.ts) + "</span>" +
+             "<span class='log-cat log-cat-" + e.cat + "'>[" + e.cat + "]</span>" +
+             "<span class='log-msg'>" + _escHtml(e.msg) + "</span>";
+    }).join("\n");
+    adminLogsOutputEl.innerHTML = html;
+    adminLogsOutputEl.scrollTop = adminLogsOutputEl.scrollHeight;
+    if (adminLogsCountEl) {
+      adminLogsCountEl.textContent = _eventLog.length + " events" +
+        (_logFilter ? " (" + filtered.length + " shown)" : "") +
+        (_logPaused ? " · ⏸ paused" : "");
+    }
+  }
+
+  /* ── Controls ── */
+  if (adminLogsPauseBtn) {
+    adminLogsPauseBtn.addEventListener("click", function () {
+      _logPaused = !_logPaused;
+      adminLogsPauseBtn.textContent = _logPaused ? "▶ Возобновить" : "⏸ Пауза";
+      _renderLog();
+    });
+  }
+  if (adminLogsClearBtn) {
+    adminLogsClearBtn.addEventListener("click", function () {
+      _eventLog = [];
+      _renderLog();
+    });
+  }
+  if (adminLogsCopyBtn) {
+    adminLogsCopyBtn.addEventListener("click", function () {
+      var txt = _eventLog.map(function (e) {
+        return _logTimestamp(e.ts) + " [" + e.cat + "] " + e.msg;
+      }).join("\n");
+      try {
+        navigator.clipboard.writeText(txt);
+        var orig = adminLogsCopyBtn.textContent;
+        adminLogsCopyBtn.textContent = "✓ Скопировано";
+        setTimeout(function () { adminLogsCopyBtn.textContent = orig; }, 1200);
+      } catch (e2) {}
+    });
+  }
+  if (adminLogsFilterEl) {
+    adminLogsFilterEl.addEventListener("change", function () {
+      _logFilter = adminLogsFilterEl.value || "";
+      _renderLog();
+    });
+  }
+
+  /* ── Hook into key functions ── wrapper pattern: capture original,
+     redefine with log call + delegate. Each hook adds <100µs overhead. */
+  if (typeof setTheme === "function") {
+    var _ot = setTheme;
+    setTheme = function (t) { logEvent("theme", "set → " + t); return _ot.apply(this, arguments); };
+  }
+  if (typeof playUiSound === "function") {
+    var _op = playUiSound;
+    playUiSound = function (n) { logEvent("sound", String(n)); return _op.apply(this, arguments); };
+  }
+  if (typeof setLang === "function") {
+    var _ol = setLang;
+    setLang = function (l) { logEvent("lang", "→ " + l); return _ol.apply(this, arguments); };
+  }
+  if (typeof activateAdmin === "function") {
+    var _oa = activateAdmin;
+    activateAdmin = function () {
+      logEvent("admin", "activated as " + (_activeRole || "?") +
+               " · username=" + (ROLES[_activeRole] && ROLES[_activeRole].username));
+      return _oa.apply(this, arguments);
+    };
+  }
+  if (typeof logoutAdmin === "function") {
+    var _ola = logoutAdmin;
+    logoutAdmin = function () {
+      logEvent("admin", "deactivated (was " + (_activeRole || "?") + ")");
+      return _ola.apply(this, arguments);
+    };
+  }
+  if (typeof openAdminPanel === "function") {
+    var _oap = openAdminPanel;
+    openAdminPanel = function () {
+      logEvent("admin", "panel opened");
+      var r = _oap.apply(this, arguments);
+      /* When the panel opens, force a render so creator sees the
+         accumulated history immediately, not after the next event. */
+      setTimeout(_renderLog, 50);
+      return r;
+    };
+  }
+  if (typeof closeAdminPanel === "function") {
+    var _ocp = closeAdminPanel;
+    closeAdminPanel = function () {
+      logEvent("admin", "panel closed");
+      return _ocp.apply(this, arguments);
+    };
+  }
+  if (typeof openAccountPanel === "function") {
+    var _oacp = openAccountPanel;
+    openAccountPanel = function () {
+      logEvent("account", "modal opened");
+      return _oacp.apply(this, arguments);
+    };
+  }
+  if (typeof closeAccountPanel === "function") {
+    var _ocacp = closeAccountPanel;
+    closeAccountPanel = function () {
+      logEvent("account", "modal closed");
+      return _ocacp.apply(this, arguments);
+    };
+  }
+  if (typeof scheduleApplyKnobs === "function") {
+    /* Knobs fire 60+ times/sec during drag — coalesce log entries similarly */
+    var _knobLogPending = null;
+    var _origSched = scheduleApplyKnobs;
+    scheduleApplyKnobs = function () {
+      if (!_knobLogPending) {
+        _knobLogPending = setTimeout(function () {
+          /* Log the SETTLED state once the user stops dragging */
+          var summary = "scale=" + knobState.scale + "% blur=" + knobState.blur + "px";
+          logEvent("knob", "adjust → " + summary);
+          _knobLogPending = null;
+        }, 200);
+      }
+      return _origSched.apply(this, arguments);
+    };
+  }
+  /* Hook main tab buttons (home/fonts/calc/time/tools/custom/settings/secret) */
+  (function () {
+    var tabBtns = document.querySelectorAll(".tab-btn[data-tab]");
+    for (var i = 0; i < tabBtns.length; i++) {
+      (function (btn) {
+        btn.addEventListener("click", function () {
+          logEvent("tab", "→ " + (btn.dataset.tab || btn.textContent.trim()));
+        });
+      })(tabBtns[i]);
+    }
+  })();
+  /* Secret code attempts — wrap checkSecretCode */
+  if (typeof checkSecretCode === "function") {
+    var _ocsc = checkSecretCode;
+    checkSecretCode = function () {
+      var raw = (secretInputEl && secretInputEl.value || "").trim();
+      if (raw) logEvent("secret", "attempt: " + raw.slice(0, 30));
+      return _ocsc.apply(this, arguments);
+    };
+  }
+  /* Account: login/register/logout */
+  if (accLoginBtn) {
+    accLoginBtn.addEventListener("click", function () {
+      logEvent("account", "login click: " + (accLoginUserEl.value || "").slice(0, 30));
+    }, true);
+  }
+  if (accRegisterBtn) {
+    accRegisterBtn.addEventListener("click", function () {
+      logEvent("account", "register click: " + (accRegUserEl.value || "").slice(0, 30));
+    }, true);
+  }
+  if (accLogoutBtn) {
+    accLogoutBtn.addEventListener("click", function () {
+      var cur = getCurrentAccount();
+      logEvent("account", "logout: " + (cur && cur.username || "?"));
+    }, true);
+  }
+  if (accWidgetLogout) {
+    accWidgetLogout.addEventListener("click", function () {
+      var cur = getCurrentAccount();
+      if (cur) logEvent("account", "widget-logout: " + cur.username);
+    }, true);
+  }
+  /* Service-code submit attempts */
+  if (accAdminSubmit) {
+    accAdminSubmit.addEventListener("click", function () {
+      logEvent("admin", "service-code submit attempt");
+    }, true);
+  }
+  /* Window-level errors */
+  window.addEventListener("error", function (e) {
+    logEvent("error", "JS: " + (e.message || "?") + " @ " +
+             (e.filename || "?").split("/").pop() + ":" + (e.lineno || "?"));
+  });
+  window.addEventListener("unhandledrejection", function (e) {
+    logEvent("error", "Promise rejected: " + (e.reason && e.reason.message || String(e.reason)));
+  });
+
+  /* Initial entry so the log isn't empty on first open */
+  logEvent("admin", "page loaded · " + (location.pathname || "/") + " · " + navigator.userAgent.split(" ").pop());
 
   /* ── Boot — paint widget on init + apply owner-theme if owner logged in ── */
   refreshAccountWidget();
