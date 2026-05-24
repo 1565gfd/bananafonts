@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.44.0";
+  var VERSION = "v5.44.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -6180,6 +6180,8 @@
 
   /* DOM refs */
   var accWidget       = document.getElementById("account-widget");
+  var accWidgetMain   = document.getElementById("account-widget-main");
+  var accWidgetLogout = document.getElementById("account-widget-logout");
   var accWidgetAvatar = document.getElementById("account-widget-avatar");
   var accWidgetName   = document.getElementById("account-widget-name");
   var accPanel        = document.getElementById("account-panel");
@@ -7088,7 +7090,20 @@
   }
 
   /* ── Wire widget + tabs + close ── */
-  accWidget.addEventListener("click", function () { openAccountPanel(); });
+  accWidgetMain.addEventListener("click", function () { openAccountPanel(); });
+  /* v5.44.1 — instant logout from widget. Confirm dialog prevents misclicks. */
+  accWidgetLogout.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var cur = getCurrentAccount();
+    if (!cur) return;
+    var ok = confirm(currentLang === "en"
+      ? "Log out of " + cur.username + "?"
+      : "Выйти из аккаунта " + cur.username + "?");
+    if (!ok) return;
+    setCurrentAccountId(null);
+    refreshAccountWidget();
+    playUiSound("knock");
+  });
   accClose.addEventListener("click", closeAccountPanel);
   accBackdrop.addEventListener("click", closeAccountPanel);
   for (var ti = 0; ti < accTabBtns.length; ti++) {

@@ -752,10 +752,13 @@
   <!-- v5.41.0 — Account widget. Pure-client "kinda" accounts via
        localStorage + SHA-256 password hashing (real crypto, fake auth).
        Floating chip top-right, always visible. -->
-  <button type="button" id="account-widget" class="account-widget" aria-label="Account" hidden>
-    <span class="account-avatar" id="account-widget-avatar">🍌</span>
-    <span class="account-name" id="account-widget-name">guest</span>
-  </button>
+  <div id="account-widget" class="account-widget" hidden>
+    <button type="button" id="account-widget-main" class="account-widget-main" aria-label="Account">
+      <span class="account-avatar" id="account-widget-avatar">🍌</span>
+      <span class="account-name" id="account-widget-name">guest</span>
+    </button>
+    <button type="button" id="account-widget-logout" class="account-widget-logout" aria-label="Выйти" title="Выйти из аккаунта" hidden>⏻</button>
+  </div>
 
   <!-- Account modal — register / login / profile -->
   <div id="account-panel" class="admin-panel" hidden role="dialog" aria-modal="true" aria-labelledby="account-title">

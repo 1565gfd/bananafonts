@@ -7408,33 +7408,71 @@ body.bf-low-gpu * {
 
 /* Floating widget — top-right corner, always visible.
    Sits below admin-badge (z-index 50) and well below modals (10000). */
+/* v5.44.1 — widget is now a CONTAINER with two child buttons:
+   .account-widget-main (avatar + name → opens panel)
+   .account-widget-logout (⏻ icon → instant logout, shown only when logged in) */
 .account-widget {
   position: fixed;
   top: max(12px, env(safe-area-inset-top));
   right: max(12px, env(safe-area-inset-right));
   z-index: 40;
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px 6px 6px;
+  align-items: stretch;
   border-radius: 999px;
   background: var(--glass-bg, rgba(255,255,255,0.12));
   border: 1px solid var(--glass-border, rgba(255,255,255,0.3));
   color: var(--text, #fff);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  transition: transform 0.15s ease, background 0.18s ease;
-  max-width: 220px;
+  transition: transform 0.15s ease;
+  overflow: hidden;
 }
-.account-widget:hover {
-  transform: translateY(-1px);
-  background: var(--glass-bg-hover, rgba(255,255,255,0.2));
+.account-widget-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  max-width: 200px;
 }
-.account-widget:active { transform: translateY(0); }
+.account-widget-main:hover {
+  background: rgba(255,255,255,0.1);
+}
+.account-widget-main:active { transform: translateY(1px); }
+/* Logout button — slim, right-side, separated by a thin divider */
+.account-widget-logout {
+  display: none;          /* hidden until .logged-in on parent */
+  padding: 0 10px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+}
+.account-widget:not(.logged-in) .account-widget-logout {
+  display: none;
+}
+.account-widget.logged-in .account-widget-logout {
+  display: inline-flex;
+}
+.account-widget-logout:hover {
+  background: rgba(255, 76, 76, 0.18);
+  color: #ff8888;
+}
+.account-widget-logout:active { transform: translateY(1px); }
 .account-avatar {
   display: inline-flex;
   align-items: center;
@@ -7659,9 +7697,15 @@ body.bf-low-gpu * {
 
 /* Mobile tweaks */
 @media (max-width: 600px) {
-  .account-widget {
-    padding: 5px 10px 5px 5px;
+  .account-widget-main {
+    padding: 5px 8px 5px 5px;
     font-size: 12px;
+    max-width: 130px;
+  }
+  .account-widget-logout {
+    padding: 0 8px;
+    min-width: 32px;
+    font-size: 13px;
   }
   .account-avatar {
     width: 24px;
@@ -7669,7 +7713,7 @@ body.bf-low-gpu * {
     font-size: 14px;
   }
   .account-name {
-    max-width: 90px;
+    max-width: 80px;
   }
   .account-tabs {
     gap: 3px;
