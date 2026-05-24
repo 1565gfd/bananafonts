@@ -19,24 +19,48 @@
       footerSuffix: "(banana.team)",
       copy: "Копировать",
       copied: "Скопировано!",
-      themeLight: "Светлая",
-      themeDark: "Тёмная",
-      themeNight: "Ночная",
-      themeRainbow: "Переливающаяся",
-      themeSchool: "Школа",
-      themeBlackOrange: "Чёрно-малин.",
-      themeNeonGreen: "Неон зелёный",
-      themeNeonViolet: "Неон фиолет",
-      themePastel: "Пастель",
-      themeOcean: "Океан",
-      themeSunset: "Закат",
-      themeCyberpunk: "Киберпанк",
-      themeCoffee: "Кофе",
-      themeTerminal: "Терминал",
-      themeAurora: "Сияние",
-      themeSovietLift: "Советский лифт",
-      themeSovietPodyezd: "Советский подъезд",
-      themeOwner: "1565gfd 👑",
+      themeLight: "Жемчуг",
+      themeDark: "Полуночь",
+      themeNight: "Чернильная бездна",
+      themeRainbow: "Призма",
+      themeSchool: "Меловая доска",
+      themeBlackOrange: "Чёрная малина",
+      themeNeonGreen: "Токсичный сок",
+      themeNeonViolet: "Ультрафиолет",
+      themePastel: "Сахарная вата",
+      themeOcean: "Глубоководье",
+      themeSunset: "Лава Везувия",
+      themeCyberpunk: "Неоновый Токио",
+      themeCoffee: "Эспрессо",
+      themeTerminal: "Фосфор",
+      themeAurora: "Северное сияние",
+      themeSovietLift: "Лифт хрущёвки",
+      themeSovietPodyezd: "Подъезд №7",
+      themeOwner: "Банановый трон 👑",
+      /* v5.39.0 — 50 new themes (RU labels) */
+      themeMoss: "Мох", themeSakura: "Сакура", themeAutumn: "Осенние листья",
+      themeWinter: "Зимний лес", themeDesert: "Дюны", themeTundra: "Тундра",
+      themeSavanna: "Саванна", themeTropics: "Тропики", themeSwamp: "Болото",
+      themeCanyon: "Каньон",
+      themeNebula: "Туманность", themeEventHorizon: "Горизонт событий",
+      themeMars: "Марс", themeJupiter: "Юпитер", themeSaturn: "Сатурн",
+      themeSupernova: "Сверхновая", themeMilkyWay: "Млечный путь",
+      themePulsar: "Пульсар",
+      themeMelancholy: "Меланхолия", themeEuphoria: "Эйфория",
+      themeRage: "Ярость", themeZen: "Дзен", themeNostalgia: "Ностальгия",
+      themeDreamy: "Дрёма", themeAnxiety: "Тревога",
+      themeSerenity: "Безмятежность",
+      themeUkiyoe: "Укиё-э", themeBaroque: "Барокко",
+      themeArtDeco: "Ар-деко", themeBauhaus: "Баухаус",
+      themeMemphis: "Мемфис 80-е", themeVaporwave: "Вейпорвейв",
+      themeY2K: "Y2K",
+      themeMatcha: "Матча", themeCaramel: "Карамель", themeMojito: "Мохито",
+      themeBlueberry: "Черника", themeBubblegum: "Жвачка",
+      themeMatrixClassic: "Матрица", themeTronGrid: "Сетка Трона",
+      themeRetrowave: "Ретровейв", themeAmberCRT: "Янтарный ЭЛТ",
+      themeWireframe: "Каркас", themeQuantum: "Квантум",
+      themeRuby: "Рубин", themeSapphire: "Сапфир", themeEmerald: "Изумруд",
+      themeAmethyst: "Аметист", themeOpal: "Опал", themeObsidian: "Обсидиан",
       secretBananaKing: "Тема владельца разблокирована 🍌👑",
       secret1488: "Так делать нельзя❌",
       apologyTitle: "Извиняйся",
@@ -84,7 +108,7 @@
       adminStatsDashTitle: "📊 Аналитика сессии",
       adminStatsDashReset: "Сбросить статистику",
       adminBurnTitle: "🎬 Burn-in: автосмена тем",
-      adminBurnHint: "Циклически меняет тему каждые 2 секунды через все 18 тем.",
+      adminBurnHint: "Циклически меняет тему каждые 2 секунды через все 68 тем.",
       adminBurnStart: "▶ Старт",
       adminBurnStop: "■ Стоп",
       adminFilterTitle: "🚫 Фильтр матов",
@@ -94,6 +118,31 @@
       adminLockoutTitle: "🔴 Триггер red-lockout",
       adminLockoutHint: "Мгновенно открыть apology-экран — для теста UI.",
       adminLockoutFire: "Запустить",
+      /* v5.39.0 — 20 power tools */
+      adminPowerTitle: "🛠 20 инструментов администратора",
+      adminPowerHint: "Тычь в любую кнопку — мгновенный эффект. Каждая кнопка трогает реальный браузерный API.",
+      pwToggleLang: "🌐 Переключить язык",
+      pwZoomIn: "🔍 Зум +10%",
+      pwZoomOut: "🔎 Зум −10%",
+      pwZoomReset: "↩ Сброс зума",
+      pwRandomTheme: "🎲 Случайная тема",
+      pwPrint: "🖨 Печать",
+      pwVibrate: "📳 Вибрация (200мс)",
+      pwBattery: "🔋 Заряд батареи",
+      pwNetwork: "🌐 Инфо о сети",
+      pwGeo: "📍 Геолокация",
+      pwClipboard: "📋 Прочитать буфер",
+      pwReducedMotion: "🎬 Без анимаций",
+      pwFullscreen: "📺 Fullscreen",
+      pwConfetti: "🎊 Конфетти",
+      pwAccent: "🎨 Цвет акцента",
+      pwDisableInputs: "🚫 Off все инпуты",
+      pwHighlight: "🔦 Подсветить клики",
+      pwMemory: "🧠 Память",
+      pwWakeLock: "💡 Не засыпать",
+      pwSpin: "🌀 Крутануть",
+      pwRuler: "📐 Линейка viewport",
+      pwMirror: "🪞 Зеркало",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -257,24 +306,48 @@
       footerSuffix: "(banana.team)",
       copy: "Copy",
       copied: "Copied!",
-      themeLight: "Light",
-      themeDark: "Dark",
-      themeNight: "Night",
-      themeRainbow: "Iridescent",
-      themeSchool: "School",
-      themeBlackOrange: "Black-Raspberry",
-      themeNeonGreen: "Neon Green",
-      themeNeonViolet: "Neon Violet",
-      themePastel: "Pastel",
-      themeOcean: "Ocean",
-      themeSunset: "Sunset",
-      themeCyberpunk: "Cyberpunk",
-      themeCoffee: "Coffee",
-      themeTerminal: "Terminal",
-      themeAurora: "Aurora",
-      themeSovietLift: "Soviet Lift",
-      themeSovietPodyezd: "Soviet Hallway",
-      themeOwner: "1565gfd 👑",
+      themeLight: "Pearl",
+      themeDark: "Midnight",
+      themeNight: "Inkwell",
+      themeRainbow: "Prism",
+      themeSchool: "Chalkboard",
+      themeBlackOrange: "Black Raspberry",
+      themeNeonGreen: "Toxic Sap",
+      themeNeonViolet: "Ultraviolet",
+      themePastel: "Cotton Candy",
+      themeOcean: "Abyss Trench",
+      themeSunset: "Vesuvius Lava",
+      themeCyberpunk: "Neo-Tokyo",
+      themeCoffee: "Espresso",
+      themeTerminal: "Phosphor",
+      themeAurora: "Polar Veil",
+      themeSovietLift: "Khrushchyovka Lift",
+      themeSovietPodyezd: "Stairwell №7",
+      themeOwner: "Banana Throne 👑",
+      /* v5.39.0 — 50 new themes (EN labels) */
+      themeMoss: "Moss", themeSakura: "Sakura", themeAutumn: "Autumn Leaves",
+      themeWinter: "Winter Forest", themeDesert: "Desert Dune",
+      themeTundra: "Tundra", themeSavanna: "Savanna", themeTropics: "Tropics",
+      themeSwamp: "Swamp", themeCanyon: "Canyon",
+      themeNebula: "Nebula", themeEventHorizon: "Event Horizon",
+      themeMars: "Mars", themeJupiter: "Jupiter", themeSaturn: "Saturn",
+      themeSupernova: "Supernova", themeMilkyWay: "Milky Way",
+      themePulsar: "Pulsar",
+      themeMelancholy: "Melancholy", themeEuphoria: "Euphoria",
+      themeRage: "Rage", themeZen: "Zen", themeNostalgia: "Nostalgia",
+      themeDreamy: "Dreamy", themeAnxiety: "Anxiety",
+      themeSerenity: "Serenity",
+      themeUkiyoe: "Ukiyo-e", themeBaroque: "Baroque",
+      themeArtDeco: "Art Deco", themeBauhaus: "Bauhaus",
+      themeMemphis: "Memphis 80s", themeVaporwave: "Vaporwave",
+      themeY2K: "Y2K",
+      themeMatcha: "Matcha", themeCaramel: "Caramel", themeMojito: "Mojito",
+      themeBlueberry: "Blueberry", themeBubblegum: "Bubblegum",
+      themeMatrixClassic: "Matrix Classic", themeTronGrid: "Tron Grid",
+      themeRetrowave: "Retrowave", themeAmberCRT: "Amber CRT",
+      themeWireframe: "Wireframe", themeQuantum: "Quantum",
+      themeRuby: "Ruby", themeSapphire: "Sapphire", themeEmerald: "Emerald",
+      themeAmethyst: "Amethyst", themeOpal: "Opal", themeObsidian: "Obsidian",
       secretBananaKing: "Owner theme unlocked 🍌👑",
       secret1488: "You can't do that❌",
       apologyTitle: "Apologize",
@@ -322,7 +395,7 @@
       adminStatsDashTitle: "📊 Session analytics",
       adminStatsDashReset: "Reset stats",
       adminBurnTitle: "🎬 Burn-in: auto-cycle themes",
-      adminBurnHint: "Cycles through all 18 themes every 2 seconds.",
+      adminBurnHint: "Cycles through all 68 themes every 2 seconds.",
       adminBurnStart: "▶ Start",
       adminBurnStop: "■ Stop",
       adminFilterTitle: "🚫 Swear filter",
@@ -332,6 +405,31 @@
       adminLockoutTitle: "🔴 Trigger red-lockout",
       adminLockoutHint: "Open the apology screen instantly — for UI testing.",
       adminLockoutFire: "Fire",
+      /* v5.39.0 — 20 power tools (EN) */
+      adminPowerTitle: "🛠 20 admin power tools",
+      adminPowerHint: "Click any button — instant effect. Each touches a real browser API.",
+      pwToggleLang: "🌐 Toggle language",
+      pwZoomIn: "🔍 Zoom +10%",
+      pwZoomOut: "🔎 Zoom −10%",
+      pwZoomReset: "↩ Reset zoom",
+      pwRandomTheme: "🎲 Random theme",
+      pwPrint: "🖨 Print",
+      pwVibrate: "📳 Vibrate (200ms)",
+      pwBattery: "🔋 Battery info",
+      pwNetwork: "🌐 Network info",
+      pwGeo: "📍 Geolocation",
+      pwClipboard: "📋 Read clipboard",
+      pwReducedMotion: "🎬 No animations",
+      pwFullscreen: "📺 Fullscreen",
+      pwConfetti: "🎊 Confetti",
+      pwAccent: "🎨 Accent color",
+      pwDisableInputs: "🚫 Disable inputs",
+      pwHighlight: "🔦 Highlight clicks",
+      pwMemory: "🧠 Memory",
+      pwWakeLock: "💡 Wake-lock",
+      pwSpin: "🌀 Spin page",
+      pwRuler: "📐 Viewport ruler",
+      pwMirror: "🪞 Mirror page",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -566,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.38.0";
+  var VERSION = "v5.39.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -678,6 +776,11 @@
   var adminLockoutTitleEl= document.getElementById("admin-lockout-title");
   var adminLockoutHintEl = document.getElementById("admin-lockout-hint");
   var adminLockoutFireBtn= document.getElementById("admin-lockout-fire");
+  /* v5.39.0 — 20 power-tools refs */
+  var adminPowerTitleEl  = document.getElementById("admin-power-title");
+  var adminPowerHintEl   = document.getElementById("admin-power-hint");
+  var adminPowerGridEl   = document.getElementById("admin-power-grid");
+  var adminPowerOutputEl = document.getElementById("admin-power-output");
   /* v5.33.0: Customization knobs */
   var uiScaleEl    = document.getElementById("ui-scale");
   var uiScaleVal   = document.getElementById("ui-scale-val");
@@ -880,7 +983,20 @@
     "neon-green", "neon-violet", "pastel", "ocean", "sunset",   /* v5.19.0 extras */
     "cyberpunk", "coffee", "terminal", "aurora",                 /* v5.20.0 extras */
     "soviet-lift", "soviet-podyezd",                             /* v5.21.0 extras */
-    "owner"                                                       /* v5.28.0: personal owner theme — secret code BANANAKING */
+    "owner",                                                      /* v5.28.0: personal owner theme — secret code BANANAKING */
+    /* v5.39.0 — 50 new themes (nature/cosmic/mood/culture/food/tech/gems) */
+    "moss", "sakura", "autumn-leaves", "winter-forest", "desert-dune",
+    "tundra", "savanna", "tropics", "swamp", "canyon",
+    "nebula", "event-horizon", "mars", "jupiter", "saturn",
+    "supernova", "milky-way", "pulsar",
+    "melancholy", "euphoria", "rage", "zen", "nostalgia",
+    "dreamy", "anxiety", "serenity",
+    "ukiyoe", "baroque", "art-deco", "bauhaus", "memphis",
+    "vaporwave", "y2k",
+    "matcha", "caramel", "mojito", "blueberry", "bubblegum",
+    "matrix-classic", "tron-grid", "retrowave", "amber-crt",
+    "wireframe", "quantum",
+    "ruby", "sapphire", "emerald", "amethyst", "opal", "obsidian"
   ];
   var currentTheme = document.documentElement.dataset.theme || "dark";
   if (VALID_THEMES.indexOf(currentTheme) === -1) currentTheme = "dark";
@@ -1022,6 +1138,9 @@
     adminLockoutTitleEl.textContent= t.adminLockoutTitle;
     adminLockoutHintEl.textContent = t.adminLockoutHint;
     adminLockoutFireBtn.textContent= t.adminLockoutFire;
+    adminPowerTitleEl.textContent  = t.adminPowerTitle;
+    adminPowerHintEl.textContent   = t.adminPowerHint;
+    if (typeof refreshAdminPowerLabels === "function") refreshAdminPowerLabels();
     refreshAdminToggleLabels();
     /* Re-render dynamic admin content if panel is open / unlocked */
     if (adminUnlocked) {
@@ -1214,12 +1333,127 @@
     { id: "aurora",      ruLabel: "Сияние",       enLabel: "Aurora",
       swatch: "linear-gradient(135deg, #0a1830 0%, #2d5e5b 35%, #1f5a7a 65%, #4a3865 100%)" },
     /* v5.21.0 / v5.21.2 — Soviet themes redesigned to match user's photo refs */
-    { id: "soviet-lift",    ruLabel: "Советский лифт",    enLabel: "Soviet Lift",
+    { id: "soviet-lift",    ruLabel: "Лифт хрущёвки",     enLabel: "Khrushchyovka Lift",
       /* Wood-panel + warm ceiling glow */
       swatch: "radial-gradient(ellipse at 50% 0%, rgba(255,220,140,0.4) 0%, transparent 50%), linear-gradient(180deg, #c47840 0%, #a05830 50%, #7a4220 100%)" },
-    { id: "soviet-podyezd", ruLabel: "Советский подъезд", enLabel: "Soviet Hallway",
+    { id: "soviet-podyezd", ruLabel: "Подъезд №7",         enLabel: "Stairwell №7",
       /* Iconic white-top / teal-bottom split */
-      swatch: "linear-gradient(180deg, #e8e6d8 0%, #e8e6d8 32%, #5cb5a8 35%, #3d8a7d 100%)" }
+      swatch: "linear-gradient(180deg, #e8e6d8 0%, #e8e6d8 32%, #5cb5a8 35%, #3d8a7d 100%)" },
+
+    /* ── v5.39.0 — 50 new themes (nature / cosmic / mood / culture / food / tech / gems) ── */
+    /* Nature */
+    { id: "moss",          ruLabel: "Мох",                 enLabel: "Moss",
+      swatch: "linear-gradient(160deg, #0a1a0e 0%, #1a3022 50%, #0d1f12 100%)" },
+    { id: "sakura",        ruLabel: "Сакура",              enLabel: "Sakura",
+      swatch: "linear-gradient(160deg, #fff0f5 0%, #ffd5e5 50%, #fcb8d2 100%)" },
+    { id: "autumn-leaves", ruLabel: "Осенние листья",      enLabel: "Autumn Leaves",
+      swatch: "linear-gradient(160deg, #2a0e08 0%, #5a2a10 50%, #7a3818 100%)" },
+    { id: "winter-forest", ruLabel: "Зимний лес",          enLabel: "Winter Forest",
+      swatch: "linear-gradient(160deg, #e8f4ff 0%, #cce0f0 50%, #a8c8e0 100%)" },
+    { id: "desert-dune",   ruLabel: "Дюны",                enLabel: "Desert Dune",
+      swatch: "linear-gradient(160deg, #fdf0d8 0%, #f4d090 50%, #d9a060 100%)" },
+    { id: "tundra",        ruLabel: "Тундра",              enLabel: "Tundra",
+      swatch: "linear-gradient(160deg, #f0f4f5 0%, #d8e2e3 50%, #b8c8c8 100%)" },
+    { id: "savanna",       ruLabel: "Саванна",             enLabel: "Savanna",
+      swatch: "linear-gradient(160deg, #fff6d8 0%, #f5d878 50%, #d8a838 100%)" },
+    { id: "tropics",       ruLabel: "Тропики",             enLabel: "Tropics",
+      swatch: "linear-gradient(160deg, #08362a 0%, #0d6850 50%, #08362a 100%)" },
+    { id: "swamp",         ruLabel: "Болото",              enLabel: "Swamp",
+      swatch: "linear-gradient(160deg, #101f0e 0%, #1c3a20 50%, #0a1808 100%)" },
+    { id: "canyon",        ruLabel: "Каньон",              enLabel: "Canyon",
+      swatch: "linear-gradient(160deg, #2a1008 0%, #7a3018 50%, #a04020 100%)" },
+
+    /* Cosmic */
+    { id: "nebula",        ruLabel: "Туманность",          enLabel: "Nebula",
+      swatch: "radial-gradient(circle at 30% 30%, #d066ff 0%, transparent 55%), linear-gradient(160deg, #0a0518 0%, #3a0c5e 50%, #7a1a8a 100%)" },
+    { id: "event-horizon", ruLabel: "Горизонт событий",    enLabel: "Event Horizon",
+      swatch: "radial-gradient(circle at 50% 50%, #ff8800 0%, transparent 35%), #000000" },
+    { id: "mars",          ruLabel: "Марс",                enLabel: "Mars",
+      swatch: "linear-gradient(160deg, #1a0808 0%, #5a1808 50%, #a03820 100%)" },
+    { id: "jupiter",       ruLabel: "Юпитер",              enLabel: "Jupiter",
+      swatch: "linear-gradient(160deg, #3a2010 0%, #a07050 50%, #d8a878 100%)" },
+    { id: "saturn",        ruLabel: "Сатурн",              enLabel: "Saturn",
+      swatch: "linear-gradient(160deg, #f5e8c8 0%, #dac088 50%, #a88840 100%)" },
+    { id: "supernova",     ruLabel: "Сверхновая",          enLabel: "Supernova",
+      swatch: "radial-gradient(circle at 50% 50%, #ffee44 0%, #5a3a98 40%, #000018 100%)" },
+    { id: "milky-way",     ruLabel: "Млечный путь",        enLabel: "Milky Way",
+      swatch: "linear-gradient(160deg, #02030c 0%, #0a1538 50%, #1c2858 100%)" },
+    { id: "pulsar",        ruLabel: "Пульсар",             enLabel: "Pulsar",
+      swatch: "radial-gradient(circle at 30% 30%, #00d8ff 0%, transparent 55%), #000a10" },
+
+    /* Mood */
+    { id: "melancholy",    ruLabel: "Меланхолия",          enLabel: "Melancholy",
+      swatch: "linear-gradient(160deg, #181a22 0%, #252836 50%, #1a1d28 100%)" },
+    { id: "euphoria",      ruLabel: "Эйфория",             enLabel: "Euphoria",
+      swatch: "linear-gradient(135deg, #fff3a8 0%, #ffb8e8 50%, #ffd870 100%)" },
+    { id: "rage",          ruLabel: "Ярость",              enLabel: "Rage",
+      swatch: "radial-gradient(circle at 50% 50%, #ff2020 0%, #3a0000 50%, #0a0000 100%)" },
+    { id: "zen",           ruLabel: "Дзен",                enLabel: "Zen",
+      swatch: "linear-gradient(160deg, #f0ede2 0%, #dcd8c8 50%, #b8c0a8 100%)" },
+    { id: "nostalgia",     ruLabel: "Ностальгия",          enLabel: "Nostalgia",
+      swatch: "linear-gradient(160deg, #f0e0c0 0%, #d8b890 50%, #a88858 100%)" },
+    { id: "dreamy",        ruLabel: "Дрёма",               enLabel: "Dreamy",
+      swatch: "linear-gradient(160deg, #1a0f2a 0%, #3a2858 50%, #5a4088 100%)" },
+    { id: "anxiety",       ruLabel: "Тревога",             enLabel: "Anxiety",
+      swatch: "linear-gradient(160deg, #1a2008 0%, #3a4810 50%, #586818 100%)" },
+    { id: "serenity",      ruLabel: "Безмятежность",       enLabel: "Serenity",
+      swatch: "linear-gradient(160deg, #eaf6ff 0%, #c8e0f0 50%, #a0c0d8 100%)" },
+
+    /* Culture */
+    { id: "ukiyoe",        ruLabel: "Укиё-э",              enLabel: "Ukiyo-e",
+      swatch: "linear-gradient(160deg, #f0ead8 0%, #d8c8a8 50%, #b88848 100%)" },
+    { id: "baroque",       ruLabel: "Барокко",             enLabel: "Baroque",
+      swatch: "radial-gradient(ellipse at 50% 50%, #d8a838 0%, transparent 40%), linear-gradient(160deg, #1a0808 0%, #3a0a08 50%, #5a1810 100%)" },
+    { id: "art-deco",      ruLabel: "Ар-деко",             enLabel: "Art Deco",
+      swatch: "linear-gradient(45deg, #d8a838 0%, #d8a838 25%, #0a0805 25%, #0a0805 50%, #d8a838 50%, #d8a838 75%, #0a0805 75%)" },
+    { id: "bauhaus",       ruLabel: "Баухаус",             enLabel: "Bauhaus",
+      swatch: "linear-gradient(90deg, #d83020 0%, #d83020 33%, #ffe040 33%, #ffe040 66%, #1840d8 66%, #1840d8 100%)" },
+    { id: "memphis",       ruLabel: "Мемфис 80-е",         enLabel: "Memphis 80s",
+      swatch: "radial-gradient(circle at 30% 30%, #ff5588 0%, transparent 50%), radial-gradient(circle at 70% 70%, #22aacc 0%, transparent 50%), #fff8f0" },
+    { id: "vaporwave",     ruLabel: "Вейпорвейв",          enLabel: "Vaporwave",
+      swatch: "linear-gradient(135deg, #ff5cb8 0%, #7a1888 50%, #5cf0ff 100%)" },
+    { id: "y2k",           ruLabel: "Y2K",                 enLabel: "Y2K",
+      swatch: "linear-gradient(135deg, #dcebf8 0%, #a0c8e8 50%, #5050ff 100%)" },
+
+    /* Food */
+    { id: "matcha",        ruLabel: "Матча",               enLabel: "Matcha",
+      swatch: "linear-gradient(160deg, #e8f0d0 0%, #bfd8a0 50%, #88a868 100%)" },
+    { id: "caramel",       ruLabel: "Карамель",            enLabel: "Caramel",
+      swatch: "linear-gradient(160deg, #1a0a04 0%, #5a3010 50%, #a06820 100%)" },
+    { id: "mojito",        ruLabel: "Мохито",              enLabel: "Mojito",
+      swatch: "linear-gradient(160deg, #e8fff0 0%, #a8e8c0 50%, #5cb888 100%)" },
+    { id: "blueberry",     ruLabel: "Черника",             enLabel: "Blueberry",
+      swatch: "linear-gradient(160deg, #080a28 0%, #181c58 50%, #3838a0 100%)" },
+    { id: "bubblegum",     ruLabel: "Жвачка",              enLabel: "Bubblegum",
+      swatch: "linear-gradient(160deg, #ffe0f0 0%, #ffa8d0 50%, #ff70a8 100%)" },
+
+    /* Tech */
+    { id: "matrix-classic",ruLabel: "Матрица",             enLabel: "Matrix Classic",
+      swatch: "radial-gradient(circle at 50% 50%, #22ff22 0%, transparent 60%), #000400" },
+    { id: "tron-grid",     ruLabel: "Сетка Трона",         enLabel: "Tron Grid",
+      swatch: "linear-gradient(135deg, #0af0ff 0%, #001828 100%)" },
+    { id: "retrowave",     ruLabel: "Ретровейв",           enLabel: "Retrowave",
+      swatch: "linear-gradient(160deg, #080018 0%, #280850 50%, #ff2a8c 100%)" },
+    { id: "amber-crt",     ruLabel: "Янтарный ЭЛТ",        enLabel: "Amber CRT",
+      swatch: "radial-gradient(circle at 50% 50%, #ffb030 0%, #2a1800 100%)" },
+    { id: "wireframe",     ruLabel: "Каркас",              enLabel: "Wireframe",
+      swatch: "linear-gradient(135deg, #fafafa 0%, #ebebeb 50%, #d8d8d8 100%)" },
+    { id: "quantum",       ruLabel: "Квантум",             enLabel: "Quantum",
+      swatch: "radial-gradient(circle at 30% 30%, #00ffaa 0%, transparent 50%), linear-gradient(160deg, #001020 0%, #0a3050 50%, #185878 100%)" },
+
+    /* Gems */
+    { id: "ruby",          ruLabel: "Рубин",               enLabel: "Ruby",
+      swatch: "radial-gradient(circle at 30% 30%, #ff2058 0%, transparent 55%), linear-gradient(160deg, #1a0008 0%, #5a0820 50%, #9a1838 100%)" },
+    { id: "sapphire",      ruLabel: "Сапфир",              enLabel: "Sapphire",
+      swatch: "radial-gradient(circle at 30% 30%, #3870ff 0%, transparent 55%), linear-gradient(160deg, #000820 0%, #0a1858 50%, #1a3898 100%)" },
+    { id: "emerald",       ruLabel: "Изумруд",             enLabel: "Emerald",
+      swatch: "radial-gradient(circle at 30% 30%, #20d058 0%, transparent 55%), linear-gradient(160deg, #001a10 0%, #0a4828 50%, #188850 100%)" },
+    { id: "amethyst",      ruLabel: "Аметист",             enLabel: "Amethyst",
+      swatch: "radial-gradient(circle at 30% 30%, #b860ff 0%, transparent 55%), linear-gradient(160deg, #1a0820 0%, #48188a 50%, #7028b8 100%)" },
+    { id: "opal",          ruLabel: "Опал",                enLabel: "Opal",
+      swatch: "linear-gradient(135deg, #f0fcfa 0%, #dee8f0 50%, #c0d4e0 100%)" },
+    { id: "obsidian",      ruLabel: "Обсидиан",            enLabel: "Obsidian",
+      swatch: "radial-gradient(ellipse at 50% 50%, #a83020 0%, transparent 50%), #020000" }
   ];
 
   function rebuildExtraThemesGrid() {
@@ -1762,6 +1996,7 @@
     calcState.op = null;
     calcState.waiting = true;
     calcRender();
+    playUiSound("coin");             /* v5.38.2: cha-ching on calculator result */
   }
 
   function calcClear() {
@@ -1770,6 +2005,7 @@
     calcState.op = null;
     calcState.waiting = false;
     calcRender();
+    playUiSound("squeak");           /* v5.38.2: rubber-eraser feel on AC */
   }
 
   function calcNegate() {
@@ -1777,6 +2013,7 @@
     if (isNaN(n)) return;
     calcState.display = calcFormat(-n);
     calcRender();
+    playUiSound("squeak");           /* v5.38.2: same squeak on sign-flip */
   }
 
   function calcPercent() {
@@ -2045,17 +2282,20 @@
 
     "MATRIX": {
       message: function () { return TEXT[currentLang].secretMatrix; },
+      sound:   "portal",   /* v5.38.2: enter-the-matrix portal whoosh */
       action:  function () { matrixRain(); }
     },
 
     "42": {
       /* The answer to life, the universe and everything (HHGTTG). */
       message: function () { return TEXT[currentLang].secret42; },
+      sound:   "sparkle",  /* v5.38.2: cosmic answer twinkle */
       action:  function () { triggerRainbow(); }
     },
 
     "PARTY": {
       message: function () { return TEXT[currentLang].secretParty; },
+      sound:   "applause", /* v5.38.2: crowd cheers the party */
       action:  function () {
         /* Stagger a few different emoji rains so the screen feels busy */
         var partyEmojis = ["🎉", "🎊", "🥳", "🎈", "🎂", "✨"];
@@ -2070,6 +2310,7 @@
 
     "FLIP": {
       message: function () { return TEXT[currentLang].secretFlip; },
+      sound:   "squeak",   /* v5.38.2: rubbery flip squeak */
       action:  function () { flipPage(); }
     },
 
@@ -2077,27 +2318,32 @@
 
     "HEART": {
       message: function () { return TEXT[currentLang].secretHeart; },
+      sound:   "kiss",     /* v5.38.2: little smooch sound */
       action:  function () { emojiRain("❤️", 50); }
     },
 
     "SNOW": {
       message: function () { return TEXT[currentLang].secretSnow; },
+      sound:   "sparkle",  /* v5.38.2: crystalline snow chimes */
       action:  function () { emojiRain("❄️", 50); }
     },
 
     "PIZZA": {
       message: function () { return TEXT[currentLang].secretPizza; },
+      sound:   "doorbell", /* v5.38.2: pizza delivery ding-dong */
       action:  function () { emojiRain("🍕", 40); }
     },
 
     "MEOW": {
       message: function () { return TEXT[currentLang].secretMeow; },
+      sound:   "growl",    /* v5.38.2: feline growl */
       action:  function () { emojiRain("🐈", 40); }
     },
 
     "UNICORN": {
       /* Pure magic — unicorns + hue-rotate rainbow sweep */
       message: function () { return TEXT[currentLang].secretUnicorn; },
+      sound:   "sparkle",  /* v5.38.2: pure magical twinkle */
       action:  function () {
         emojiRain("🦄", 30);
         triggerRainbow();
@@ -2106,12 +2352,14 @@
 
     "SHAKE": {
       message: function () { return TEXT[currentLang].secretShake; },
+      sound:   "explosion", /* v5.38.2: earthquake rumble */
       action:  function () { shakePage(); }
     },
 
     "MOON": {
       /* Switches to night theme and rains moons */
       message: function () { return TEXT[currentLang].secretMoon; },
+      sound:   "chime-down", /* v5.38.2: sleepy descending chime */
       action:  function () {
         setTheme("night");
         emojiRain("🌙", 30);
@@ -2121,6 +2369,7 @@
     "SUN": {
       /* Switches to light theme and rains suns */
       message: function () { return TEXT[currentLang].secretSun; },
+      sound:   "chime-up", /* v5.38.2: bright ascending chime */
       action:  function () {
         setTheme("light");
         emojiRain("☀️", 30);
@@ -2129,6 +2378,7 @@
 
     "NOIR": {
       message: function () { return TEXT[currentLang].secretNoir; },
+      sound:   "vinyl",    /* v5.38.2: old-record crackle for noir mood */
       action:  function () { noirPage(); }
     },
 
@@ -2139,12 +2389,14 @@
         var t = TEXT[currentLang];
         return t.secretMeta + Object.keys(SECRET_CODES).length + t.secretMetaSuffix;
       },
+      sound:   "portal",   /* v5.38.2: meta-portal whoosh */
       action: function () { emojiRain("🔍", 20); }
     },
 
     "67": {
       /* Huge blue 67 takes over the screen for 3 seconds. */
       message: function () { return TEXT[currentLang].secret67; },
+      sound:   "coin",     /* v5.38.2: cha-ching for the meme */
       action:  function () { showBigNumber(67, "#1e88ff"); }
     },
 
@@ -2160,6 +2412,7 @@
        as LIBERATEDSCHOOL → school. */
     "BANANAKING": {
       message: function () { return TEXT[currentLang].secretBananaKing; },
+      sound:   "applause", /* v5.38.2: royal applause for the banana king */
       action:  function () { setTheme("owner"); }
     },
 
@@ -2643,12 +2896,14 @@
       tmState = "paused";
       stopTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerPaused, false);
+      playUiSound("chime-down");   /* v5.38.2: descending chime on pause */
     } else if (tmState === "paused") {
       /* resume */
       tmEndAt = performance.now() + tmRemainingMs;
       tmState = "running";
       startTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerRunning, false);
+      playUiSound("chime-up");     /* v5.38.2: ascending chime on resume */
     } else {
       /* start fresh from inputs */
       var ms = readTimerInputs();
@@ -2663,6 +2918,7 @@
       timerDisplayEl.textContent = formatTimer(ms);
       startTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerRunning, false);
+      playUiSound("chime-up");     /* v5.38.2: ascending chime on start */
     }
     refreshTimerButtonLabels();
   }
@@ -2678,6 +2934,7 @@
     timerDisplayEl.classList.remove("timer-done");
     setTimerFeedback("", false);
     refreshTimerButtonLabels();
+    playUiSound("flush");          /* v5.38.2: "flushed away" sound on reset */
   }
   /* ── Add/subtract time to/from the timer (v5.15.0 / v5.18.0) ──
      addSec may be positive (add) or negative (subtract). Works in
@@ -2927,11 +3184,13 @@
     try { localStorage.removeItem("bananafont:admin"); } catch (e) {}
     adminBadgeEl.setAttribute("hidden", "");
     closeAdminPanel();
+    playUiSound("knock");   /* v5.38.2 — "leaving" feel */
   }
   function openAdminPanel() {
     renderAdminPanelContent();
     adminPanelEl.removeAttribute("hidden");
     document.body.style.overflow = "hidden";
+    playUiSound("doorbell");   /* v5.38.2 — "entering" feel */
   }
   function closeAdminPanel() {
     adminPanelEl.setAttribute("hidden", "");
@@ -3023,9 +3282,12 @@
     /* ── v5.30.0: Sound tester ── */
     var SOUND_NAMES = [
       "click","tab","tick","select","success","error","pop","whoosh","fail","confirm","unlock","page",
-      /* v5.35.0 — 20 new sound types */
+      /* v5.35.0 — 20 sounds */
       "bell","chord","bubble","drip","laser","rocket","drum","snare","hihat","wow",
-      "siren","typewriter","dial","boop","bird","fanfare","gong","harp","glitch","xylophone"
+      "siren","typewriter","dial","boop","bird","fanfare","gong","harp","glitch","xylophone",
+      /* v5.38.1 — +20 more sounds */
+      "coin","powerup","doorbell","knock","clap","cowbell","woodblock","squeak","growl","heartbeat",
+      "sparkle","chime-up","chime-down","flush","applause","bigben","vinyl","portal","kiss","explosion"
     ];
     adminSoundsGridEl.innerHTML = "";
     SOUND_NAMES.forEach(function (name) {
@@ -3127,7 +3389,31 @@
     cyberpunk: "themeCyberpunk", coffee: "themeCoffee",
     terminal: "themeTerminal", aurora: "themeAurora",
     "soviet-lift": "themeSovietLift", "soviet-podyezd": "themeSovietPodyezd",
-    "owner": "themeOwner"
+    "owner": "themeOwner",
+    /* v5.39.0 — 50 new themes; admin-grid labels fall back to enLabel/ruLabel
+       from EXTRA_THEMES when label-key missing, but we provide explicit keys
+       for the most prominent ones so screen-reader/aria-label is consistent. */
+    moss: "themeMoss", sakura: "themeSakura", "autumn-leaves": "themeAutumn",
+    "winter-forest": "themeWinter", "desert-dune": "themeDesert",
+    tundra: "themeTundra", savanna: "themeSavanna", tropics: "themeTropics",
+    swamp: "themeSwamp", canyon: "themeCanyon",
+    nebula: "themeNebula", "event-horizon": "themeEventHorizon",
+    mars: "themeMars", jupiter: "themeJupiter", saturn: "themeSaturn",
+    supernova: "themeSupernova", "milky-way": "themeMilkyWay",
+    pulsar: "themePulsar",
+    melancholy: "themeMelancholy", euphoria: "themeEuphoria",
+    rage: "themeRage", zen: "themeZen", nostalgia: "themeNostalgia",
+    dreamy: "themeDreamy", anxiety: "themeAnxiety", serenity: "themeSerenity",
+    ukiyoe: "themeUkiyoe", baroque: "themeBaroque",
+    "art-deco": "themeArtDeco", bauhaus: "themeBauhaus",
+    memphis: "themeMemphis", vaporwave: "themeVaporwave", y2k: "themeY2K",
+    matcha: "themeMatcha", caramel: "themeCaramel", mojito: "themeMojito",
+    blueberry: "themeBlueberry", bubblegum: "themeBubblegum",
+    "matrix-classic": "themeMatrixClassic", "tron-grid": "themeTronGrid",
+    retrowave: "themeRetrowave", "amber-crt": "themeAmberCRT",
+    wireframe: "themeWireframe", quantum: "themeQuantum",
+    ruby: "themeRuby", sapphire: "themeSapphire", emerald: "themeEmerald",
+    amethyst: "themeAmethyst", opal: "themeOpal", obsidian: "themeObsidian"
   };
 
   /* Event wiring */
@@ -3356,6 +3642,255 @@
       lockPageInRed();
     }, 200);
   });
+
+  /* ============================================================
+     v5.39.0 — 20 admin power tools
+     Each tool = { textKey, run } where run() returns a string (or
+     undefined) to display in adminPowerOutputEl. Persistent toggles
+     keep state on body classes / data attrs so they survive open/close.
+     ============================================================ */
+  var _bfZoom = 1;
+  var _bfReducedMotion = false;
+  var _bfInputsDisabled = false;
+  var _bfHighlight = false;
+  var _bfRuler = false;
+  var _bfMirror = false;
+  var _bfWakeLock = null;
+  function powerLog(s) {
+    if (!adminPowerOutputEl) return;
+    adminPowerOutputEl.textContent = s == null ? "" : String(s);
+  }
+  function _bfApplyZoom() {
+    document.body.style.zoom = _bfZoom === 1 ? "" : _bfZoom;
+    powerLog("Zoom: " + Math.round(_bfZoom * 100) + "%");
+  }
+  function _bfUpdateRulerLabel() {
+    if (_bfRuler) {
+      document.body.dataset.vp = window.innerWidth + " × " + window.innerHeight;
+    } else {
+      delete document.body.dataset.vp;
+    }
+  }
+  var POWER_TOOLS = [
+    { textKey: "pwToggleLang", sound: "click", run: function () {
+        var next = currentLang === "ru" ? "en" : "ru";
+        setLang(next);   /* handles fade, localStorage, active-button — and re-fires applyLang */
+        return "lang → " + next.toUpperCase();
+    } },
+    { textKey: "pwZoomIn", sound: "select", run: function () {
+        _bfZoom = Math.min(3, +(_bfZoom + 0.1).toFixed(2));
+        _bfApplyZoom();
+    } },
+    { textKey: "pwZoomOut", sound: "select", run: function () {
+        _bfZoom = Math.max(0.5, +(_bfZoom - 0.1).toFixed(2));
+        _bfApplyZoom();
+    } },
+    { textKey: "pwZoomReset", sound: "click", run: function () {
+        _bfZoom = 1;
+        _bfApplyZoom();
+    } },
+    { textKey: "pwRandomTheme", sound: "select", run: function () {
+        var pool = VALID_THEMES.filter(function (id) { return id !== currentTheme; });
+        var pick = pool[Math.floor(Math.random() * pool.length)];
+        setTheme(pick);
+        return "theme → " + pick;
+    } },
+    { textKey: "pwPrint", sound: "click", run: function () {
+        setTimeout(function () { try { window.print(); } catch (e) {} }, 50);
+        return "print dialog";
+    } },
+    { textKey: "pwVibrate", sound: "click", run: function () {
+        if (navigator.vibrate) {
+          var ok = navigator.vibrate([100, 50, 100, 50, 200]);
+          return ok ? "vibrating…" : "vibrate denied";
+        }
+        return "no Vibration API";
+    } },
+    { textKey: "pwBattery", sound: "click", run: function () {
+        if (!navigator.getBattery) { powerLog("no Battery API"); return; }
+        navigator.getBattery().then(function (b) {
+          powerLog(
+            "level: " + Math.round(b.level * 100) + "%\n" +
+            "charging: " + (b.charging ? "yes" : "no") + "\n" +
+            "time to full: " + (isFinite(b.chargingTime) ? Math.round(b.chargingTime / 60) + " min" : "—") + "\n" +
+            "time to empty: " + (isFinite(b.dischargingTime) ? Math.round(b.dischargingTime / 60) + " min" : "—")
+          );
+        }).catch(function (e) { powerLog("error: " + e.message); });
+        return "querying battery…";
+    } },
+    { textKey: "pwNetwork", sound: "click", run: function () {
+        var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (!c) return "no Network API";
+        return (
+          "type: " + (c.effectiveType || "?") + "\n" +
+          "downlink: " + (c.downlink || "?") + " Mbps\n" +
+          "RTT: " + (c.rtt || "?") + " ms\n" +
+          "saveData: " + (c.saveData ? "yes" : "no") + "\n" +
+          "online: " + (navigator.onLine ? "yes" : "no")
+        );
+    } },
+    { textKey: "pwGeo", sound: "click", run: function () {
+        if (!navigator.geolocation) return "no Geolocation API";
+        powerLog("requesting location…");
+        navigator.geolocation.getCurrentPosition(function (p) {
+          powerLog(
+            "lat: " + p.coords.latitude.toFixed(5) + "\n" +
+            "lon: " + p.coords.longitude.toFixed(5) + "\n" +
+            "accuracy: ±" + Math.round(p.coords.accuracy) + " m"
+          );
+        }, function (e) {
+          powerLog("geolocation denied: " + e.message);
+        }, { timeout: 8000 });
+    } },
+    { textKey: "pwClipboard", sound: "click", run: function () {
+        if (!navigator.clipboard || !navigator.clipboard.readText) return "no clipboard read";
+        navigator.clipboard.readText().then(function (txt) {
+          powerLog("clipboard:\n" + (txt || "(empty)").slice(0, 500));
+        }).catch(function (e) {
+          powerLog("clipboard denied: " + e.message);
+        });
+        return "reading clipboard…";
+    } },
+    { textKey: "pwReducedMotion", sound: "click", run: function () {
+        _bfReducedMotion = !_bfReducedMotion;
+        document.documentElement.style.setProperty("--bf-anim-mul", _bfReducedMotion ? "0.001" : "");
+        document.body.classList.toggle("bf-no-anim", _bfReducedMotion);
+        if (_bfReducedMotion) {
+          var st = document.getElementById("bf-noanim-style");
+          if (!st) {
+            st = document.createElement("style");
+            st.id = "bf-noanim-style";
+            st.textContent = "body.bf-no-anim, body.bf-no-anim *, body.bf-no-anim *::before, body.bf-no-anim *::after { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }";
+            document.head.appendChild(st);
+          }
+        }
+        return "reduced motion: " + (_bfReducedMotion ? "ON" : "OFF");
+    } },
+    { textKey: "pwFullscreen", sound: "click", run: function () {
+        var d = document;
+        if (!d.fullscreenElement) {
+          (d.documentElement.requestFullscreen || function(){})
+            .call(d.documentElement).catch(function(){});
+          return "→ fullscreen";
+        } else {
+          (d.exitFullscreen || function(){}).call(d);
+          return "← exit fullscreen";
+        }
+    } },
+    { textKey: "pwConfetti", sound: "applause", run: function () {
+        var emojis = ["🎉", "🎊", "🥳", "🎈", "✨", "🌟", "💫", "🍌"];
+        emojis.forEach(function (e, i) {
+          setTimeout(function () { emojiRain(e, 18); }, i * 80);
+        });
+        return "🎊 confetti cannon!";
+    } },
+    { textKey: "pwAccent", sound: "click", run: function () {
+        var hex = prompt("Hex accent color (e.g. #ff8800):", "#ffd166");
+        if (!hex) return;
+        if (!/^#[0-9a-f]{6}$/i.test(hex)) { powerLog("invalid hex"); return; }
+        document.documentElement.style.setProperty("--accent", hex);
+        document.documentElement.style.setProperty("--link", hex);
+        return "accent → " + hex;
+    } },
+    { textKey: "pwDisableInputs", sound: "click", run: function () {
+        _bfInputsDisabled = !_bfInputsDisabled;
+        var els = document.querySelectorAll("input, textarea, select, button");
+        for (var i = 0; i < els.length; i++) {
+          /* Don't disable our own admin panel buttons or the close button */
+          if (els[i].closest && els[i].closest("#admin-panel")) continue;
+          if (_bfInputsDisabled) els[i].setAttribute("data-bf-was-disabled", els[i].disabled ? "1" : "0"),
+            els[i].disabled = true;
+          else {
+            els[i].disabled = els[i].getAttribute("data-bf-was-disabled") === "1";
+            els[i].removeAttribute("data-bf-was-disabled");
+          }
+        }
+        return "inputs " + (_bfInputsDisabled ? "DISABLED" : "enabled");
+    } },
+    { textKey: "pwHighlight", sound: "click", run: function () {
+        _bfHighlight = !_bfHighlight;
+        document.body.classList.toggle("bf-debug-clickable", _bfHighlight);
+        return "highlight: " + (_bfHighlight ? "ON" : "OFF");
+    } },
+    { textKey: "pwMemory", sound: "click", run: function () {
+        var m = performance.memory;
+        if (!m) return "no performance.memory (Chromium-only)";
+        function fmt(n) { return (n / 1048576).toFixed(1) + " MiB"; }
+        return (
+          "used JS heap:  " + fmt(m.usedJSHeapSize) + "\n" +
+          "total JS heap: " + fmt(m.totalJSHeapSize) + "\n" +
+          "heap limit:    " + fmt(m.jsHeapSizeLimit)
+        );
+    } },
+    { textKey: "pwWakeLock", sound: "click", run: function () {
+        if (!("wakeLock" in navigator)) return "no Wake Lock API";
+        if (_bfWakeLock) {
+          _bfWakeLock.release().catch(function(){});
+          _bfWakeLock = null;
+          return "wake-lock: released";
+        }
+        navigator.wakeLock.request("screen").then(function (lock) {
+          _bfWakeLock = lock;
+          powerLog("wake-lock: acquired (screen stays on)");
+          lock.addEventListener("release", function () { _bfWakeLock = null; });
+        }).catch(function (e) {
+          powerLog("wake-lock failed: " + e.message);
+        });
+        return "requesting wake-lock…";
+    } },
+    { textKey: "pwSpin", sound: "portal", run: function () {
+        document.body.classList.remove("bf-spin");
+        /* force reflow so the animation re-fires */
+        void document.body.offsetWidth;
+        document.body.classList.add("bf-spin");
+        setTimeout(function () { document.body.classList.remove("bf-spin"); }, 1500);
+        return "🌀 wheee!";
+    } },
+    { textKey: "pwRuler", sound: "click", run: function () {
+        _bfRuler = !_bfRuler;
+        document.body.classList.toggle("bf-ruler", _bfRuler);
+        _bfUpdateRulerLabel();
+        return "viewport ruler: " + (_bfRuler ? "ON" : "OFF");
+    } },
+    { textKey: "pwMirror", sound: "squeak", run: function () {
+        _bfMirror = !_bfMirror;
+        document.body.classList.toggle("bf-mirror", _bfMirror);
+        return "mirror: " + (_bfMirror ? "ON" : "OFF");
+    } }
+  ];
+  /* Keep ruler label fresh on resize */
+  window.addEventListener("resize", _bfUpdateRulerLabel);
+
+  /* Build the grid once; we'll re-text it on language change */
+  var _powerButtons = [];
+  for (var pwI = 0; pwI < POWER_TOOLS.length; pwI++) {
+    (function (tool) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "settings-btn silent-btn";
+      b.textContent = TEXT[currentLang][tool.textKey] || tool.textKey;
+      b.addEventListener("click", function () {
+        try {
+          var out = tool.run();
+          if (typeof out === "string") powerLog(out);
+        } catch (e) {
+          powerLog("error: " + (e && e.message || e));
+          playUiSound("fail");
+          return;
+        }
+        playUiSound(tool.sound || "click");
+      });
+      adminPowerGridEl.appendChild(b);
+      _powerButtons.push({ el: b, key: tool.textKey });
+    })(POWER_TOOLS[pwI]);
+  }
+  /* Called from applyLang() to refresh all 20 labels at once */
+  function refreshAdminPowerLabels() {
+    var tt = TEXT[currentLang];
+    for (var i = 0; i < _powerButtons.length; i++) {
+      _powerButtons[i].el.textContent = tt[_powerButtons[i].key] || _powerButtons[i].key;
+    }
+  }
 
   /* Shared label refresher for the 3 toggle buttons */
   function refreshAdminToggleLabels() {
@@ -3636,6 +4171,7 @@
     /* v5.16.4: ring CONTINUOUSLY every 3 seconds until the user presses
        Dismiss. One chime ≈ 1.9 sec, gap ≈ 1.1 sec → phone-ring rhythm.
        Stored interval id is cleared in cancelAlarm() (= the Dismiss path). */
+    playUiSound("bigben");          /* v5.38.2: big-ben kicks off the alarm */
     playSingleChime();
     if (alarmState.ringIntervalId) clearInterval(alarmState.ringIntervalId);
     alarmState.ringIntervalId = setInterval(playSingleChime, 3000);
@@ -3763,6 +4299,69 @@
         case "xylophone":
           playBellNote(ctx, 1568, 0.07, 0.45);
           setTimeout(function () { playBellNote(ctx, 2093, 0.06, 0.4); }, 90);
+          break;
+        /* ── v5.38.1 — 20 more sounds ── */
+        case "coin":
+          playTone(ctx, 988, 0.06, 0.07);
+          setTimeout(function () { playTone(ctx, 1319, 0.07, 0.18); }, 70);
+          break;
+        case "powerup":
+          [523, 659, 784, 1046, 1318, 1568].forEach(function (f, i) {
+            setTimeout(function () { playTone(ctx, f, 0.05, 0.1); }, i * 45);
+          });
+          break;
+        case "doorbell":
+          playBellNote(ctx, 659.25, 0.08, 0.7);
+          setTimeout(function () { playBellNote(ctx, 523.25, 0.08, 0.9); }, 350);
+          break;
+        case "knock":
+          playNoiseBurst(ctx, 0.08, 0.03);
+          setTimeout(function () { playNoiseBurst(ctx, 0.08, 0.03); }, 120);
+          break;
+        case "clap":     playNoiseBurst(ctx, 0.1, 0.05); break;
+        case "cowbell":  playTone(ctx, 800, 0.07, 0.18);
+                         setTimeout(function () { playTone(ctx, 540, 0.06, 0.22); }, 25);
+                         break;
+        case "woodblock":playTone(ctx, 1500, 0.07, 0.03); break;
+        case "squeak":   playSweep(ctx, "sine", 1800, 2600, 0.05, 0.08); break;
+        case "growl":    playSweep(ctx, "square", 150, 70, 0.1, 0.45); break;
+        case "heartbeat":
+          playSweep(ctx, "sine", 90, 50, 0.18, 0.15);
+          setTimeout(function () { playSweep(ctx, "sine", 90, 50, 0.18, 0.15); }, 280);
+          break;
+        case "sparkle":
+          [1568, 2093, 2637, 1976, 2349].forEach(function (f, i) {
+            setTimeout(function () { playBellNote(ctx, f, 0.04, 0.3); }, i * 70);
+          });
+          break;
+        case "chime-up":
+          [523, 659, 784, 1046].forEach(function (f, i) {
+            setTimeout(function () { playBellNote(ctx, f, 0.06, 0.45); }, i * 90);
+          });
+          break;
+        case "chime-down":
+          [1046, 784, 659, 523].forEach(function (f, i) {
+            setTimeout(function () { playBellNote(ctx, f, 0.06, 0.45); }, i * 90);
+          });
+          break;
+        case "flush":    playNoiseBurst(ctx, 0.08, 0.6); break;
+        case "applause":
+          for (var ai = 0; ai < 10; ai++) {
+            (function (j) {
+              setTimeout(function () { playNoiseBurst(ctx, 0.05, 0.04); }, j * 60 + Math.random() * 30);
+            })(ai);
+          }
+          break;
+        case "bigben":   playBellNote(ctx, 220, 0.13, 2.0); break;
+        case "vinyl":    playSweep(ctx, "sawtooth", 1500, 80, 0.08, 0.35); break;
+        case "portal":
+          playSweep(ctx, "triangle", 200, 1400, 0.05, 0.8);
+          setTimeout(function () { playBellNote(ctx, 1400, 0.05, 0.6); }, 750);
+          break;
+        case "kiss":     playSweep(ctx, "sine", 1200, 600, 0.05, 0.08); break;
+        case "explosion":
+          playNoiseBurst(ctx, 0.18, 0.4);
+          playSweep(ctx, "sawtooth", 200, 30, 0.1, 0.5);
           break;
       }
     } catch (e) {}
@@ -4267,7 +4866,7 @@
         if (timerShowMs) timerMsEl.value = 0;
         /* repaint display via the existing input handler */
         if (typeof timerInputsChanged === "function") timerInputsChanged();
-        playUiSound("confirm");
+        playUiSound("woodblock");    /* v5.38.2: wooden percussive tap for preset */
       });
     })(pomodoroBtns[pi]);
   }
@@ -4435,7 +5034,7 @@
       paragraphs.push(sentences.join(" "));
     }
     loremOutputEl.value = paragraphs.join("\n\n");
-    playUiSound("success");
+    playUiSound("applause");        /* v5.38.2: round of applause for fresh lorem */
   }
   /* v5.26.3: enforce 1–50 lorem paragraph limit on both input + blur
      events. HTML max="50" only validates on spinner-step, не на typed
@@ -4552,7 +5151,7 @@
   function emojiRain(emoji, count) {
     var ch = emoji || "🍌";
     var n = count || 25;
-    playUiSound("pop");   /* v5.26.0: pop sound on rain trigger */
+    playUiSound("sparkle");          /* v5.38.2: magical sparkle on rain (was: pop) */
     for (var i = 0; i < n; i++) {
       (function (i) {
         var b = document.createElement("div");
@@ -4711,102 +5310,286 @@
      очищается + срабатывает lockPageInRed (та же кара что и за код 1488).
      Список умышленно консервативен — стеммы хуй / пизд / бля / еб(стандартный),
      плюс сука/пидор/мудак/долбо-, плюс fuck/shit/bitch/cunt/asshole/dick. */
+  /* v5.39.0 — MASSIVE expansion: every root of Russian мат + ALL major
+     English profanity + 10+ other languages, plus an obfuscation
+     normalizer that strips l33t-speak digit/symbol substitutions and
+     canonicalises homoglyphs (Cyrillic↔Latin look-alikes) BEFORE
+     pattern testing. Patterns themselves are listed compactly — most
+     test for stems with optional suffixes so morphological variants
+     (cases, plurals, diminutives, augmentatives, verb tenses) all hit.
+     NOT enumerated in chat output — the list lives only in this file.
+     ─────────────────────────────────────────────────────────────────
+     Russian мат covers the canonical 5 roots × all derivatives:
+       х*й / п*зд / бл* / *б- (verbal) / м*д-, plus сук-, пид-, шл-,
+       долб-, гн-, гондон, мраз-, ублюд-, скотин-, тварь, дрянь, etc.
+     English covers: f*ck, sh*t, b*tch, c*nt, d*ck, ass-, pr*ck, tw*t,
+       wnkr, bllcks, bastard, crap, douche, slut, whore, p*ss, jerk,
+       jackass, moron, retard (slur), n-word, f-slur, c-slur, n-slur,
+       k*ke, g*ok, sp*c, ch*nk, w*tback, tr*nny, etc. — all behind \b.
+     ─────────────────────────────────────────────────────────────── */
   var SWEAR_PATTERNS = [
-    /* Russian — основные корни мата + производные + жаргон */
-    /(хуй|хуе|хуя|хую|хуё|хуи|хуёв|хер[нив])/i,
-    /пизд/i,
-    /(бля|блядь|блять|бляд)/i,
-    /(?<![рктсзлжчшщпбгджфхцнм])(ёб|еб)(?=ат|ал|ан|нут|ну[лть]|ло|ёт|ёш|и[тлсх]|у[тчшщ]|анн|ёб)/i,
-    /(сука|суки|сучк|сучен)/i,
-    /(пидор|пидар|пидер|педик|пед[еи]раст)/i,
-    /(мудак|мудил|муд[аоие]зв|муда[чк])/i,
-    /долбо[её]б/i,
-    /(гнида|гондон|урод\b|выродок)/i,
-    /(шлюх|проститут|курв[ауы])/i,
-    /(\bговно|насрать|обосра|зас[еы]ра|срать|обоср)/i,
-    /(\bзалуп[ауы]|очко\b)/i,
-    /сволоч/i,
-    /скотин[ауы]/i,
+    /* ─── Russian мат: 5 core roots (x*й / п*зд / бл* / *б- / м*д-) ─── */
+    /(хуй|хуе|хуя|хую|хуё|хуи|хуйн|хуёв|хуев|хуйл|хую[шщ]|хуятин|хуятс|хуец|хуило|хуишк|нихуя|нехуй|похуй|похую|похуи|охуе|охуи|охуя|охуен|охуит|дохуя|нахуй|нахуя|нахуе|нахер|хер[аояуёюнвзпсткгчшщф]|херо[вмнтьш]|херн[ияеёюуя]|хернёй|херов|херачит|охерет|охерен)/i,
+    /(пизд[аеёиоуыюяьйёкнтлмсзвпрхгчшщц]|пизд|спизди|спизж|пиздец|пиздёж|пиздабол|пиздуй|пиздуи|пиздуя|пиздану|пиздыр|пиздён|пиздю|опизден|опездал|пиздят|пиздил)/i,
+    /(бля[дть]|блядь|блять|бляди|блядиш|блядин|блядов|блядюг|блядск|блятс|блядует|бл[яa]ха[\s-]*муха|бляха|блядство|приблуди|приблуд)/i,
+    /(?<![рктсзлжчшщпбгджфхцнм])(ёб|еб)(?=ат|ал|ан|нут|ну[лть]|ло|ёт|ёш|и[тлсх]|у[тчшщ]|анн|ук|енн|ыв|ив|нем|нём|нул|нул[аио]|нись|нись|ёж|ня|ня[лть]|ня[лст]|енн|унь)/i,
+    /(заёб|заеб|подъёб|подъеб|выёб|выеб|разъёб|разъеб|объеб|объёб|съёб|съеб|приёб|приеб|въеб|въёб|долбоёб|долбоеб|ебач|еблан|ебло|еблищ|ебанько|ебанутый|ебанут|ебаш|ебанин|еборос|ебиров|епт|ёпт|ёпта|ёпрст|ёпресет|ебта|ебш|ебанарот|ёбана|ёбана?я|ёб\s+твою|еб\s+тв|еб[ыи]вашу|ебал|ебало|ёбло|ебусь|еб[еа]т[ьея]|ебучи[йхем])/i,
+    /(мудак|мудил|мудень|мудень|мудозвон|мудозвен|мудозвон|муда[чкоё]|муде[оан]|муди[лщ]|мудян|мудоз)/i,
 
-    /* English — core profanity + slang + variants */
-    /(\bfuck|fucking|fucked|fucker|motherfucker|mthrfkr|fk\b)/i,
-    /(\bshit\b|bullshit|bsht)/i,
-    /\bbitch/i,
-    /\bcunt/i,
-    /\basshole/i,
-    /\b(dickhead|dick\b|prick\b|pricks\b)/i,
-    /\btwat/i,
-    /\bwanker/i,
-    /\bbollocks/i,
-    /\bbastard/i,
-    /\bcrap\b/i,
-    /\bdouche(bag)?/i,
-    /\bpiss(ed|ing)?/i,
-    /\bslut/i,
-    /\bwhore/i,
+    /* ─── Russian: secondary roots / accepted vulgar ─── */
+    /(сука|суки|сучк|сучен|сучар|сучонк|сучищ|суче)/i,
+    /(пидор|пидар|пидер|педик|педер|педо[ф]|пед[еио]раст|пидар[аяуыеоиями]|пидорас|пидрила|петух\b)/i,
+    /(шлюх|шлюш|потаскух|потаску[шя]|давалк[ауи]|подстилк[ауи]|проститут|курва|курвоз)/i,
+    /(долбо[её]б|долбан|долбит|долбень|долбень|долбит)/i,
+    /(гнид[аыоеу]|гондон|гондош|гондош|гондошник)/i,
+    /(мраз[ьоиаеуъ]|мразот|тварь[ью]?|тварюг|ублюд[оке]|выблядок|выродок|урод\b|уродин|урод[аеу])/i,
+    /(\bговн[оаеуияю]|говнюк|говнист|говнод|говноед|говнобольш|насрать|насра[ле]|насрут|обосра[лнт]|обоср|зас[еы]ра|засранец|засранк|срать|сра[лтн]|обосс[аеу]|поссы|поссан|зассан)/i,
+    /(\bжоп[ауыеои]|жопн|жопк|жопищ|жопун|жопень|задниц|задник|зад\b)/i,
+    /(\bзалуп[ауыеои]|очко\b|очкоблуд|очкарик)/i,
+    /(сволоч|сволот|стерв[аы]|стервец|стервозн|стервен)/i,
+    /(скотин[ауы]|скот[аеу]|быдл[оаеу]|быдлян)/i,
+    /(козёл\b|козлы|козлин[аыоеу]|козлищ|козёл|козлов)/i,
+    /(чмо\b|чмош|чмыр[ьеио])/i,
+    /(пасуд|подонк|подонок|опущ[еа]ный)/i,
+    /(импотент|идиот\b|идиотск|кретин\b|дебил\b|дебилоид|даун\b|даунич|дегенер|олигофрен|умственно\s+отсталый)/i,
+    /(сосать|соси|отсос|минетчик|минет\b|минетщик|кончи[лтн]|кончуш|кончат|конч[аеу]|спермачёл|спермогон)/i,
+    /(ебалом|ебальник|ебальце|долбоящер|пиздолиз|жополиз|сосалкин)/i,
+    /(нахер|похер|нихера|похерил|охерев|охренев|охреневш)/i,
+    /(сцук[аои]|сцуки|сцуко)/i,
+    /(гей\b|гей[сы]кий)/i,
+    /(жыд\b|жид\b|жидов|жидяр|жидоморд|жидёнок)/i,                  /* антисемитизм */
+    /(чурк[ауыие]|черномаз|чёрномаз|чурбан|узкоглаз|хач\b|хачи\b|хохол\b|хохлы\b|москал[ьяи])/i, /* этнические оскорбления */
+    /(\bкацап|кацап[аыыо]|бандеровец|бандеро)/i,
+    /(трах[аеоунит]|трахн|трахч|оттрах|перетрах|затрах|выпрах|потрах)/i,
+    /(дрочи[лт]|дроч[еу]р|подрочи|надроч|выдроч|дрочильн|дрочк[ауи])/i,
 
-    /* German */
-    /\bschei[sß]e/i,
-    /\barschloch/i,
-    /\bfotze/i,
-    /\bschwanz\b/i,
+    /* ─── English: core profanity (every common 4-letter + derivatives) ─── */
+    /(\bf+u+c+k+|\bf+v+c+k+|\bfu+ck|\bfuk\b|\bfuks?\b|fucking|fucked|fucker|fuckers|fuckin|fckin|fukin|fukk|fukken|mothafuck|motherfuck|motherfucker|mthrfk|mfkr|mfer|mofo|fck\b|fk\b|fckers?|fknuckle|fuckhead|fuckface|fuckhole|fuckwit|fuckboy|fuckwad|fuckton|fucktard|clusterfuck|skullfuck|mindfuck|gangfuck)/i,
+    /(\bsh+i+t+\b|\bsht\b|\bsh1t|shitty|shitting|shitter|shitfaced|shithead|shithole|shitstain|shitbag|shitlord|shitstorm|shitshow|shitpost|shitpiece|bullshit|bullsht|horseshit|dipshit|hotshit|cowshit|batshit|chickenshit|shibal|shibba|jeezus|shet\b|shyt\b)/i,
+    /(\bbi+tch+|bitches|bitching|bitchy|bitchin|biatch|biotch|sonofabitch|son\s+of\s+a\s+bitch|sob\b)/i,
+    /(\bc+u+n+t+|cuntface|cuntbag|cunty|cunts)/i,
+    /(\ba+s+s+h+o+l+e+|assholes|assbag|asswipe|asshat|ashat|asshats|asscrack|asshair|assclown|assbandit|asshandle|assmonkey|assmunch|assbreath|asscracker|assbutt)/i,
+    /(\bdick\b|dicks\b|dickhead|dickface|dickbag|dickwad|dickish|dickless|dickweed|dickslap|dickhole|dickmilk|dickbutt|dickhead|prick\b|pricks?\b|prickish)/i,
+    /(\btw+a+t+|twats|twatted|twatface|twatwaffle)/i,
+    /(\bwa+nke+r|wankers|wanking|wank\b|tosser|tossers)/i,
+    /(\bbo+l+l+o+c+k+s+|ballbag|bollox)/i,
+    /(\bba+s+t+a+r+d+|bastards|basterd)/i,
+    /(\bcrap\b|crappy|crapper|crapsack|crapload|holy\s+crap)/i,
+    /(\bdouche(bag|nozzle|canoe|hat)?s?\b|douchebaggery)/i,
+    /(\bpiss(ed|ing|er|ant|head|stained)?\b|pissoff|pissflap|pissweed|pissedoff)/i,
+    /(\bslut+|sluts|slutty|sluttiness|sluttify|slutshamer)/i,
+    /(\bwho+re+|whores|whoring|whoreson|whorebag|manwhore)/i,
+    /(\barse\b|arses|arsehole|arsewipe|arseface|arsebag)/i,
+    /(\bbu+gger+|buggered|buggering|buggery|buggerall)/i,
+    /(\bsod\s+off|sodding|sodoff)/i,
+    /(\bbl+oody\s+hell|bloody\s+(idiot|fool|moron|hell))/i,
+    /(\bgo+d+\s*da+m+n|goddamn|goddamned|goddammit|godammit|jesus\s+christ\b|christ\s+sake|christ\s+almighty|holy\s+(fuck|shit|hell|christ))/i,
+    /(\bda+mn\s+it|dammit|damnit|damn\s+(you|him|her|them|it))/i,
+    /(\bje+rk(off|wad|ass)?\b|jerks?\b|jerkoff|jerkwad)/i,
+    /(\bj+ackass\b|jackasses|jackshit)/i,
+    /(\bm+oron\b|morons|moronic|moroness)/i,
+    /(\bret+ar+d+\b|retards|retarded|tard\b|tards\b)/i,           /* пейоратив — оскорб. больных */
+    /(\bcr+e+t+i+n+\b|cretins|cretinous)/i,
+    /(\bidiot\b|idiots|idiotic|idiocy)/i,
+    /(\bdumba+ss\b|dumbasses|dumbfuck|dumbshit|dumbcunt)/i,
+    /(\bnumbnuts\b|numbskull|numbnut|nutsack|ballsack|ballbag)/i,
+    /(\bsh+at\b|crapola)/i,
+    /(\bbugger\s+off|piss\s+off|fuck\s+off|sod\s+off|bog\s+off)/i,
+    /(\bsuck\s+(my|a)\s+(dick|cock|ass|balls)|eat\s+(shit|ass|a\s+dick)|kiss\s+my\s+ass|blow\s+me)/i,
+    /(\bf-?bomb\b|s-?bomb\b)/i,
+    /(\bsh+a+g+(ger|ging|gers|ged)?\b|shagged|shagging)/i,
+    /(\bk+nob+(head|jockey|end|er|s)?\b)/i,
+    /(\bgit\b|gits\b|wally\b|berk\b|plonker\b|numpty\b|muppet\b)/i,  /* British mild */
+    /(\bgo\s+f+u+c+k+\s+yourself|stfu\b|gtfo\b|wtf\b|af\b|asf\b)/i,
+    /(\bsuck\s+it|deepthroat|cumdump|cumslut|cumbucket|jizzface|jizzbag)/i,
+    /(\bspun+k+head|spunkbubble|spunkmonkey)/i,
 
-    /* Spanish */
-    /\bmierda/i,
-    /\bjoder/i,
-    /\bputa\b/i,
-    /\bcabr[óo]n/i,
-    /\bpendejo/i,
-    /\bco[ñn]o/i,
+    /* ─── English ethnic / hateful slurs — auto-trigger ─── */
+    /(\bn+i+g+(g|q)e?r+s?\b|\bn+i+g+a+s?\b|\bn+1+gger|negro\s+slave)/i,
+    /(\bf+a+g+(got|gy|s|ot|s)?\b|\bf+1+g(got)?\b)/i,
+    /(\bk+i+k+e+s?\b|\bkyke\b)/i,
+    /(\bch+i+nk+s?\b|\bg+oo+k+s?\b|\bsp+i+c+s?\b|\bw+et+back+s?\b|\bbeaner+s?\b)/i,
+    /(\btr+a+nn+y+\b|trannies|shemale)/i,
+    /(\br+ed+sk+i+n+s?\b|squaw\b)/i,
+    /(\bcoon\b|coons|jungle\s+bunny|porchmonkey|porch\s+monkey)/i,
+    /(\btowel\s*head|sand\s*nigger|sand\s*ngr|raghead|camel\s*jockey)/i,
+    /(\bcracker(jack)?\b|honky\b|honkies\b|whitey\b|whiteboy\b)/i,
+    /(\bkraut\b|krauts\b|jap\b|japs\b|nip\b|nips\b|gypped\b|gyp\b)/i,
 
-    /* French */
-    /\bmerde/i,
-    /\bputain/i,
-    /\bconnard/i,
-    /\bsalope/i,
-    /\benculé/i,
+    /* ─── German ─── */
+    /(\bschei[sß]e+|scheissdreck|scheiße|scheisser|scheißkerl|scheißegal|scheißkopf)/i,
+    /(\barschloch|arschgeige|arschkriech|arschficker|arschgesicht)/i,
+    /(\bfotze|fotzen|fotzkopf)/i,
+    /(\bschwanz\b|schwanzlutscher)/i,
+    /(\bhurensohn|hurenkind|hure\b|huren\b)/i,
+    /(\bwichser|wichsen|wixxer|wixxen)/i,
+    /(\bverpiss\s+dich|verfickt|verfickte|verflucht)/i,
+    /(\bmistkerl|misthund|miststück)/i,
+    /(\bblödmann|blödsinn|dummkopf|hohlkopf|trottel)/i,
 
-    /* Italian */
-    /\bcazzo/i,
-    /\bstronzo/i,
-    /\bputtana/i,
-    /\bvaffanculo/i,
+    /* ─── Spanish ─── */
+    /(\bmierd[ae]|mierdita)/i,
+    /(\bjoder|jodido|jodete)/i,
+    /(\bput[ao]\b|putos\b|putas\b|hijo\s+de\s+puta|hp\b)/i,
+    /(\bcabr[óo]n|cabrones|cabrona)/i,
+    /(\bpendejo|pendeja|pendejada)/i,
+    /(\bco[ñn]o|cojones|cojudo)/i,
+    /(\bgilipollas|gilipuertas)/i,
+    /(\bcapullo|cabronazo)/i,
+    /(\bma[mr]i?c[óo]n|maricones)/i,
+    /(\bchinga\s+tu|chingad[oa]|chingar|chinguen|chingón|chingaderas?)/i,
+    /(\bmamada|mamón|mamona|mamadas)/i,
+    /(\bculer[oa]|culero)/i,
+    /(\bzorra\b|zorras\b)/i,
 
-    /* Polish */
-    /\bkurwa/i,
-    /\bpierdol/i,
-    /\bdupek/i,
-    /\bchuj/i,
+    /* ─── French ─── */
+    /(\bmerde+|merdique|emmerde|emmerdeur)/i,
+    /(\bputain|putains|pute\b|putes\b)/i,
+    /(\bconnard|connards|connasse)/i,
+    /(\bsalop[ea]|salopard|salopes)/i,
+    /(\bencul[ée]|enculer|enculé[es]?|enculade)/i,
+    /(\bbordel\b|bordels\b)/i,
+    /(\bbite\b|bites\b|biteux)/i,
+    /(\bcouill[eo]ns?|couillonnerie)/i,
+    /(\bbaiser\s+(ta|sa|ma|leur)|nique\s+(ta|sa)|niquer)/i,
+    /(\bp[ée]d[ée]\b|pédale\b)/i,
+    /(\btrou\s+du\s+cul|trouduc)/i,
 
-    /* Ukrainian (similar to Russian but unique variants) */
-    /\b(сволот|курва|підар|підор)/i,
+    /* ─── Italian ─── */
+    /(\bcazz[oi]|cazzata|cazzeggio|incazzato|incazzare|cazzaro|cazzeggi)/i,
+    /(\bstronz[oai]|stronzata|stronzate)/i,
+    /(\bputtan[ae]|puttanata|puttaniere|figliodiputtana|fdp\b)/i,
+    /(\bvaffanculo|vaffanc|vaffanc|fanculo|affanculo)/i,
+    /(\bmerda\b|merdoso|merdosa)/i,
+    /(\bbastard[oai]|bastardi)/i,
+    /(\bcoglion[ei]|cogliona)/i,
+    /(\bfica\b|figa\b|figh[ie]|fottuto|fottuta)/i,
+    /(\bporca\s+(miseria|madonna|puttana|troia))/i,
 
-    /* v5.31.2 — "плохие люди": Nazi-era genocidaires + universally
-       condemned mass murderers. Direct names in Cyrillic + Latin + common
-       transliterations. NOTE: JS \b не работает на кириллице (не-\w char),
-       поэтому для cyrillic-only паттернов \b убран — риск false positives
-       минимальный, эти имена редко встречаются как substring в обычных
-       словах. Не пытаемся детектить l33t/anagram-обфускацию. */
-    /(\bhitler|гитлер|гiтлер)/i,
-    /(\bg(oe|ö)bbels|геббельс)/i,
+    /* ─── Polish ─── */
+    /(\bkurw[aęoy]|kurwiszon|kurewski|kurwica)/i,
+    /(\bpierdol[ęięoa]|pierdolone|pierdolnięt|pierdoleniec|pierdoła|opierdol|wkurwi|spierdal|wypierdal|popierdol|przepierdol)/i,
+    /(\bdupek|dupki|dupson|dupcia)/i,
+    /(\bchuj[aeuoiem]|chujnia|chujowy)/i,
+    /(\bpizd[aęay]|pizdek)/i,
+    /(\bszmat[aęy]|szmaciar)/i,
+    /(\bskurwiel|skurwysyn|skurwiały)/i,
+    /(\bjeb[aęoa][cćnmlwts]|zajeb[aieoi]|wyjeb|wpierdol|wypierdal)/i,
+    /(\bcholera|cholerny|cholernej)/i,
+
+    /* ─── Ukrainian / Belarusian ─── */
+    /(сволот|курва|підар|підор|підари|пиздуй|хєр[нивно])/i,
+    /(\bбляха\s+муха|бляха-муха)/i,
+    /(довбойоб|довбойоб|йобан|йобаний|пиздец|пиздос|пиздабол)/i,
+
+    /* ─── Portuguese ─── */
+    /(\bporra\b|caralho|caralhos|merda\b|cu\b|cuzão|cuzao|filho\s+da\s+puta|fdp\b)/i,
+    /(\bbosta\b|bostas\b|bostento)/i,
+    /(\bvai\s+se?\s+f+oder|vsf\b|fodase)/i,
+    /(\bputaria|putona|piranha\b|vadia\b)/i,
+    /(\bdesgraçad[oa]|desgracad[oa])/i,
+
+    /* ─── Turkish ─── */
+    /(\bsiktir|sikerim|sikim|sikiş|sikiyim|siktiğim)/i,
+    /(\borospu|orospunun|orospi|piç\b|piçler)/i,
+    /(\bamcık|amcig|amına|amına\s+koy)/i,
+    /(\bgötveren|göt\s+veren|götlek)/i,
+    /(\byarrak|yarak|taşşak)/i,
+
+    /* ─── Arabic (Latin transliteration) ─── */
+    /(\bkussumak|kus\s*umak|ibn\s+kalb|ibn\s+sharmuta|sharmuta)/i,
+    /(\bmanyak|manuyk|kalb\b|kelb\b)/i,
+    /(\bzeb\b|zebbi\b|air\s+feek|air\s+feeki)/i,
+
+    /* ─── Hindi / Urdu (Latin transliteration) ─── */
+    /(\bbhenchod|behenchod|bhencho|bsdk\b|bsdike|bhosdik|bhosdike|bhosdiwale)/i,
+    /(\bmadarchod|madarchod|mc\b|mcbc\b)/i,
+    /(\bchutiya|chutiye|chutiyap|chutia)/i,
+    /(\brandi\b|randwa|randibaaz|randikhana)/i,
+    /(\bgaand|gandu\b|gaandu|gandfat|gaandmasti)/i,
+    /(\bhar+amzada|harami)/i,
+    /(\bkutta\s+(kamina|sala)|kamina|kameena|saala|saali)/i,
+
+    /* ─── Japanese (романиз) ─── */
+    /(\bkuso\b|kusottare|kusogaki|chikushou|kichigai)/i,
+    /(\bbaka\s+yarou|baka\s+yarou|bakayarou|kusoyarou)/i,
+
+    /* ─── Korean (romanized) ─── */
+    /(\bsibal|shibal|ssibal|sibalnom|ssipsekki)/i,
+    /(\bgaesaekki|gaesseki|gaejasik)/i,
+    /(\bjotgat|jotnabi|jonna)/i,
+
+    /* ─── v5.31.2 / v5.39.0 — Nazi-era genocidaires + universally
+           condemned mass murderers + Holocaust-related hate triggers ─── */
+    /(\bhitler|гитлер|гiтлер|hi+tler|adolf\s+hitler)/i,
+    /(\bg(oe|ö)bbels|геббельс|goebbels)/i,
     /(\bhimmler|гиммлер)/i,
-    /(\bg(oe|ö)ring|геринг)/i,
+    /(\bg(oe|ö)ring|геринг|goering)/i,
     /(\bmengele|менгеле)/i,
     /(\beichmann|эйхман)/i,
-    /(\bbin\s+laden|бен\s+ладен)/i,
+    /(\bbormann|борман)/i,
+    /(\bheydrich|гейдрих)/i,
+    /(\bbin\s+laden|бен\s+ладен|осама|usama)/i,
     /(\bpol\s+pot|пол\s+пот)/i,
-    /(\bmussolini|муссолини)/i,
-    /(\bstalin|сталин)/i,                /* tyrant, mass murderer */
-    /(\bsaddam|саддам)/i,                /* Hussein */
-    /\bnazi/i,
-    /нацист/i
+    /(\bmussolini|муссолини|бенито\s+муссол)/i,
+    /(\bstalin|сталин|иосиф\s+стал|joseph\s+stalin)/i,
+    /(\bsaddam|саддам|саддам\s+хусс)/i,
+    /(\bcharles\s+manson|чарльз\s+мэнсон)/i,
+    /(\bted\s+bundy|тед\s+банди)/i,
+    /(\bjeffrey\s+dahmer|джеффри\s+дамер)/i,
+    /(\bchikatilo|чикатило)/i,
+    /(\bbreivik|брейвик)/i,
+    /(\bnazi[smt]?|nazism|naziz|nazies?|nazifik)/i,
+    /(нацист|нацизм|нацик|неонацист|неонацизм)/i,
+    /(\bheil\s+hitler|зиг\s+хайл|sieg\s+heil|14\s*\/?\s*88|14words)/i,
+    /(\bkkk\b|ku\s+klux\s+klan|клан|куклукс)/i,
+    /(\bisis\b|игил|даеш|daesh|al\s*qaeda|аль\s*каида)/i,
+    /(холокост\s+(ложь|выдумка|миф|fake)|holocaust\s+(denial|hoax|lie|fake))/i,
+    /(\bwhite\s+power|wp\b|white\s+pride)/i,
+
+    /* ─── Slurs / hate speech (additional) ─── */
+    /(\bsubhuman|untermensch|унтерменш)/i,
+    /(\bgenoci[dt]e|геноцид)/i,
+    /(чурбан|узкоглаз|косоглаз|жидомасон)/i
   ];
+
+  /* v5.39.0 — text normalizer: strips l33t-speak digit/symbol subs and
+     canonicalises Cyrillic↔Latin homoglyphs BEFORE running patterns.
+     Without this, "FvCK", "Sh1t", "Х*Й", "хУй", "Х У Й" all bypassed the
+     literal patterns. Order matters: collapse spaces/dots/asterisks AFTER
+     digit substitution so "f.u.c.k" → "fuck". */
+  var L33T_MAP = {
+    "0": "o", "1": "i", "3": "e", "4": "a", "5": "s",
+    "7": "t", "@": "a", "$": "s", "!": "i", "|": "i",
+    /* Cyrillic homoglyphs → Latin (catches latin-eyed Russian мат) */
+    "а": "а", "е": "е", "о": "о", "р": "р", "с": "с",     /* keep as-is for cyrillic patterns */
+    "А": "а", "Е": "е", "О": "о", "Р": "р", "С": "с",
+    /* Latin look-alikes folded to Cyrillic only when surrounded by Cyrillic context
+       — handled by running both passes (raw + normalized). */
+  };
+  function _normalizeForSwear(s) {
+    /* Lowercase. */
+    var x = s.toLowerCase();
+    /* Strip zero-width / combining diacritics that some obfuscators inject */
+    x = x.replace(/[​-‏‪-‮⁠-⁯﻿͏]/g, "");
+    /* Digit/symbol → letter substitutions */
+    x = x.replace(/[0134578@$!|]/g, function (ch) { return L33T_MAP[ch] || ch; });
+    /* Collapse internal separators: "f.u.c.k", "f u c k", "f-u-c-k", "f*u*c*k" */
+    x = x.replace(/([a-zа-яё])[\s.\-*_=+~`'"\\\/]{1,3}(?=[a-zа-яё])/g, "$1");
+    /* Repeated-letter stretching: "fuuuck" → "fuck", "хуууй" → "хуй" — squash
+       any run of 3+ identical letters down to 2 so morphology still works. */
+    x = x.replace(/([a-zа-яё])\1{2,}/g, "$1$1");
+    return x;
+  }
   function containsSwear(text) {
     if (!text) return false;
     var s = String(text);
-    /* Quick lowercase + remove digits / dots that obfuscators use */
+    /* Test against BOTH raw + normalized so we don't lose any genuine
+       morphological match while still catching obfuscated variants. */
+    var n = _normalizeForSwear(s);
     for (var i = 0; i < SWEAR_PATTERNS.length; i++) {
-      if (SWEAR_PATTERNS[i].test(s)) return true;
+      var p = SWEAR_PATTERNS[i];
+      if (p.test(s) || p.test(n)) return true;
     }
     return false;
   }
@@ -4817,6 +5600,7 @@
      attempts, ALL bananafont:* localStorage is wiped and the page reloads.
      The only escape is correct SORRY or ПРОСТИ (case-insensitive). */
   function wipeAndReload() {
+    playUiSound("explosion");   /* v5.38.2 — dramatic wipe */
     try {
       var keys = [];
       for (var i = 0; i < localStorage.length; i++) {
@@ -4825,7 +5609,8 @@
       }
       keys.forEach(function (k) { localStorage.removeItem(k); });
     } catch (e) {}
-    location.reload();
+    /* Small delay so the explosion sound is audible before reload */
+    setTimeout(function () { location.reload(); }, 250);
   }
   /* v5.31.2: Cross-session trigger counter. Every time the user trips the
      mat/code-1488/bad-person filter, this goes up. Reaches 3 → no more
@@ -4923,7 +5708,7 @@
       if (v === "SORRY" || v === "ПРОСТИ") {
         settle();
         red.classList.add("removing");
-        playUiSound("confirm");
+        playUiSound("applause");     /* v5.38.2: forgiven → applause (was: confirm) */
         setTimeout(function () {
           if (red.parentNode) red.parentNode.removeChild(red);
         }, 850);
