@@ -8192,3 +8192,61 @@ body.bf-low-gpu * {
 @media (max-width: 600px) {
   .auth-secondary-btn { font-size: 12px; padding: 9px 10px; min-width: 110px; }
 }
+
+/* v5.47.0 — admin-code entry on the login screen.
+   Looks like a subtle link until expanded; then shows a small panel
+   with a password-style input and a separate accent-coloured submit. */
+.auth-admin-row {
+  margin-top: 6px;
+  text-align: center;
+}
+.auth-admin-link {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.auth-admin-link:hover {
+  background: rgba(255,225,53,0.08);
+  color: #ffe135;
+}
+.auth-admin-link[aria-expanded="true"] {
+  color: #ffe135;
+}
+.auth-admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 14px;
+  background: rgba(255, 225, 53, 0.06);
+  border: 1px dashed rgba(255, 225, 53, 0.3);
+  border-radius: 12px;
+}
+.auth-submit-admin {
+  background: linear-gradient(135deg, #ffe135 0%, #ffaa3c 100%);
+  color: #1a1208;
+  box-shadow: 0 2px 12px rgba(255, 170, 60, 0.35);
+}
+.auth-submit-admin:hover {
+  background: linear-gradient(135deg, #fff44a 0%, #ffbf50 100%);
+  box-shadow: 0 4px 18px rgba(255, 170, 60, 0.5);
+}
+
+/* v5.47.1 — "(необязательно)" + hint inside admin form */
+.auth-admin-optional {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+.auth-admin-hint {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: rgba(255,225,53,0.7);
+  font-style: italic;
+}

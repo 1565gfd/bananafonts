@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.46.0";
+  var VERSION = "v5.47.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -7014,6 +7014,96 @@
       accListGrid.appendChild(item);
     });
   }
+
+  /* ─────────────────────────────────────────────────────────
+     v5.47.0 — admin-code entry inside the login screen.
+     Opens the same admin panel as the Secret-tab privileged code,
+     but as a dedicated UI control so non-techy admins don't have
+     to know about the Secret tab at all. Reuses _isPrivilegedCode
+     + activateAdmin so the code byte-array stays the single source
+     of truth (off-repo plaintext, XOR-decoded at runtime).
+     ───────────────────────────────────────────────────────── */
+  var accAdminToggle    = document.getElementById("acc-admin-toggle");
+  var accAdminForm      = document.getElementById("acc-admin-form");
+  var accAdminCode      = document.getElementById("acc-admin-code");
+  var accAdminCodeToggle= document.getElementById("acc-admin-code-toggle");
+  var accAdminSubmit    = document.getElementById("acc-admin-submit");
+  var accAdminFb        = document.getElementById("acc-admin-feedback");
+  /* Anti-bruteforce: 5 wrong attempts per session → 30-second cooldown */
+  var _adminTries = 0;
+  var _adminLockUntil = 0;
+
+  accAdminToggle.addEventListener("click", function () {
+    var open = accAdminForm.hasAttribute("hidden");
+    if (open) {
+      accAdminForm.removeAttribute("hidden");
+      accAdminToggle.setAttribute("aria-expanded", "true");
+      setTimeout(function () { accAdminCode.focus(); }, 50);
+    } else {
+      accAdminForm.setAttribute("hidden", "");
+      accAdminToggle.setAttribute("aria-expanded", "false");
+      accAdminCode.value = "";
+      accAdminFb.textContent = "";
+      accAdminFb.className = "account-feedback";
+    }
+    playUiSound("click");
+  });
+  /* Eye toggle for admin code input */
+  accAdminCodeToggle.addEventListener("click", function () {
+    var hidden = accAdminCode.type === "password";
+    accAdminCode.type = hidden ? "text" : "password";
+    accAdminCodeToggle.textContent = hidden ? "🙈" : "👁";
+  });
+  function _adminFb(msg, err) {
+    accAdminFb.textContent = msg || "";
+    accAdminFb.classList.toggle("error", !!err && !!msg);
+    accAdminFb.classList.toggle("success", !err && !!msg);
+  }
+  accAdminSubmit.addEventListener("click", function () {
+    /* Cooldown check */
+    if (_adminLockUntil > Date.now()) {
+      var left = Math.ceil((_adminLockUntil - Date.now()) / 1000);
+      _adminFb("Слишком много попыток. Подожди " + left + " сек.", true);
+      playUiSound("fail");
+      return;
+    }
+    var raw = (accAdminCode.value || "").trim();
+    if (!raw) {
+      _adminFb("Введи код", true);
+      playUiSound("fail");
+      return;
+    }
+    var upper = raw.toUpperCase();
+    if (_isPrivilegedCode(upper)) {
+      _adminTries = 0;
+      _adminFb("Доступ открыт ✓", false);
+      activateAdmin();
+      closeAccountPanel();
+      /* Clear sensitive input */
+      accAdminCode.value = "";
+      accAdminCode.type = "password";
+      accAdminCodeToggle.textContent = "👁";
+      /* Collapse form */
+      accAdminForm.setAttribute("hidden", "");
+      accAdminToggle.setAttribute("aria-expanded", "false");
+    } else {
+      _adminTries++;
+      if (_adminTries >= 5) {
+        _adminLockUntil = Date.now() + 30000;
+        _adminTries = 0;
+        _adminFb("5 неудачных попыток. Заблокировано на 30 сек.", true);
+      } else {
+        _adminFb("Неверный код (осталось попыток: " + (5 - _adminTries) + ")", true);
+      }
+      playUiSound("fail");
+      accAdminCode.value = "";
+      accAdminCode.focus();
+    }
+  });
+  /* Enter submits */
+  accAdminCode.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); accAdminSubmit.click(); }
+  });
 
   /* ── Wire widget + tabs + close ── */
   accWidgetMain.addEventListener("click", function () { openAccountPanel(); });

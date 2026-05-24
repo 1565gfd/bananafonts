@@ -814,6 +814,22 @@
         <button type="button" id="acc-login-btn" class="auth-submit">Войти</button>
 
         <div class="account-feedback" id="acc-login-feedback"></div>
+
+        <!-- v5.47.1 — admin-code entry — clearly marked OPTIONAL.
+             Collapsed by default, only for the site admin. Regular users
+             can ignore this entirely. -->
+        <div class="auth-admin-row">
+          <button type="button" id="acc-admin-toggle" class="auth-admin-link" aria-expanded="false" aria-controls="acc-admin-form">🔑 Код администратора <span class="auth-admin-optional">(необязательно)</span></button>
+        </div>
+        <div id="acc-admin-form" class="auth-admin-form" hidden>
+          <p class="auth-admin-hint">Только для администратора сайта. Обычным пользователям заполнять не нужно.</p>
+          <div class="auth-pwd-wrap">
+            <input type="password" id="acc-admin-code" class="auth-input" placeholder="Код" autocomplete="off" spellcheck="false" />
+            <button type="button" id="acc-admin-code-toggle" class="auth-eye" aria-label="Показать код" title="Показать код">👁</button>
+          </div>
+          <button type="button" id="acc-admin-submit" class="auth-submit auth-submit-admin">Открыть админку</button>
+          <div class="account-feedback" id="acc-admin-feedback"></div>
+        </div>
       </section>
 
       <!-- ── REGISTER — v5.46.0: full feature set back, kept in auth-screen style ── -->
