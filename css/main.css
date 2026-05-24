@@ -8280,3 +8280,144 @@ body.bf-low-gpu * {
   flex-direction: column;
   gap: 14px;
 }
+
+
+/* ============================================================
+   v5.48.0 — DDoS simulation overlay (admin power tool).
+   Pure UX theater — looks like a hacked-server panel under attack.
+   ============================================================ */
+.ddos-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  background: rgba(5, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  color: #ff4444;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ddos-head {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ff2020;
+  text-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
+  margin-bottom: 16px;
+}
+.ddos-blink {
+  display: inline-block;
+  animation: ddosBlink 0.5s infinite;
+}
+@keyframes ddosBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.2; }
+}
+.ddos-meters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ddos-meter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ddos-meter > span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff8888;
+  width: 30px;
+  letter-spacing: 1px;
+}
+.ddos-bar {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 30, 30, 0.15);
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ddos-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4040, #ff8000, #ff4040);
+  background-size: 200% 100%;
+  animation: ddosBarSlide 0.6s linear infinite;
+  width: 5%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
+}
+@keyframes ddosBarSlide {
+  0% { background-position: 0% 0%; }
+  100% { background-position: -200% 0%; }
+}
+.ddos-log {
+  flex: 1;
+  margin: 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #aaffaa;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.ddos-log .ddos-ip {
+  color: #88ddff;
+  font-weight: 600;
+}
+.ddos-log .ddos-err {
+  color: #ff5555;
+  font-weight: 700;
+}
+.ddos-log .ddos-dim {
+  color: rgba(170, 255, 170, 0.4);
+}
+.ddos-status {
+  margin-top: 12px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(255, 30, 30, 0.15);
+  border: 1px solid rgba(255, 60, 60, 0.5);
+  border-radius: 6px;
+  color: #ff8080;
+}
+.ddos-status.ddos-status-ok {
+  background: rgba(45, 209, 106, 0.15);
+  border-color: rgba(45, 209, 106, 0.6);
+  color: #6ef098;
+}
+/* Whole page shake while attack is on */
+body.ddos-active {
+  animation: ddosShake 0.1s linear infinite;
+}
+@keyframes ddosShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+  100% { transform: translate(-1px, -1px); }
+}
+@media (max-width: 600px) {
+  .ddos-overlay { padding: 16px 12px; }
+  .ddos-head { font-size: 16px; letter-spacing: 1px; margin-bottom: 10px; }
+  .ddos-meter > span { font-size: 9px; width: 24px; }
+  .ddos-log { font-size: 10px; padding: 8px; }
+  .ddos-status { font-size: 12px; }
+}
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  body.ddos-active { animation: none; }
+  .ddos-blink { animation: none; opacity: 0.7; }
+  .ddos-bar-fill { animation: none; }
+}

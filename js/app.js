@@ -143,6 +143,7 @@
       pwSpin: "🌀 Крутануть",
       pwRuler: "📐 Линейка viewport",
       pwMirror: "🪞 Зеркало",
+      pwDdos: "🚨 DDoS-симуляция",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -430,6 +431,7 @@
       pwSpin: "🌀 Spin page",
       pwRuler: "📐 Viewport ruler",
       pwMirror: "🪞 Mirror page",
+      pwDdos: "🚨 DDoS simulation",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -664,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.47.8";
+  var VERSION = "v5.48.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3743,6 +3745,136 @@
       delete document.body.dataset.vp;
     }
   }
+
+  /* ─────────────────────────────────────────────────────────
+     v5.48.0 — runDdosSimulation()
+     Fullscreen DDoS-attack theater: fake terminal log, fake metrics,
+     screen flicker. 8 seconds, auto-cleanup. No actual traffic.
+     ───────────────────────────────────────────────────────── */
+  var _ddosActive = false;
+  function runDdosSimulation() {
+    if (_ddosActive) return;
+    _ddosActive = true;
+
+    var IP_PREFIXES = ["192.168", "10.0", "172.16", "203.0.113", "198.51.100",
+                       "45.33", "104.18", "185.220", "91.219", "77.83"];
+    var ENDPOINTS = ["/", "/api/login", "/api/users", "/admin", "/wp-admin",
+                     "/.env", "/config.php", "/api/v1/auth", "/login", "/api/secret",
+                     "/.git/config", "/phpmyadmin", "/api/users/1", "/backup.zip"];
+    var METHODS = ["GET", "POST", "GET", "GET", "POST", "PUT", "DELETE", "HEAD"];
+    var ERRORS = ["[ERROR]", "[WARN]", "[CRIT]", "[DDOS]", "[BLOCKED]"];
+    function randIP() {
+      var p = IP_PREFIXES[Math.floor(Math.random() * IP_PREFIXES.length)];
+      return p + "." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256));
+    }
+    function timestamp() {
+      var d = new Date();
+      return d.toISOString().slice(11, 23);  /* HH:MM:SS.mmm */
+    }
+
+    /* Build overlay */
+    var overlay = document.createElement("div");
+    overlay.className = "ddos-overlay";
+    var head = document.createElement("div");
+    head.className = "ddos-head";
+    head.innerHTML = "<span class='ddos-blink'>🚨</span> SIMULATED DDoS ATTACK <span class='ddos-blink'>🚨</span>";
+    var meters = document.createElement("div");
+    meters.className = "ddos-meters";
+    meters.innerHTML =
+      "<div class='ddos-meter'><span>CPU</span><div class='ddos-bar'><div id='ddos-cpu' class='ddos-bar-fill'></div></div></div>" +
+      "<div class='ddos-meter'><span>NET</span><div class='ddos-bar'><div id='ddos-net' class='ddos-bar-fill'></div></div></div>" +
+      "<div class='ddos-meter'><span>RPS</span><div class='ddos-bar'><div id='ddos-rps' class='ddos-bar-fill'></div></div></div>";
+    var log = document.createElement("pre");
+    log.className = "ddos-log";
+    log.id = "ddos-log";
+    var status = document.createElement("div");
+    status.className = "ddos-status";
+    status.id = "ddos-status";
+    status.textContent = "⚠ Под атакой. Фильтрация трафика…";
+    overlay.appendChild(head);
+    overlay.appendChild(meters);
+    overlay.appendChild(log);
+    overlay.appendChild(status);
+    document.body.appendChild(overlay);
+    document.body.classList.add("ddos-active");
+
+    var cpu = document.getElementById("ddos-cpu");
+    var net = document.getElementById("ddos-net");
+    var rps = document.getElementById("ddos-rps");
+
+    /* Spam log lines */
+    var lineCount = 0;
+    var logTimer = setInterval(function () {
+      var lines = "";
+      var burst = 4 + Math.floor(Math.random() * 4);
+      for (var i = 0; i < burst; i++) {
+        var roll = Math.random();
+        var ip = randIP();
+        var ep = ENDPOINTS[Math.floor(Math.random() * ENDPOINTS.length)];
+        var mt = METHODS[Math.floor(Math.random() * METHODS.length)];
+        if (roll < 0.15) {
+          lines += "<span class='ddos-err'>" + timestamp() + " " +
+                   ERRORS[Math.floor(Math.random() * ERRORS.length)] +
+                   " Rate limit exceeded from " + ip + "</span>\n";
+        } else if (roll < 0.3) {
+          lines += "<span class='ddos-err'>" + timestamp() + " [DROP] " + ip + " " + mt + " " + ep + " — blacklisted</span>\n";
+        } else {
+          lines += "<span class='ddos-ip'>" + ip + "</span> " + mt + " " + ep +
+                   " <span class='ddos-dim'>(" + timestamp() + ")</span>\n";
+        }
+        lineCount++;
+      }
+      log.innerHTML += lines;
+      /* Keep log bounded — cap at ~200 lines */
+      var html = log.innerHTML;
+      var splitPos = -1;
+      for (var k = 0, n = 0; k < html.length; k++) {
+        if (html[k] === "\n") { n++; if (n > 200) { splitPos = k; break; } }
+      }
+      if (splitPos > 0) log.innerHTML = html.slice(splitPos + 1);
+      log.scrollTop = log.scrollHeight;
+    }, 80);
+
+    /* Animate fake meters — random jitter pinned near max */
+    var meterTimer = setInterval(function () {
+      cpu.style.width = (78 + Math.random() * 22) + "%";
+      net.style.width = (85 + Math.random() * 15) + "%";
+      rps.style.width = (60 + Math.random() * 40) + "%";
+    }, 120);
+
+    /* Screen flicker — brief filter pulses */
+    var flickerTimer = setInterval(function () {
+      if (Math.random() < 0.3) {
+        document.body.style.filter = "hue-rotate(" + Math.floor(Math.random() * 30 - 15) + "deg) brightness(1.05)";
+        setTimeout(function () { document.body.style.filter = ""; }, 60);
+      }
+    }, 250);
+
+    /* Cleanup after 8 seconds */
+    setTimeout(function () {
+      clearInterval(logTimer);
+      clearInterval(meterTimer);
+      clearInterval(flickerTimer);
+      document.body.style.filter = "";
+      status.textContent = "✓ Атака отбита. Трафик восстановлен.";
+      status.classList.add("ddos-status-ok");
+      /* Drain meters */
+      cpu.style.width = "12%";
+      net.style.width = "8%";
+      rps.style.width = "5%";
+      /* Hold 1.5s, then fade out */
+      setTimeout(function () {
+        overlay.style.transition = "opacity 0.5s ease";
+        overlay.style.opacity = "0";
+        setTimeout(function () {
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          document.body.classList.remove("ddos-active");
+          _ddosActive = false;
+        }, 520);
+      }, 1500);
+    }, 8000);
+  }
+
   var POWER_TOOLS = [
     { textKey: "pwToggleLang", sound: "click", run: function () {
         var next = currentLang === "ru" ? "en" : "ru";
@@ -3928,6 +4060,15 @@
         _bfMirror = !_bfMirror;
         document.body.classList.toggle("bf-mirror", _bfMirror);
         return "mirror: " + (_bfMirror ? "ON" : "OFF");
+    } },
+    /* v5.48.0 — DDoS attack simulation. Pure UX theater: fullscreen
+       fake terminal-style overlay with scrolling request log, fake
+       CPU/network meters, screen flicker. 8-second run, auto-cleanup.
+       Plays the siren wail for atmosphere. Does NOT actually generate
+       any network traffic. */
+    { textKey: "pwDdos", sound: "siren", run: function () {
+        runDdosSimulation();
+        return "🚨 ATTACK INCOMING…";
     } }
   ];
   /* Keep ruler label fresh on resize */
