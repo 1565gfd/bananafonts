@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.47.6";
+  var VERSION = "v5.47.8";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -3245,8 +3245,9 @@
     adminUnlocked = true;
     try { localStorage.setItem("bananafont:admin", "1"); } catch (e) {}
     adminBadgeEl.removeAttribute("hidden");
-    /* Show success message + open panel */
-    showSecretMessage(TEXT[currentLang].adminActivated);
+    /* v5.47.8 — stealth activation: no heart-rain / rainbow flash /
+       celebration message. Just a quiet unlock sound and the panel
+       slides in. Matches the rest of the de-flashed admin UI. */
     playUiSound("unlock");
     setTimeout(openAdminPanel, 350);
   }
