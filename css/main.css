@@ -243,6 +243,231 @@
   --nf-code-gradient: linear-gradient(180deg, #ffb56b 0%, #ff7a1f 100%);
 }
 
+/* ──────── Black-Orange theme (v5.19.0) — pure black + neon orange.
+            5th main-bar theme button. ──────── */
+[data-theme="black-orange"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 50% 0%, rgba(255, 107, 0, 0.18) 0%, transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255, 80, 0, 0.1) 0%, transparent 50%),
+    #000000;
+  --text: #fff5e6;
+  --text-dim: rgba(255, 245, 230, 0.5);
+  --text-soft: rgba(255, 245, 230, 0.88);
+  --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(255, 107, 0, 0.08);
+  --glass-bg-hover: rgba(255, 107, 0, 0.14);
+  --glass-border: rgba(255, 107, 0, 0.45);
+  --glass-border-soft: rgba(255, 107, 0, 0.25);
+  --glass-inset: rgba(255, 107, 0, 0.3);
+  --glass-inset-soft: rgba(255, 107, 0, 0.15);
+  --output-bg: rgba(20, 10, 0, 0.85);
+  --output-border: rgba(255, 107, 0, 0.35);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #ff6b00;
+  --accent-bg: rgba(255, 107, 0, 0.92);
+  --accent-border: rgba(255, 140, 60, 1);
+  --accent-glow: rgba(255, 107, 0, 0.6);
+  --copy-bg: rgba(255, 107, 0, 0.88);
+  --copy-bg-hover: rgba(255, 130, 30, 0.96);
+  --copy-border: rgba(255, 140, 60, 1);
+  --copy-border-hover: rgba(255, 160, 90, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #ff8a3d;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.7);
+  --nf-bg: linear-gradient(160deg, #000 0%, #1a0a00 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ff6b00 0%, #ffaa44 100%);
+}
+
+/* ──────── Neon Green (v5.19.0) — extras, unlocked in Settings ──────── */
+[data-theme="neon-green"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 50% 0%, rgba(57, 255, 20, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(57, 255, 20, 0.08) 0%, transparent 55%),
+    #020c02;
+  --text: #d6ffd6;
+  --text-dim: rgba(214, 255, 214, 0.5);
+  --text-soft: rgba(214, 255, 214, 0.9);
+  --text-shadow: 0 2px 12px rgba(57, 255, 20, 0.35);
+  --glass-bg: rgba(57, 255, 20, 0.06);
+  --glass-bg-hover: rgba(57, 255, 20, 0.12);
+  --glass-border: rgba(57, 255, 20, 0.45);
+  --glass-border-soft: rgba(57, 255, 20, 0.25);
+  --glass-inset: rgba(57, 255, 20, 0.3);
+  --glass-inset-soft: rgba(57, 255, 20, 0.12);
+  --output-bg: rgba(0, 15, 0, 0.85);
+  --output-border: rgba(57, 255, 20, 0.4);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #39ff14;
+  --accent-bg: rgba(57, 255, 20, 0.85);
+  --accent-border: rgba(100, 255, 80, 1);
+  --accent-glow: rgba(57, 255, 20, 0.7);
+  --copy-bg: rgba(57, 255, 20, 0.8);
+  --copy-bg-hover: rgba(100, 255, 60, 0.92);
+  --copy-border: rgba(100, 255, 80, 1);
+  --copy-border-hover: rgba(140, 255, 120, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #39ff14;
+  --shadow-card: 0 12px 40px rgba(57, 255, 20, 0.2);
+  --nf-bg: linear-gradient(160deg, #020c02 0%, #0a2010 100%);
+  --nf-code-gradient: linear-gradient(180deg, #39ff14 0%, #b8ff80 100%);
+}
+
+/* ──────── Neon Violet (v5.19.0) ──────── */
+[data-theme="neon-violet"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 50% 0%, rgba(191, 0, 255, 0.22) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(191, 0, 255, 0.1) 0%, transparent 55%),
+    #0a0010;
+  --text: #ecd6ff;
+  --text-dim: rgba(236, 214, 255, 0.5);
+  --text-soft: rgba(236, 214, 255, 0.9);
+  --text-shadow: 0 2px 14px rgba(191, 0, 255, 0.4);
+  --glass-bg: rgba(191, 0, 255, 0.08);
+  --glass-bg-hover: rgba(191, 0, 255, 0.16);
+  --glass-border: rgba(191, 0, 255, 0.45);
+  --glass-border-soft: rgba(191, 0, 255, 0.25);
+  --glass-inset: rgba(191, 0, 255, 0.3);
+  --glass-inset-soft: rgba(191, 0, 255, 0.12);
+  --output-bg: rgba(15, 0, 25, 0.85);
+  --output-border: rgba(191, 0, 255, 0.4);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #bf00ff;
+  --accent-bg: rgba(191, 0, 255, 0.85);
+  --accent-border: rgba(210, 80, 255, 1);
+  --accent-glow: rgba(191, 0, 255, 0.7);
+  --copy-bg: rgba(191, 0, 255, 0.8);
+  --copy-bg-hover: rgba(210, 50, 255, 0.92);
+  --copy-border: rgba(210, 80, 255, 1);
+  --copy-border-hover: rgba(230, 130, 255, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #bf00ff;
+  --shadow-card: 0 12px 40px rgba(191, 0, 255, 0.25);
+  --nf-bg: linear-gradient(160deg, #0a0010 0%, #1f0035 100%);
+  --nf-code-gradient: linear-gradient(180deg, #bf00ff 0%, #ffb0ff 100%);
+}
+
+/* ──────── Pastel (v5.19.0) — soft pinks/blues/lavenders, light scheme ──────── */
+[data-theme="pastel"] {
+  color-scheme: light;
+  --bg-gradient:
+    radial-gradient(circle at 20% 20%, rgba(255, 200, 220, 0.6) 0%, transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(200, 220, 255, 0.55) 0%, transparent 55%),
+    radial-gradient(circle at 50% 90%, rgba(220, 200, 255, 0.55) 0%, transparent 55%),
+    #fce8ee;
+  --text: #3d2840;
+  --text-dim: rgba(61, 40, 64, 0.5);
+  --text-soft: rgba(61, 40, 64, 0.78);
+  --text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-hover: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(180, 140, 200, 0.4);
+  --glass-border-soft: rgba(180, 140, 200, 0.25);
+  --glass-inset: rgba(255, 255, 255, 0.85);
+  --glass-inset-soft: rgba(255, 255, 255, 0.5);
+  --output-bg: rgba(255, 255, 255, 0.75);
+  --output-border: rgba(180, 140, 200, 0.35);
+  --output-inset-bottom: rgba(180, 140, 200, 0.15);
+  --accent: #c779b8;
+  --accent-bg: rgba(199, 121, 184, 0.92);
+  --accent-border: rgba(220, 150, 200, 1);
+  --accent-glow: rgba(199, 121, 184, 0.45);
+  --copy-bg: rgba(199, 121, 184, 0.88);
+  --copy-bg-hover: rgba(220, 140, 205, 0.96);
+  --copy-border: rgba(220, 150, 200, 1);
+  --copy-border-hover: rgba(240, 170, 220, 1);
+  --copied-bg: rgba(120, 200, 150, 0.7);
+  --copied-border: rgba(150, 220, 175, 0.9);
+  --copied-glow: rgba(120, 200, 150, 0.4);
+  --link: #c779b8;
+  --shadow-card: 0 10px 30px rgba(180, 140, 200, 0.25);
+  --nf-bg: linear-gradient(135deg, #ffd1dc 0%, #d8c8ff 100%);
+  --nf-code-gradient: linear-gradient(180deg, #c779b8 0%, #ff9dbb 100%);
+}
+
+/* ──────── Ocean (v5.19.0) — deep ocean blue + teal accent ──────── */
+[data-theme="ocean"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 30% 0%, rgba(0, 180, 200, 0.18) 0%, transparent 55%),
+    radial-gradient(circle at 80% 100%, rgba(0, 100, 180, 0.2) 0%, transparent 55%),
+    linear-gradient(160deg, #003a5c 0%, #001a3a 100%);
+  --text: #d6f4ff;
+  --text-dim: rgba(214, 244, 255, 0.55);
+  --text-soft: rgba(214, 244, 255, 0.9);
+  --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --glass-bg: rgba(0, 200, 220, 0.08);
+  --glass-bg-hover: rgba(0, 200, 220, 0.16);
+  --glass-border: rgba(0, 200, 220, 0.4);
+  --glass-border-soft: rgba(0, 200, 220, 0.22);
+  --glass-inset: rgba(255, 255, 255, 0.3);
+  --glass-inset-soft: rgba(255, 255, 255, 0.12);
+  --output-bg: rgba(0, 20, 40, 0.75);
+  --output-border: rgba(0, 200, 220, 0.3);
+  --output-inset-bottom: rgba(0, 0, 0, 0.5);
+  --accent: #00c2cb;
+  --accent-bg: rgba(0, 194, 203, 0.9);
+  --accent-border: rgba(80, 220, 230, 1);
+  --accent-glow: rgba(0, 194, 203, 0.55);
+  --copy-bg: rgba(0, 194, 203, 0.85);
+  --copy-bg-hover: rgba(40, 220, 230, 0.95);
+  --copy-border: rgba(80, 220, 230, 1);
+  --copy-border-hover: rgba(140, 240, 250, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #00c2cb;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --nf-bg: linear-gradient(160deg, #003a5c 0%, #007a9e 100%);
+  --nf-code-gradient: linear-gradient(180deg, #00c2cb 0%, #80f0ff 100%);
+}
+
+/* ──────── Sunset (v5.19.0) — purple → pink → orange ──────── */
+[data-theme="sunset"] {
+  color-scheme: dark;
+  --bg-gradient: linear-gradient(160deg,
+    #2a0a3f   0%,
+    #6a1a5e  35%,
+    #c43a85  65%,
+    #ff8b3d 100%);
+  --text: #fff5e6;
+  --text-dim: rgba(255, 245, 230, 0.6);
+  --text-soft: rgba(255, 245, 230, 0.92);
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-bg-hover: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-soft: rgba(255, 255, 255, 0.28);
+  --glass-inset: rgba(255, 255, 255, 0.5);
+  --glass-inset-soft: rgba(255, 255, 255, 0.15);
+  --output-bg: rgba(40, 10, 50, 0.5);
+  --output-border: rgba(255, 255, 255, 0.3);
+  --output-inset-bottom: rgba(0, 0, 0, 0.3);
+  --accent: #ffe0a0;
+  --accent-bg: rgba(255, 200, 100, 0.92);
+  --accent-border: rgba(255, 220, 140, 1);
+  --accent-glow: rgba(255, 200, 100, 0.5);
+  --copy-bg: rgba(255, 200, 100, 0.88);
+  --copy-bg-hover: rgba(255, 220, 130, 0.96);
+  --copy-border: rgba(255, 220, 140, 1);
+  --copy-border-hover: rgba(255, 240, 180, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #ffe0a0;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --nf-bg: linear-gradient(160deg, #2a0a3f 0%, #c43a85 50%, #ff8b3d 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffe0a0 0%, #ff9dbb 100%);
+}
+
 /* ============================================================
    Base + reset
    ============================================================ */
@@ -461,6 +686,14 @@ html.theme-transition *::after {
     #ff006e, #ff5e00, #ffbe0b, #8338ec, #3a86ff, #c200fb, #ff006e);
   border-color: rgba(255, 255, 255, 0.6);
   animation: swatchSpin 6s linear infinite;
+}
+
+/* v5.19.0: Black-Orange swatch — radial orange glow on pure black */
+.theme-switch button[data-theme-btn="black-orange"]::before {
+  background:
+    radial-gradient(circle at 50% 30%, #ff6b00 0%, transparent 60%),
+    #000000;
+  border-color: rgba(255, 107, 0, 0.6);
 }
 
 @keyframes swatchSpin {
@@ -2380,6 +2613,73 @@ footer a:hover {
   [data-theme="school"] .theme-switch button:not(.active) {
     background: rgba(25, 55, 90, 0.92);
   }
+  /* ── v5.19.0: mobile fallbacks for new themes (backdrop-filter off) ── */
+  [data-theme="black-orange"] .app,
+  [data-theme="black-orange"] textarea,
+  [data-theme="black-orange"] .not-found-card {
+    background: rgba(15, 8, 0, 0.96);
+  }
+  [data-theme="black-orange"] .output { background: rgba(0, 0, 0, 0.95); }
+  [data-theme="black-orange"] .fonts button:not(.active),
+  [data-theme="black-orange"] .lang-switch button:not(.active),
+  [data-theme="black-orange"] .theme-switch button:not(.active) {
+    background: rgba(40, 22, 5, 0.92);
+  }
+  [data-theme="neon-green"] .app,
+  [data-theme="neon-green"] textarea,
+  [data-theme="neon-green"] .not-found-card {
+    background: rgba(5, 18, 5, 0.96);
+  }
+  [data-theme="neon-green"] .output { background: rgba(0, 8, 0, 0.95); }
+  [data-theme="neon-green"] .fonts button:not(.active),
+  [data-theme="neon-green"] .lang-switch button:not(.active),
+  [data-theme="neon-green"] .theme-switch button:not(.active) {
+    background: rgba(15, 40, 15, 0.92);
+  }
+  [data-theme="neon-violet"] .app,
+  [data-theme="neon-violet"] textarea,
+  [data-theme="neon-violet"] .not-found-card {
+    background: rgba(20, 5, 30, 0.96);
+  }
+  [data-theme="neon-violet"] .output { background: rgba(10, 0, 18, 0.95); }
+  [data-theme="neon-violet"] .fonts button:not(.active),
+  [data-theme="neon-violet"] .lang-switch button:not(.active),
+  [data-theme="neon-violet"] .theme-switch button:not(.active) {
+    background: rgba(40, 15, 60, 0.92);
+  }
+  [data-theme="pastel"] .app,
+  [data-theme="pastel"] textarea,
+  [data-theme="pastel"] .not-found-card {
+    background: rgba(255, 240, 246, 0.96);
+  }
+  [data-theme="pastel"] .output { background: rgba(255, 250, 252, 0.95); }
+  [data-theme="pastel"] .fonts button:not(.active),
+  [data-theme="pastel"] .lang-switch button:not(.active),
+  [data-theme="pastel"] .theme-switch button:not(.active) {
+    background: rgba(255, 248, 252, 0.95);
+  }
+  [data-theme="ocean"] .app,
+  [data-theme="ocean"] textarea,
+  [data-theme="ocean"] .not-found-card {
+    background: rgba(0, 30, 50, 0.96);
+  }
+  [data-theme="ocean"] .output { background: rgba(0, 15, 30, 0.95); }
+  [data-theme="ocean"] .fonts button:not(.active),
+  [data-theme="ocean"] .lang-switch button:not(.active),
+  [data-theme="ocean"] .theme-switch button:not(.active) {
+    background: rgba(0, 60, 90, 0.92);
+  }
+  [data-theme="sunset"] .app,
+  [data-theme="sunset"] textarea,
+  [data-theme="sunset"] .not-found-card {
+    background: rgba(50, 20, 70, 0.92);
+  }
+  [data-theme="sunset"] .output { background: rgba(30, 10, 50, 0.85); }
+  [data-theme="sunset"] .fonts button:not(.active),
+  [data-theme="sunset"] .lang-switch button:not(.active),
+  [data-theme="sunset"] .theme-switch button:not(.active) {
+    background: rgba(80, 30, 90, 0.9);
+  }
 }
 
 /* ──────── Flowing colors animation ──────── */
@@ -2416,3 +2716,142 @@ footer a:hover {
    request ("лого убери так уж и быть") after multiple failed SVG
    reproduction attempts. As of v5.9.0 the navy/gold background is the
    only visual indicator that school theme is active. */
+
+/* ============================================================
+   v5.19.0 — Extra themes grid in Settings + UI polish for
+   Settings / Secret / Fonts tabs.
+   ============================================================ */
+
+/* Extra-themes grid: 5 themes displayed as swatch + label cards */
+.extra-themes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.extra-theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px 10px;
+  border-radius: 14px;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--glass-border-soft);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.extra-theme-btn:hover {
+  transform: translateY(-2px);
+  background: var(--glass-bg-hover);
+  border-color: var(--accent-border);
+}
+.extra-theme-btn:active {
+  transform: scale(0.97);
+}
+.extra-theme-btn.active {
+  border-color: var(--accent);
+  background: var(--glass-bg-hover);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+.extra-theme-swatch {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 2px 6px rgba(255, 255, 255, 0.2);
+  flex: 0 0 auto;
+}
+.extra-theme-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  line-height: 1.2;
+}
+
+/* --- UI polish for Settings sections (v5.19.0) ---
+   Add a subtle left-accent bar to section headers for visual hierarchy. */
+.settings-section {
+  padding: 18px 18px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 14px;
+  margin: 0 0 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.settings-section h3 {
+  position: relative;
+  margin: 0 0 12px;
+  padding-left: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.settings-section h3::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.85;
+}
+
+/* --- UI polish for Secret-codes tab (v5.19.0) --- */
+#tab-secret .tool-section {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 14px;
+  padding: 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+#tab-secret .secret-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+#tab-secret #secret-input {
+  flex: 1;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+#tab-secret #secret-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  outline: none;
+}
+#tab-secret #secret-submit {
+  background: var(--accent-bg);
+  color: #ffffff;
+  border-color: var(--accent-border);
+  font-weight: 700;
+  min-width: 110px;
+}
+
+/* --- UI polish for Fonts tab (v5.19.0) ---
+   Slightly tighter grid + smoother hover lift. */
+.fonts {
+  gap: 8px;
+}
+.fonts button {
+  transition: transform 0.15s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.fonts button:not(.active):hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .extra-themes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  .extra-theme-swatch {
+    width: 48px;
+    height: 48px;
+  }
+}

@@ -36,7 +36,9 @@
        don't get a flash of wrong theme or language. */
     (function () {
       var root = document.documentElement;
-      var VALID = ["light", "dark", "night", "rainbow", "school"];
+      var VALID = ["light", "dark", "night", "rainbow", "school",
+                   "black-orange", "neon-green", "neon-violet",
+                   "pastel", "ocean", "sunset"];
       try {
         var s = localStorage.getItem("bananafont:theme");
         if (s && VALID.indexOf(s) !== -1) {
@@ -74,11 +76,11 @@
         <button type="button" data-theme-btn="dark" aria-label="Dark theme"></button>
         <button type="button" data-theme-btn="night" aria-label="Night theme"></button>
         <button type="button" data-theme-btn="rainbow" aria-label="Rainbow theme"></button>
-        <!-- School theme button is intentionally REMOVED.
-             School theme is unlocked only via the secret code LIBERATEDSCHOOL
-             in the "Секретные коды" tab. The theme is otherwise fully working
-             (in VALID_THEMES, in CSS, in setTheme) and persists in localStorage
-             once unlocked. -->
+        <button type="button" data-theme-btn="black-orange" aria-label="Black-Orange theme"></button>
+        <!-- Other extra themes (neon-green, neon-violet, pastel, ocean, sunset)
+             are unlocked from Settings → Additional themes (v5.19.0).
+             School stays unlocked only via secret code LIBERATEDSCHOOL.
+             All themes are persisted in localStorage once chosen. -->
       </div>
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang="ru">RU</button>
@@ -350,6 +352,14 @@
 
     <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
       <h1 id="settings-title"></h1>
+
+      <!-- v5.19.0: Extra themes — neon green/violet, pastel, ocean, sunset.
+           Populated dynamically by JS from the EXTRA_THEMES list. -->
+      <div class="settings-section">
+        <h3 id="settings-extra-themes-label"></h3>
+        <p class="settings-hint" id="settings-extra-themes-hint"></p>
+        <div class="extra-themes-grid" id="extra-themes-grid"></div>
+      </div>
 
       <div class="settings-section">
         <h3 id="settings-size-label"></h3>

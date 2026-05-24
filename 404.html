@@ -32,7 +32,9 @@
     /* Anti-FOUC bootstrap — sets both data-theme and lang from localStorage. */
     (function () {
       var root = document.documentElement;
-      var VALID = ["light", "dark", "night", "rainbow", "school"];
+      var VALID = ["light", "dark", "night", "rainbow", "school",
+                   "black-orange", "neon-green", "neon-violet",
+                   "pastel", "ocean", "sunset"];
       try {
         var s = localStorage.getItem("bananafont:theme");
         if (s && VALID.indexOf(s) !== -1) {

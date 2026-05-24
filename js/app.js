@@ -24,6 +24,14 @@
       themeNight: "Ночная",
       themeRainbow: "Радужная",
       themeSchool: "Школа",
+      themeBlackOrange: "Чёрно-оранж.",
+      themeNeonGreen: "Неон зелёный",
+      themeNeonViolet: "Неон фиолет",
+      themePastel: "Пастель",
+      themeOcean: "Океан",
+      themeSunset: "Закат",
+      settingsExtraThemesLabel: "Дополнительные темы",
+      settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       ttUniversal: "🇷🇺 🇬🇧 Поддерживает кириллицу и латиницу",
       ttUnicode: "🇬🇧 Только латиница и цифры. В Telegram Desktop Windows может не работать (нормализация Unicode)",
       ttCombining: "🇷🇺 🇬🇧 Подчёркнутый/зачёркнутый — работает везде, включая Telegram Desktop Windows и кириллицу",
@@ -158,6 +166,14 @@
       themeNight: "Night",
       themeRainbow: "Rainbow",
       themeSchool: "School",
+      themeBlackOrange: "Black-Orange",
+      themeNeonGreen: "Neon Green",
+      themeNeonViolet: "Neon Violet",
+      themePastel: "Pastel",
+      themeOcean: "Ocean",
+      themeSunset: "Sunset",
+      settingsExtraThemesLabel: "Additional themes",
+      settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       ttUniversal: "🇷🇺 🇬🇧 Supports Cyrillic and Latin",
       ttUnicode: "🇬🇧 Latin and digits only. May not work in Telegram Desktop Windows (Unicode normalization)",
       ttCombining: "🇷🇺 🇬🇧 Underline/strikethrough — works everywhere including Telegram Desktop Windows and Cyrillic",
@@ -358,7 +374,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.18.0";
+  var VERSION = "v5.19.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -409,6 +425,10 @@
   var settingsAboutLab  = document.getElementById("settings-about-label");
   var settingsAboutText = document.getElementById("settings-about-text");
   var settingsVersionEl = document.getElementById("settings-version-line");
+  /* Extra themes (v5.19.0) */
+  var settingsExtraThemesLabelEl = document.getElementById("settings-extra-themes-label");
+  var settingsExtraThemesHintEl  = document.getElementById("settings-extra-themes-hint");
+  var extraThemesGridEl          = document.getElementById("extra-themes-grid");
   var tabBtnFonts       = document.getElementById("tab-btn-fonts");
   var tabBtnSettings    = document.getElementById("tab-btn-settings");
   var tabBtnCalc        = document.getElementById("tab-btn-calc");
@@ -496,7 +516,11 @@
   /* --------- state --------- */
   var currentIdx = 0;
   var currentLang = "en";
-  var VALID_THEMES = ["light", "dark", "night", "rainbow", "school"];
+  var VALID_THEMES = [
+    "light", "dark", "night", "rainbow", "school",
+    "black-orange",                                 /* v5.19.0: 5th main-bar button */
+    "neon-green", "neon-violet", "pastel", "ocean", "sunset" /* extras: Settings */
+  ];
   var currentTheme = document.documentElement.dataset.theme || "dark";
   if (VALID_THEMES.indexOf(currentTheme) === -1) currentTheme = "dark";
 
@@ -544,7 +568,13 @@
       dark: "themeDark",
       night: "themeNight",
       rainbow: "themeRainbow",
-      school: "themeSchool"
+      school: "themeSchool",
+      "black-orange": "themeBlackOrange",
+      "neon-green":   "themeNeonGreen",
+      "neon-violet":  "themeNeonViolet",
+      pastel: "themePastel",
+      ocean:  "themeOcean",
+      sunset: "themeSunset"
     };
     for (var j = 0; j < themeButtons.length; j++) {
       var btn = themeButtons[j];
@@ -638,6 +668,10 @@
     settingsAboutLab.textContent  = t.settingsAboutLabel;
     settingsAboutText.textContent = t.settingsAboutText;
     settingsVersionEl.textContent = VERSION;
+    /* Extra themes section (v5.19.0) */
+    settingsExtraThemesLabelEl.textContent = t.settingsExtraThemesLabel;
+    settingsExtraThemesHintEl.textContent  = t.settingsExtraThemesHint;
+    rebuildExtraThemesGrid();
     renderFonts();
     setFont(currentIdx);
   }
@@ -680,11 +714,17 @@
 
   /* --------- theme --------- */
   var THEME_COLORS = {
-    light:   "#eef2ff",
-    dark:    "#161b3a",
-    night:   "#000000",
-    rainbow: "#ff006e",   /* v5.9.0: rainbow now psychedelic (hot pink first stop) */
-    school:  "#0f2c4a"    /* v5.9.0: school restored to navy/gold */
+    light:          "#eef2ff",
+    dark:           "#161b3a",
+    night:          "#000000",
+    rainbow:        "#ff006e",
+    school:         "#0f2c4a",
+    "black-orange": "#000000",   /* v5.19.0 new themes */
+    "neon-green":   "#020c02",
+    "neon-violet":  "#0a0010",
+    pastel:         "#fce8ee",
+    ocean:          "#003a5c",
+    sunset:         "#2a0a3f"
   };
   var themeTransitionTimer = null;
 
@@ -701,6 +741,46 @@
     meta.name = "theme-color";
     meta.content = color;
     document.head.appendChild(meta);
+  }
+
+  /* Extra themes (v5.19.0) — populated as a swatch grid in Settings.
+     Each entry: { id, ruLabel, enLabel, swatch (CSS color or gradient) }.
+     Add new ones here; CSS [data-theme="..."] block must also exist. */
+  var EXTRA_THEMES = [
+    { id: "neon-green",  ruLabel: "Неон зелёный", enLabel: "Neon Green",
+      swatch: "radial-gradient(circle at 30% 30%, #39ff14, #062c06 80%)" },
+    { id: "neon-violet", ruLabel: "Неон фиолет",  enLabel: "Neon Violet",
+      swatch: "radial-gradient(circle at 30% 30%, #bf00ff, #1a0030 80%)" },
+    { id: "pastel",      ruLabel: "Пастель",      enLabel: "Pastel",
+      swatch: "linear-gradient(135deg, #ffd1dc 0%, #c8e7ff 50%, #d8c8ff 100%)" },
+    { id: "ocean",       ruLabel: "Океан",        enLabel: "Ocean",
+      swatch: "linear-gradient(160deg, #003a5c 0%, #007a9e 60%, #00c2cb 100%)" },
+    { id: "sunset",      ruLabel: "Закат",        enLabel: "Sunset",
+      swatch: "linear-gradient(135deg, #2a0a3f 0%, #c43a85 50%, #ff8b3d 100%)" }
+  ];
+
+  function rebuildExtraThemesGrid() {
+    if (!extraThemesGridEl) return;
+    extraThemesGridEl.innerHTML = "";
+    for (var i = 0; i < EXTRA_THEMES.length; i++) {
+      (function (theme) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "extra-theme-btn";
+        if (currentTheme === theme.id) btn.classList.add("active");
+        btn.setAttribute("data-extra-theme", theme.id);
+        var sw = document.createElement("span");
+        sw.className = "extra-theme-swatch";
+        sw.style.background = theme.swatch;
+        var lbl = document.createElement("span");
+        lbl.className = "extra-theme-label";
+        lbl.textContent = (currentLang === "ru") ? theme.ruLabel : theme.enLabel;
+        btn.appendChild(sw);
+        btn.appendChild(lbl);
+        btn.addEventListener("click", function () { setTheme(theme.id); });
+        extraThemesGridEl.appendChild(btn);
+      })(EXTRA_THEMES[i]);
+    }
   }
 
   function setTheme(theme) {
@@ -726,6 +806,13 @@
     try { localStorage.setItem("bananafont:theme", theme); } catch (e) {}
     for (var i = 0; i < themeButtons.length; i++) {
       themeButtons[i].classList.toggle("active", themeButtons[i].dataset.themeBtn === theme);
+    }
+    /* Reflect the active theme on the extra-themes grid swatches too */
+    if (extraThemesGridEl) {
+      var extras = extraThemesGridEl.querySelectorAll(".extra-theme-btn");
+      for (var ex = 0; ex < extras.length; ex++) {
+        extras[ex].classList.toggle("active", extras[ex].getAttribute("data-extra-theme") === theme);
+      }
     }
     setMobileBarColor(theme);
     themeTransitionTimer = setTimeout(function () {
