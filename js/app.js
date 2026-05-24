@@ -39,7 +39,7 @@
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Тема владельца разблокирована 🍌👑",
       secret1488: "Так делать нельзя❌",
-      apologyTitle: "Извиняйся перед создателем",
+      apologyTitle: "Извиняйся",
       apologyHint: "Напиши слово прощения:",
       apologyPlaceholder: "SORRY  или  ПРОСТИ",
       apologyBtn: "Извиниться",
@@ -257,7 +257,7 @@
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Owner theme unlocked 🍌👑",
       secret1488: "You can't do that❌",
-      apologyTitle: "Apologize to the creator",
+      apologyTitle: "Apologize",
       apologyHint: "Type a word of apology:",
       apologyPlaceholder: "SORRY  or  ПРОСТИ",
       apologyBtn: "Apologize",
@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.31.2";
+  var VERSION = "v5.31.4";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -4193,8 +4193,14 @@
     red.appendChild(inner);
     document.body.appendChild(red);
 
-    requestAnimationFrame(function () { red.classList.add("active"); });
-    setTimeout(function () { input.focus(); }, 400);
+    requestAnimationFrame(function () {
+      red.classList.add("active");
+      /* v5.31.3: focus input immediately on the same frame as .active —
+         was 400ms delay which ate user's 3-second window. Try once now,
+         and once more after a tiny tick in case the first didn't take. */
+      input.focus();
+      setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
+    });
     /* Start the countdown */
     rafId = requestAnimationFrame(tick);
   }
