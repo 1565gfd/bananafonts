@@ -757,7 +757,7 @@
       <span class="account-avatar" id="account-widget-avatar">🍌</span>
       <span class="account-name" id="account-widget-name">guest</span>
     </button>
-    <button type="button" id="account-widget-logout" class="account-widget-logout" aria-label="Выйти" title="Выйти из аккаунта" hidden>⏻</button>
+    <button type="button" id="account-widget-logout" class="account-widget-logout" aria-label="Выйти" title="Выйти из аккаунта">⏻</button>
   </div>
 
   <!-- Account modal — register / login / profile -->
@@ -773,7 +773,6 @@
         <button type="button" class="account-tab-btn" data-acc-tab="register" id="acc-tab-register-btn">Регистрация</button>
         <button type="button" class="account-tab-btn" data-acc-tab="profile" id="acc-tab-profile-btn">Профиль</button>
         <button type="button" class="account-tab-btn" data-acc-tab="list" id="acc-tab-list-btn">Аккаунты</button>
-        <button type="button" class="account-tab-btn" data-acc-tab="sync" id="acc-tab-sync-btn">☁️ Синк</button>
       </div>
 
       <!-- ── LOGIN — v5.44.0 modern auth screen ── -->
@@ -819,15 +818,15 @@
              Collapsed by default, only for the site admin. Regular users
              can ignore this entirely. -->
         <div class="auth-admin-row">
-          <button type="button" id="acc-admin-toggle" class="auth-admin-link" aria-expanded="false" aria-controls="acc-admin-form">🔑 Код администратора <span class="auth-admin-optional">(необязательно)</span></button>
+          <button type="button" id="acc-admin-toggle" class="auth-admin-link" aria-expanded="false" aria-controls="acc-admin-form">🔑 Сервисный код <span class="auth-admin-optional">(необязательно)</span></button>
         </div>
         <div id="acc-admin-form" class="auth-admin-form" hidden>
-          <p class="auth-admin-hint">Только для администратора сайта. Обычным пользователям заполнять не нужно.</p>
+          <p class="auth-admin-hint">Для служебного входа. Обычным пользователям заполнять не нужно.</p>
           <div class="auth-pwd-wrap">
             <input type="password" id="acc-admin-code" class="auth-input" placeholder="Код" autocomplete="off" spellcheck="false" />
             <button type="button" id="acc-admin-code-toggle" class="auth-eye" aria-label="Показать код" title="Показать код">👁</button>
           </div>
-          <button type="button" id="acc-admin-submit" class="auth-submit auth-submit-admin">Открыть админку</button>
+          <button type="button" id="acc-admin-submit" class="auth-submit auth-submit-admin">Подтвердить</button>
           <div class="account-feedback" id="acc-admin-feedback"></div>
         </div>
       </section>
@@ -953,52 +952,6 @@
         <div id="acc-list-grid" class="account-list-grid"></div>
       </section>
 
-      <!-- ── v5.42.0 — SYNC: cloud (jsonblob.com) + local file backup ── -->
-      <section class="account-section" data-acc-section="sync" hidden>
-        <p class="admin-hint" id="acc-sync-hint">
-          AES-256-GCM шифровка с ключом из твоего пароля (PBKDF2, 100k итераций).
-          Сервер видит только зашифрованные байты.
-        </p>
-
-        <!-- Cloud push -->
-        <div class="sync-subsection">
-          <h4 class="sync-subtitle">☁️ Загрузить в облако</h4>
-          <p class="admin-hint">Шифруется паролем, кладётся на jsonblob.com. Получаешь короткий код.</p>
-          <button type="button" id="acc-sync-push-btn" class="settings-btn silent-btn">⬆️ Push в облако</button>
-          <div id="acc-sync-code-row" class="sync-code-row" hidden>
-            <code id="acc-sync-code" class="sync-code"></code>
-            <button type="button" id="acc-sync-copy-btn" class="settings-btn silent-btn">📋 Копировать</button>
-          </div>
-        </div>
-
-        <!-- Cloud pull -->
-        <div class="sync-subsection">
-          <h4 class="sync-subtitle">📥 Загрузить из облака</h4>
-          <p class="admin-hint">На другом устройстве: введи sync-код + пароль того аккаунта.</p>
-          <div class="account-field">
-            <label for="acc-sync-pull-code">Sync-код</label>
-            <input type="text" id="acc-sync-pull-code" class="calc-input" placeholder="напр. BNN-xxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
-          </div>
-          <div class="account-field">
-            <label for="acc-sync-pull-pass">Пароль аккаунта</label>
-            <input type="password" id="acc-sync-pull-pass" class="calc-input" autocomplete="current-password" />
-          </div>
-          <button type="button" id="acc-sync-pull-btn" class="settings-btn silent-btn">⬇️ Pull из облака</button>
-        </div>
-
-        <!-- Local backup -->
-        <div class="sync-subsection">
-          <h4 class="sync-subtitle">💾 Локальный backup</h4>
-          <p class="admin-hint">Файл .json — зашифрованный паролем. Работает офлайн.</p>
-          <div class="sync-btn-row">
-            <button type="button" id="acc-sync-export-btn" class="settings-btn silent-btn">⬇️ Скачать backup</button>
-            <button type="button" id="acc-sync-import-btn" class="settings-btn silent-btn">⬆️ Загрузить backup</button>
-            <input type="file" id="acc-sync-import-file" accept="application/json,.json" hidden />
-          </div>
-        </div>
-
-        <div class="account-feedback" id="acc-sync-feedback"></div>
-      </section>
     </div>
   </div>
 

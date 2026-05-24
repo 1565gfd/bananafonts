@@ -8250,3 +8250,14 @@ body.bf-low-gpu * {
   color: rgba(255,225,53,0.7);
   font-style: italic;
 }
+
+/* v5.47.2 — fix: register step wrappers need to be flex containers so
+   .auth-screen's gap propagates to individual fields. Without this,
+   labels stacked directly on top of inputs with no vertical breathing
+   room because gap only works on direct children. */
+#acc-reg-step-form,
+#acc-reg-step-verify {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

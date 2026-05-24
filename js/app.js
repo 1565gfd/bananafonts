@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.47.1";
+  var VERSION = "v5.47.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -6387,6 +6387,13 @@
     document.body.style.overflow = "";
     feedback(accLoginFb, "", false);
     feedback(accRegFb, "", false);
+    /* v5.47.2 fix: abandon in-flight verification on close, return to step 1
+       on next open. Otherwise re-opening the modal lands on the verify step
+       with stale _regPending data and confuses the user. */
+    if (typeof _regPending !== "undefined" && _regPending) {
+      _regPending = null;
+      if (typeof _showRegStep === "function") _showRegStep("form");
+    }
   }
 
   /* ── Widget rendering ── */
@@ -6675,11 +6682,15 @@
         feedback(accRegFb, "Слишком много попыток. Регистрация отменена.", true);
         playUiSound("fail");
         _regPending = null;
+        accRegCodeEl.value = "";
         _showRegStep("form");
         return;
       }
       feedback(accRegFb, "Неверный код (осталось попыток: " + (5 - _regPending.attempts) + ")", true);
       playUiSound("fail");
+      /* v5.47.2 fix: clear input so user types fresh, not editing old digits */
+      accRegCodeEl.value = "";
+      accRegCodeEl.focus();
       return;
     }
     /* Code matches → finalize */
@@ -6805,9 +6816,12 @@
       return;
     }
     renderAvatar(accQuickLoginIcon, recent.avatar || "🙂");
+    /* v5.47.2 fix: reset bg when switching accounts */
     if (recent.color) {
       accQuickLoginIcon.style.background =
         "linear-gradient(135deg, " + recent.color + ", " + shiftHex(recent.color, -25) + ")";
+    } else {
+      accQuickLoginIcon.style.background = "";
     }
     accQuickLoginLabel.textContent = (currentLang === "en" ? "Continue as " : "Войти как ") + recent.username;
     accQuickLoginBtn.removeAttribute("hidden");
@@ -6883,9 +6897,13 @@
       return;
     }
     renderAvatar(accProfileAvatar, acc.avatar || "🙂");
+    /* v5.47.2 fix: always reset to known value, otherwise previous account's
+       gradient bleeds through when switching to an account without color. */
     if (acc.color) {
       accProfileAvatar.style.background =
         "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
+    } else {
+      accProfileAvatar.style.background = "";
     }
     accProfileName.textContent = acc.username;
     /* Owner badge */
@@ -6996,8 +7014,11 @@
       var av = document.createElement("span");
       av.className = "account-list-avatar";
       renderAvatar(av, acc.avatar || "🙂");
-      if (acc.color) av.style.background =
-        "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
+      /* New element each render — no bleed risk — but set explicitly anyway */
+      if (acc.color) {
+        av.style.background =
+          "linear-gradient(135deg, " + acc.color + ", " + shiftHex(acc.color, -25) + ")";
+      }
       var nm = document.createElement("span");
       nm.className = "account-list-name";
       nm.textContent = acc.username + (acc.username.toLowerCase() === OWNER_USERNAME ? " 👑" : "");
@@ -7138,384 +7159,10 @@
     if (e.key === "Enter") { e.preventDefault(); accRegisterBtn.click(); }
   });
 
-  /* ============================================================
-     v5.42.0 — SYNC (e2e-encrypted cross-device account transfer)
-     ============================================================
-     Two strategies in one tab:
-       1. CLOUD via jsonblob.com — free public KV store, no signup.
-          Encrypted payload uploaded, returns short sync-code. Other
-          device enters code + password → fetched + decrypted.
-       2. LOCAL FILE — download/upload encrypted .json. Works offline,
-          survives jsonblob.com going dark.
-     Crypto:
-       - Key derivation: PBKDF2(password, salt, 100k iter, SHA-256)
-       - Cipher: AES-256-GCM with 12-byte random IV per encryption
-       - Server only ever sees: { iv, ct (base64), username, salt }
-         — salt+iv are NOT secret (needed for re-derivation), the
-         ciphertext is. Password never leaves the device.
-     ============================================================ */
-
-  var JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob";
-
-  /* DOM refs for sync tab */
-  var accSyncPushBtn   = document.getElementById("acc-sync-push-btn");
-  var accSyncCodeRow   = document.getElementById("acc-sync-code-row");
-  var accSyncCodeEl    = document.getElementById("acc-sync-code");
-  var accSyncCopyBtn   = document.getElementById("acc-sync-copy-btn");
-  var accSyncPullCode  = document.getElementById("acc-sync-pull-code");
-  var accSyncPullPass  = document.getElementById("acc-sync-pull-pass");
-  var accSyncPullBtn   = document.getElementById("acc-sync-pull-btn");
-  var accSyncExportBtn = document.getElementById("acc-sync-export-btn");
-  var accSyncImportBtn = document.getElementById("acc-sync-import-btn");
-  var accSyncImportFile= document.getElementById("acc-sync-import-file");
-  var accSyncFb        = document.getElementById("acc-sync-feedback");
-
-  /* ── PBKDF2 → AES-GCM key derivation ── */
-  function _deriveAesKey(password, saltHex) {
-    if (!window.crypto || !window.crypto.subtle) {
-      return Promise.reject(new Error("SubtleCrypto unavailable — браузер слишком старый для шифровки"));
-    }
-    var enc = new TextEncoder();
-    return window.crypto.subtle.importKey(
-      "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
-    ).then(function (baseKey) {
-      return window.crypto.subtle.deriveKey(
-        {
-          name: "PBKDF2",
-          salt: enc.encode(saltHex),
-          iterations: 100000,
-          hash: "SHA-256"
-        },
-        baseKey,
-        { name: "AES-GCM", length: 256 },
-        false,
-        ["encrypt", "decrypt"]
-      );
-    });
-  }
-  /* Base64 ↔ Uint8Array (binary-safe, handles long blobs) */
-  function _u8ToB64(u8) {
-    var s = "", CHUNK = 0x8000;
-    for (var i = 0; i < u8.length; i += CHUNK) {
-      s += String.fromCharCode.apply(null, u8.subarray(i, i + CHUNK));
-    }
-    return btoa(s);
-  }
-  function _b64ToU8(b64) {
-    var bin = atob(b64);
-    var u8 = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-    return u8;
-  }
-  function _bytesToHex(u8) {
-    return Array.prototype.map.call(u8, function (b) {
-      return b.toString(16).padStart(2, "0");
-    }).join("");
-  }
-  function _hexToBytes(hex) {
-    var u8 = new Uint8Array(hex.length / 2);
-    for (var i = 0; i < u8.length; i++) u8[i] = parseInt(hex.substr(i * 2, 2), 16);
-    return u8;
-  }
-
-  /* Encrypt full account → { v, username, salt, iv, ct } payload */
-  function encryptAccount(account, password) {
-    return _deriveAesKey(password, account.salt).then(function (key) {
-      var iv = window.crypto.getRandomValues(new Uint8Array(12));
-      var enc = new TextEncoder();
-      var data = enc.encode(JSON.stringify(account));
-      return window.crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv }, key, data
-      ).then(function (ct) {
-        return {
-          v: 1,                                 /* schema version */
-          username: account.username,            /* shown on import, unencrypted */
-          salt: account.salt,                    /* needed for key derivation */
-          iv: _bytesToHex(iv),
-          ct: _u8ToB64(new Uint8Array(ct))
-        };
-      });
-    });
-  }
-  /* Decrypt payload → account object (throws if password wrong) */
-  function decryptAccount(payload, password) {
-    if (!payload || !payload.iv || !payload.ct || !payload.salt) {
-      return Promise.reject(new Error("Битый payload"));
-    }
-    return _deriveAesKey(password, payload.salt).then(function (key) {
-      return window.crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: _hexToBytes(payload.iv) },
-        key,
-        _b64ToU8(payload.ct)
-      ).then(function (plain) {
-        var json = new TextDecoder().decode(plain);
-        return JSON.parse(json);
-      });
-    });
-  }
-
-  /* ── Cloud transport ── */
-  function cloudPush(payload) {
-    return fetch(JSONBLOB_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(payload)
-    }).then(function (res) {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      /* jsonblob returns the new blob's path in the Location header */
-      var loc = res.headers.get("Location") || res.headers.get("location");
-      if (!loc) {
-        /* Fallback: some browsers strip Location on CORS — try to read body */
-        return res.json().then(function (b) {
-          if (b && b.id) return b.id;
-          throw new Error("Нет Location header (CORS?)");
-        });
-      }
-      return loc.split("/").pop();   /* "/api/jsonBlob/12345" → "12345" */
-    });
-  }
-  function cloudPull(blobId) {
-    return fetch(JSONBLOB_URL + "/" + encodeURIComponent(blobId), {
-      headers: { "Accept": "application/json" }
-    }).then(function (res) {
-      if (res.status === 404) throw new Error("Sync-код не найден или истёк");
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.json();
-    });
-  }
-
-  /* Sync-code format: "BNN-" prefix + blob id. Easier to copy/recognize. */
-  function _formatSyncCode(id) { return "BNN-" + id; }
-  function _parseSyncCode(code) {
-    var c = (code || "").trim().toUpperCase().replace(/\s+/g, "");
-    if (c.indexOf("BNN-") === 0) c = c.slice(4);
-    return c;
-  }
-
-  function syncFb(msg, isError) {
-    accSyncFb.textContent = msg || "";
-    accSyncFb.classList.toggle("error", !!isError && !!msg);
-    accSyncFb.classList.toggle("success", !isError && !!msg);
-  }
-
-  /* ── PUSH to cloud ── */
-  accSyncPushBtn.addEventListener("click", function () {
-    var acc = getCurrentAccount();
-    if (!acc) {
-      syncFb("Войди в аккаунт сначала", true);
-      playUiSound("fail");
-      return;
-    }
-    var pass = prompt(currentLang === "en"
-      ? "Enter your account password to encrypt:"
-      : "Введи пароль аккаунта для шифровки:");
-    if (!pass) return;
-    /* Verify password first */
-    hashPassword(pass, acc.salt).then(function (hash) {
-      if (hash !== acc.passHash) {
-        syncFb("Неверный пароль", true);
-        playUiSound("fail");
-        throw new Error("__abort_password__");   /* short-circuit */
-      }
-      syncFb("Шифрую…", false);
-      accSyncPushBtn.disabled = true;
-      return encryptAccount(acc, pass);
-    }).then(function (payload) {
-      syncFb("Отправляю в облако…", false);
-      return cloudPush(payload);
-    }).then(function (blobId) {
-      var code = _formatSyncCode(blobId);
-      accSyncCodeEl.textContent = code;
-      accSyncCodeRow.removeAttribute("hidden");
-      syncFb("Готово! Sync-код выше ↑", false);
-      playUiSound("applause");
-      /* Save the code locally too so user can re-show it */
-      try {
-        var arr = loadAccounts();
-        for (var i = 0; i < arr.length; i++) {
-          if (arr[i].id === acc.id) { arr[i].syncCode = code; arr[i].syncedAt = Date.now(); }
-        }
-        saveAccounts(arr);
-      } catch (e) {}
-    }).catch(function (e) {
-      if (e && e.message === "__abort_password__") return;
-      syncFb("Ошибка: " + (e && e.message || e), true);
-      playUiSound("fail");
-    }).then(function () {
-      accSyncPushBtn.disabled = false;
-    });
-  });
-
-  /* Copy sync code button */
-  accSyncCopyBtn.addEventListener("click", function () {
-    var code = accSyncCodeEl.textContent || "";
-    if (!code) return;
-    try {
-      navigator.clipboard.writeText(code);
-      var orig = accSyncCopyBtn.textContent;
-      accSyncCopyBtn.textContent = "✓ Скопировано";
-      setTimeout(function () { accSyncCopyBtn.textContent = orig; }, 1200);
-      playUiSound("success");
-    } catch (e) { playUiSound("fail"); }
-  });
-
-  /* ── PULL from cloud ── */
-  accSyncPullBtn.addEventListener("click", function () {
-    var raw = (accSyncPullCode.value || "").trim();
-    var pass = accSyncPullPass.value || "";
-    if (!raw || !pass) {
-      syncFb("Заполни оба поля", true);
-      playUiSound("fail");
-      return;
-    }
-    var blobId = _parseSyncCode(raw);
-    if (!blobId) {
-      syncFb("Битый sync-код", true);
-      playUiSound("fail");
-      return;
-    }
-    syncFb("Скачиваю…", false);
-    accSyncPullBtn.disabled = true;
-    cloudPull(blobId).then(function (payload) {
-      syncFb("Расшифровываю…", false);
-      return decryptAccount(payload, pass);
-    }).then(function (acc) {
-      _importAccount(acc);
-      syncFb("Готово! Аккаунт '" + acc.username + "' импортирован ✓", false);
-      playUiSound("applause");
-      accSyncPullCode.value = "";
-      accSyncPullPass.value = "";
-      refreshAccountWidget();
-    }).catch(function (e) {
-      var msg = e && e.message || "";
-      if (msg.indexOf("OperationError") >= 0 || msg.indexOf("decrypt") >= 0) {
-        syncFb("Неверный пароль или битые данные", true);
-      } else {
-        syncFb("Ошибка: " + msg, true);
-      }
-      playUiSound("fail");
-    }).then(function () {
-      accSyncPullBtn.disabled = false;
-    });
-  });
-
-  /* ── Import decrypted account (shared by cloud-pull + file-import) ── */
-  function _importAccount(acc) {
-    if (!acc || !acc.username || !acc.salt || !acc.passHash) {
-      throw new Error("Битые данные аккаунта");
-    }
-    var arr = loadAccounts();
-    /* Replace if username already exists, else append */
-    var found = -1;
-    for (var i = 0; i < arr.length; i++) {
-      if ((arr[i].username || "").toLowerCase() === acc.username.toLowerCase()) {
-        found = i; break;
-      }
-    }
-    /* Preserve id if same username, else generate new id */
-    if (found >= 0) {
-      acc.id = arr[found].id;
-      arr[found] = acc;
-    } else {
-      acc.id = acc.id || ("acc_" + Date.now() + "_" + Math.floor(Math.random() * 1e6));
-      arr.push(acc);
-    }
-    saveAccounts(arr);
-    setCurrentAccountId(acc.id);
-  }
-
-  /* ── LOCAL backup: download encrypted JSON file ── */
-  accSyncExportBtn.addEventListener("click", function () {
-    var acc = getCurrentAccount();
-    if (!acc) { syncFb("Войди в аккаунт сначала", true); playUiSound("fail"); return; }
-    var pass = prompt(currentLang === "en"
-      ? "Enter password to encrypt the backup file:"
-      : "Введи пароль для шифровки backup-файла:");
-    if (!pass) return;
-    hashPassword(pass, acc.salt).then(function (hash) {
-      if (hash !== acc.passHash) {
-        syncFb("Неверный пароль", true);
-        playUiSound("fail");
-        throw new Error("__abort_password__");
-      }
-      return encryptAccount(acc, pass);
-    }).then(function (payload) {
-      var json = JSON.stringify(payload, null, 2);
-      var blob = new Blob([json], { type: "application/json" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "bananafont-account-" + acc.username + ".json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function () { URL.revokeObjectURL(url); }, 100);
-      syncFb("Backup скачан ✓", false);
-      playUiSound("success");
-    }).catch(function (e) {
-      if (e && e.message === "__abort_password__") return;
-      syncFb("Ошибка: " + (e && e.message || e), true);
-      playUiSound("fail");
-    });
-  });
-
-  accSyncImportBtn.addEventListener("click", function () {
-    accSyncImportFile.click();
-  });
-  accSyncImportFile.addEventListener("change", function () {
-    var file = accSyncImportFile.files && accSyncImportFile.files[0];
-    if (!file) return;
-    var pass = prompt(currentLang === "en"
-      ? "Enter the password used to encrypt this backup:"
-      : "Введи пароль которым backup был зашифрован:");
-    if (!pass) { accSyncImportFile.value = ""; return; }
-    var reader = new FileReader();
-    reader.onload = function () {
-      var payload;
-      try { payload = JSON.parse(reader.result); }
-      catch (e) { syncFb("Файл не JSON", true); playUiSound("fail"); return; }
-      syncFb("Расшифровываю…", false);
-      decryptAccount(payload, pass).then(function (acc) {
-        _importAccount(acc);
-        syncFb("Готово! Импортирован '" + acc.username + "' ✓", false);
-        playUiSound("applause");
-        refreshAccountWidget();
-      }).catch(function (e) {
-        syncFb("Неверный пароль или битый файл", true);
-        playUiSound("fail");
-      });
-      accSyncImportFile.value = "";
-    };
-    reader.onerror = function () {
-      syncFb("Ошибка чтения файла", true);
-      playUiSound("fail");
-      accSyncImportFile.value = "";
-    };
-    reader.readAsText(file);
-  });
-
-  /* When opening the sync tab — if current account already has a saved
-     sync code, show it immediately (saves re-uploading just to re-share). */
-  function _showSavedSyncCodeIfAny() {
-    var acc = getCurrentAccount();
-    if (acc && acc.syncCode) {
-      accSyncCodeEl.textContent = acc.syncCode;
-      accSyncCodeRow.removeAttribute("hidden");
-    } else {
-      accSyncCodeRow.setAttribute("hidden", "");
-    }
-  }
   /* Hook into setAccTab — already defined above. Wrap it. */
   var _origSetAccTab = setAccTab;
   setAccTab = function (name) {
     _origSetAccTab(name);
-    if (name === "sync") {
-      syncFb("", false);
-      _showSavedSyncCodeIfAny();
-    }
     /* v5.44.0 — keep auth pill in sync with the actual visible section.
        Old top-bar tab clicks also flow through setAccTab, so this keeps
        the pill highlighted correctly when user switches via either path. */
