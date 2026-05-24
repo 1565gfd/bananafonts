@@ -9495,18 +9495,13 @@ body {
   flex: 1 1 auto;
 }
 
-/* Theme-switch buttons: same equal-flex treatment. Worst-case RU
-   theme name 'Чернильная бездна' truncates with ellipsis instead
-   of expanding the button. */
-.theme-switch {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
+/* v5.55.6 — REVERT theme-switch growth. v5.55.3 made buttons flex:1
+   which spread them across the left half of top-bar. Now buttons keep
+   their natural compact width but still have min-width for anti-jump.
+   Container stays default inline-flex so it does not stretch. */
 .theme-switch button {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-width: 96px;
-  max-width: 160px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
