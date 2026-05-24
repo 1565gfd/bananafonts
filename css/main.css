@@ -3,6 +3,68 @@
    Themes: light · dark (default) · night (AMOLED + warm accent)
    ============================================================ */
 
+/* ──────── v5.32.2 — Native SVG-filter refraction.
+   Browsers что поддерживают `backdrop-filter: url(#svg-filter)`
+   (Chromium 76+ — Chrome, Edge, Yandex, Opera) получат настоящую
+   liquid-glass рефракцию через `<feTurbulence>` + `<feDisplacementMap>`
+   из inline SVG в index.html. Safari/Firefox — обычный blur fallback.
+   Применяется через @supports (no false-positive в Safari). */
+/* Subtle SVG-noise texture overlay — gives glass surfaces a faint grain
+   like real frosted glass. Inline data URI, no external request. Applied
+   to ::after of major glass containers; opacity is very low to не
+   disturbать читаемость. */
+.app::after,
+.tool-section::after,
+.settings-section::after,
+.time-section::after {
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: auto, 200px 200px;
+  background-blend-mode: overlay;
+}
+
+@supports (backdrop-filter: url(#nonexistent)) or (-webkit-backdrop-filter: url(#nonexistent)) {
+  .app,
+  .tool-section,
+  .settings-section,
+  .time-section {
+    -webkit-backdrop-filter: url(#lg-refract) saturate(var(--lg-saturate));
+    backdrop-filter: url(#lg-refract) saturate(var(--lg-saturate));
+  }
+  .tool-btn,
+  .settings-btn,
+  .calc-btn,
+  .tabs,
+  .theme-switch,
+  .lang-switch {
+    -webkit-backdrop-filter: url(#lg-refract) saturate(var(--lg-saturate));
+    backdrop-filter: url(#lg-refract) saturate(var(--lg-saturate));
+  }
+  /* Active tab gets the stronger refraction for emphasis */
+  .tab-btn.active {
+    -webkit-backdrop-filter: url(#lg-refract-strong) saturate(220%);
+    backdrop-filter: url(#lg-refract-strong) saturate(220%);
+  }
+}
+
+/* ──────── v5.32.1: Liquid Glass tuning vars — single source of truth.
+   Theme-agnostic (overlay over var(--glass-bg)). Used by .app, tabs,
+   tool-btn, settings-btn, calc-btn, cards, theme/lang switches. ──────── */
+:root {
+  --lg-blur-card: 36px;
+  --lg-blur-btn: 24px;
+  --lg-blur-section: 28px;
+  --lg-saturate: 200%;
+  --lg-highlight-top: rgba(255, 255, 255, 0.55);   /* bright top specular */
+  --lg-highlight-side: rgba(255, 255, 255, 0.18);  /* left edge sheen */
+  --lg-shadow-bottom: rgba(0, 0, 0, 0.22);         /* bottom inner fascia */
+  --lg-edge-tl: rgba(255, 255, 255, 0.45);         /* asymmetric border */
+  --lg-edge-tr: rgba(255, 255, 255, 0.22);
+  --lg-edge-bl: rgba(255, 255, 255, 0.18);
+  --lg-edge-br: rgba(255, 255, 255, 0.12);
+}
+
 :root,
 /* ──────── Dark theme — v5.23.1 redesign: actually dark.
             Previous version stacked 4 bright radial blobs (opacity up to
@@ -891,16 +953,55 @@ html.theme-transition *::after {
    App card
    ============================================================ */
 
+/* v5.32.1 — Liquid Glass app container: heavy blur + saturate, asymmetric
+   glass border, top specular highlight, bottom dark fascia. */
 .app {
+  position: relative;
   width: min(1700px, calc(100vw - 24px));
   padding: 26px 18px 16px;
-  border-radius: 28px;
+  border-radius: 36px;
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-inset);
+  -webkit-backdrop-filter: blur(var(--lg-blur-card)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-card)) saturate(var(--lg-saturate));
+  /* Asymmetric border — brighter top-left (light source), darker bottom-right (shadow) */
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1.5px 1px var(--lg-highlight-top),       /* sharp top specular */
+    inset 0 -2px 3px var(--lg-shadow-bottom),         /* bottom inner shadow */
+    inset 1px 0 1px var(--lg-highlight-side);         /* left edge sheen */
   transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+  overflow: hidden;
+}
+.app::before {
+  /* Top specular bar — bright thin band that looks like light hitting curved glass */
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 35%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(8px);
+}
+.app::after {
+  /* Diagonal soft glow — adds depth */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 60% 40% at 25% 5%, rgba(255, 255, 255, 0.18) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.app > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ============================================================
@@ -913,29 +1014,71 @@ html.theme-transition *::after {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
 }
 
+/* v5.32.1 — Pill container with pronounced glass top-edge */
 .theme-switch,
 .lang-switch {
-  display: flex;
-  gap: 8px;
+  position: relative;
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  border-radius: 100px;
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
+  overflow: hidden;
+  isolation: isolate;
+}
+.theme-switch::before,
+.lang-switch::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 55%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(2px);
+  z-index: 0;
+}
+.theme-switch > *,
+.lang-switch > * {
+  position: relative;
+  z-index: 1;
 }
 
 .theme-switch button,
 .lang-switch button {
-  min-width: 56px;
-  min-height: 36px;
+  min-width: 44px;
+  min-height: 32px;
   padding: 0 14px;
-  border-radius: 14px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background: transparent;
   color: var(--text);
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.25s;
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.2s, color 0.25s, transform 0.1s;
+}
+.theme-switch button:hover,
+.lang-switch button:hover {
+  background: var(--glass-bg-hover);
+}
+.theme-switch button:active,
+.lang-switch button:active {
+  transform: scale(0.94);
 }
 
 .theme-switch button {
@@ -1028,37 +1171,85 @@ html.theme-transition *::after {
    Tabs
    ============================================================ */
 
+/* v5.32.1: Liquid Glass tab nav — pill container with strong top
+   specular bar and asymmetric glass border. */
 .tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 auto 18px;
+  padding: 6px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  border-radius: 100px;
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  align-self: center;
+}
+.tabs::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 6%; right: 6%;
+  height: 55%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(2px);
+  z-index: 0;
+}
+.tabs > * {
+  position: relative;
+  z-index: 1;
+}
+.tabs-wrap {
   display: flex;
-  gap: 6px;
+  justify-content: center;
   margin-bottom: 14px;
-  border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 0;
 }
 
 .tab-btn {
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 18px;
+  padding: 8px 18px;
   color: var(--text-soft);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: -1px;
-  transition: color 0.2s, border-color 0.2s, opacity 0.18s ease;
-  border-radius: 0;
+  transition: background 0.18s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  border-radius: 100px;
   -webkit-user-select: none;
   user-select: none;
+  position: relative;
 }
 
-.tab-btn:hover {
+.tab-btn:hover:not(.active) {
+  background: var(--glass-bg-hover);
   color: var(--text);
 }
 
+.tab-btn:active {
+  transform: scale(0.95);
+}
+
 .tab-btn.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  background: var(--accent-bg);
+  color: #ffffff;
+  box-shadow:
+    0 4px 12px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  border-bottom: none;
 }
 
 .tab-content {
@@ -1093,8 +1284,51 @@ html.theme-transition *::after {
   opacity: 0.85;
 }
 
+/* v5.32.1 — Liquid Glass card with top specular highlight (curved glass)
+   + asymmetric border + bottom inner shadow. Stronger than v5.32.0. */
 .tool-section {
-  margin-bottom: 22px;
+  position: relative;
+  margin-bottom: 16px;
+  padding: 20px 18px 20px;
+  border-radius: 26px;
+  background: var(--glass-bg);
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -2px 3px var(--lg-shadow-bottom);
+  overflow: hidden;
+  isolation: isolate;
+}
+.tool-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 30%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(6px);
+  z-index: 0;
+}
+.tool-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.tool-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .tool-section h3 {
@@ -1167,25 +1401,71 @@ html.theme-transition *::after {
   gap: 8px;
 }
 
+/* v5.32.1 — Liquid Glass pill button.
+   Three-layer effect:
+     1. .tool-btn — bg + asymmetric border + outer shadow + inset bottom dark
+     2. ::before — TOP specular highlight (curved glass light catch)
+     3. ::after — diagonal soft sheen */
 .tool-btn {
-  padding: 10px 18px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
+  position: relative;
+  padding: 10px 22px;
+  border-radius: 100px;
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
   color: var(--text);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, border-color 0.18s, transform 0.12s, color 0.25s;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, color 0.25s, box-shadow 0.2s;
   -webkit-user-select: none;
   user-select: none;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.1),
+    inset 0 1.2px 0.5px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
+}
+.tool-btn > * {
+  position: relative;
+  z-index: 1;
+}
+.tool-btn::before {
+  /* Top specular bar — thin bright band */
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 50%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(3px);
+  z-index: 0;
+}
+.tool-btn::after {
+  /* Diagonal sheen */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .tool-btn:hover {
   background: var(--glass-bg-hover);
   border-color: var(--accent-border);
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -1.5px 2.5px var(--lg-shadow-bottom);
 }
 
 .tool-btn:active {
@@ -1333,18 +1613,50 @@ html.theme-transition *::after {
 }
 
 .settings-btn {
-  padding: 10px 22px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 100px;
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
   color: var(--text);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.2s;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.1),
+    inset 0 1.2px 0.5px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
 }
+.settings-btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 50%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(3px);
+  z-index: 0;
+}
+.settings-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.settings-btn > * { position: relative; z-index: 1; }
 
 .settings-btn:hover {
   background: var(--glass-bg-hover);
@@ -1867,20 +2179,54 @@ html:not(.page-noir) {
 }
 
 .calc-btn {
+  position: relative;
   min-height: 56px;
   padding: 12px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
+  border-radius: 22px;
   background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
   color: var(--text);
   font-size: 22px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.18s;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.18s, box-shadow 0.2s;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1.2px 0.5px var(--lg-highlight-top),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
 }
+.calc-btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 14%; right: 14%;
+  height: 45%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.36) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(2.5px);
+  z-index: 0;
+}
+.calc-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.calc-btn > * { position: relative; z-index: 1; }
 
 .calc-btn:hover {
   background: var(--glass-bg-hover);
@@ -1935,28 +2281,34 @@ html:not(.page-noir) {
 }
 
 .calc-select,
+/* v5.32.0 — Liquid Glass inputs */
 .calc-input {
   flex: 1;
   min-width: 100px;
   min-height: 44px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 14px;
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
   color: var(--text);
   font-size: 16px;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.18s, background 0.25s;
-}
-
-.calc-input {
   font-variant-numeric: tabular-nums;
+  transition: border-color 0.18s, background 0.25s, box-shadow 0.2s;
+  box-shadow:
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
 }
 
 .calc-input:focus,
 .calc-select:focus {
   border-color: var(--accent-border);
+  box-shadow:
+    0 0 0 3px var(--accent-glow),
+    inset 0 1px 0 var(--glass-inset);
 }
 
 .calc-input[readonly] {
@@ -2163,15 +2515,50 @@ html:not(.page-noir) {
   opacity: 0.85;
 }
 
-/* ──────── Time tab (v5.12.0): clocks + stopwatch + timer ──────── */
+/* ──────── Time tab — Liquid Glass cards (v5.32.1) ──────── */
 .time-section {
+  position: relative;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border-soft);
-  border-radius: 14px;
-  padding: 18px 18px 20px;
-  margin: 0 0 18px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  border-radius: 26px;
+  padding: 20px 18px 20px;
+  margin: 0 0 16px;
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -2px 3px var(--lg-shadow-bottom);
+  overflow: hidden;
+  isolation: isolate;
+}
+.time-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 30%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(6px);
+  z-index: 0;
+}
+.time-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.time-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .time-section h3 {
@@ -2625,7 +3012,7 @@ h1 {
 textarea {
   width: 100%;
   height: 60px;
-  border-radius: 14px;
+  border-radius: 18px;
   border: 1px solid var(--glass-border);
   padding: 14px;
   font-size: 28px;
@@ -2635,10 +3022,12 @@ textarea {
   color: var(--text);
   caret-color: var(--accent);
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 var(--glass-inset-soft);
-  transition: border-color 0.2s, background 0.25s, color 0.25s;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s, background 0.25s, color 0.25s, box-shadow 0.2s;
 }
 
 textarea::placeholder {
@@ -3371,14 +3760,50 @@ footer a:hover {
 
 /* --- UI polish for Settings sections (v5.19.0) ---
    Add a subtle left-accent bar to section headers for visual hierarchy. */
+/* v5.32.1 — Liquid Glass Settings sections (strong top specular) */
 .settings-section {
-  padding: 18px 18px 20px;
+  position: relative;
+  padding: 20px 18px 20px;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border-soft);
-  border-radius: 14px;
-  margin: 0 0 18px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  border-radius: 26px;
+  margin: 0 0 16px;
+  backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-blur-section)) saturate(var(--lg-saturate));
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -2px 3px var(--lg-shadow-bottom);
+  overflow: hidden;
+  isolation: isolate;
+}
+.settings-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 30%;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+  pointer-events: none;
+  filter: blur(6px);
+  z-index: 0;
+}
+.settings-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+.settings-section > * {
+  position: relative;
+  z-index: 1;
 }
 .settings-section h3 {
   position: relative;

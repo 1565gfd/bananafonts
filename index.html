@@ -71,6 +71,25 @@
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
+  <!-- v5.32.2 — Inline SVG filters для Liquid Glass рефракции.
+       Используется через `backdrop-filter: url(#lg-refract)` в CSS.
+       Полностью нативно, ноль зависимостей. Safari может не поддерживать
+       url() в backdrop-filter — есть graceful fallback на обычный blur. -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+    <defs>
+      <filter id="lg-refract" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="7" result="noise"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blurred"/>
+        <feDisplacementMap in="blurred" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="lg-refract-strong" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" seed="13" result="noise"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blurred"/>
+        <feDisplacementMap in="blurred" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
   <main class="app">
     <div class="top-bar">
       <div class="theme-switch" role="group" aria-label="Theme">
@@ -97,6 +116,7 @@
       <button type="button" id="admin-badge" class="admin-badge silent-btn" hidden aria-label="Admin panel">👑</button>
     </div>
 
+    <div class="tabs-wrap">
     <nav class="tabs" role="tablist">
       <button type="button" class="tab-btn active" data-tab="home" role="tab" aria-selected="true" id="tab-btn-home"></button>
       <button type="button" class="tab-btn" data-tab="fonts" role="tab" aria-selected="false" id="tab-btn-fonts"></button>
@@ -107,6 +127,7 @@
       <!-- Secret tab is always kept LAST. Do not reorder. -->
       <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
     </nav>
+    </div>
 
     <section id="tab-home" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-home">
       <h1 id="home-title"></h1>

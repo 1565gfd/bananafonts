@@ -526,7 +526,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.31.6";
+  var VERSION = "v5.32.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
