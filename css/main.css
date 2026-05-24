@@ -1408,6 +1408,21 @@ html.theme-transition *::after {
   animation: secretReveal 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
+/* v5.26.1: AI autograph stamp on the reveal card */
+.secret-autograph {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: right;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 .secret-close {
   position: absolute;
   top: 8px;

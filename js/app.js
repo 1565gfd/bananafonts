@@ -446,7 +446,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.26.0";
+  var VERSION = "v5.26.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1838,6 +1838,22 @@
     textSpan.className = "secret-message-text";
     textSpan.textContent = msg;
     card.appendChild(textSpan);
+    /* v5.26.1: AI autograph — small italic signature stamped onto every
+       reveal card. The user asked for the AI to "leave its autograph"
+       when a secret code is used. */
+    var autograph = document.createElement("span");
+    autograph.className = "secret-autograph";
+    autograph.textContent = "— Claude ✨";
+    autograph.setAttribute("aria-label", "AI signature");
+    card.appendChild(autograph);
+    /* Console log — a second, dev-facing autograph. Visible in DevTools. */
+    try {
+      console.log(
+        "%c✨ Claude was here %c· secret code revealed at " + new Date().toISOString(),
+        "color:#ffd166;font-weight:700;background:#1a1a2a;padding:2px 8px;border-radius:6px;",
+        "color:#888;font-size:11px;"
+      );
+    } catch (e) {}
     /* Close button (×) — removes the message from view */
     var closeBtn = document.createElement("button");
     closeBtn.type = "button";
@@ -1886,7 +1902,7 @@
       }
     } else {
       showSecretFeedback(TEXT[currentLang].secretError, true);
-      playUiSound("error");
+      playUiSound("fail");   /* v5.26.2: sad-trombone wah-wah-wah */
     }
   }
 
@@ -2838,6 +2854,7 @@
         /* ── v5.26.0: new sounds ── */
         case "pop":     playPop(ctx);     break;     /* sharp downward chirp */
         case "whoosh":  playWhoosh(ctx);  break;     /* freq sweep — transitions */
+        case "fail":    playFail(ctx);    break;     /* sad-trombone wah-wah-wah (v5.26.2) */
         case "confirm":                              /* 3-note ascending arpeggio */
           playTone(ctx, 660, 0.05, 0.1);
           setTimeout(function () { playTone(ctx,  880, 0.05, 0.1);  }, 80);
@@ -2870,6 +2887,30 @@
     osc.start(t0);
     osc.stop(t0 + 0.12);
   }
+  /* ── fail ── classic "sad trombone" cadence: 3 descending square-wave
+     notes (G#4 → E4 → B3), последняя длиннее остальных. v5.26.2 — для
+     неудачного ввода секретного кода. */
+  function playFail(ctx) {
+    playSadNote(ctx, 415.30, 0.00, 0.15);  /* G#4 — short  */
+    playSadNote(ctx, 329.63, 0.16, 0.15);  /* E4  — short  */
+    playSadNote(ctx, 246.94, 0.32, 0.45);  /* B3  — long, drawn-out final */
+  }
+  function playSadNote(ctx, freq, whenOffset, duration) {
+    var actualGain = 0.05 * soundVolume;
+    if (actualGain < 0.0001) actualGain = 0.0001;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.value = freq;
+    var t0 = ctx.currentTime + whenOffset;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(actualGain, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.02);
+  }
+
   /* ── whoosh ── sawtooth descending frequency sweep, mimics a soft
      transition swoosh. Good for tab/theme switches. */
   function playWhoosh(ctx) {
