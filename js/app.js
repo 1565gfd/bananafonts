@@ -356,7 +356,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.16.0";
+  var VERSION = "v5.16.4";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1740,7 +1740,7 @@
   var timerShowMs = false;
   var audioCtx = null;
 
-  function pad3(n) { return (n < 10 ? "00" : n < 100 ? "0" : "") + n; }
+  function pad3(n) { n = Math.floor(n); return (n < 10 ? "00" : n < 100 ? "0" : "") + n; }
   function readTimerInputs() {
     var m = parseInt(timerMinEl.value, 10);
     var s = parseInt(timerSecEl.value, 10);
@@ -1759,11 +1759,15 @@
   function formatTimer(ms) {
     if (ms < 0) ms = 0;
     if (timerShowMs) {
-      /* mm:ss.mmm — true 3-digit millisecond precision */
-      var totalSecFloor = Math.floor(ms / 1000);
-      var mmMs = Math.floor(totalSecFloor / 60);
-      var ssMs = totalSecFloor % 60;
-      var msMs = ms % 1000;
+      /* mm:ss.mmm — true 3-digit millisecond precision.
+         IMPORTANT: ms comes from performance.now() math and is a float
+         (e.g. 298031.6000000238). We MUST floor to an integer first,
+         otherwise (ms % 1000) leaks float drift like "031.6000000238". */
+      var msInt        = Math.floor(ms);
+      var totalSecFlr  = Math.floor(msInt / 1000);
+      var mmMs         = Math.floor(totalSecFlr / 60);
+      var ssMs         = totalSecFlr % 60;
+      var msMs         = msInt % 1000;
       return pad2(mmMs) + ":" + pad2(ssMs) + "." + pad3(msMs);
     }
     /* default: round UP to whole second so "00:01" doesn't flicker to "00:00" too early */
@@ -1781,44 +1785,57 @@
     timerFeedbackEl.textContent = text || "";
     timerFeedbackEl.style.color = isError ? "#ff6b7a" : "";
   }
-  function beepDone() {
-    /* Pleasant ascending C-major arpeggio (C5 → E5 → G5 → C6) via
-       WebAudio API. Each note: soft attack (30ms), long bell-like
-       decay (~1.4s). Notes overlap to form a chord — feels like a
-       gentle chime, not a harsh alarm pip. v5.16.0 redesign. */
+  /* Play ONE ascending C-major arpeggio (C5 → E5 → G5 → C6) via WebAudio.
+     Each note: soft attack (30ms), long bell-like decay (~1.4s). Notes
+     overlap to form a chord — feels like a gentle chime. v5.16.0 redesign. */
+  function playSingleChime() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = audioCtx;
+    /* If the browser suspended the context (e.g. tab lost focus on
+       mobile), resume so the alarm keeps ringing in background. */
+    if (ctx.state === "suspended") { try { ctx.resume(); } catch (e) {} }
+    var notes = [
+      { freq: 523.25, when: 0.00 },  /* C5  */
+      { freq: 659.25, when: 0.16 },  /* E5  */
+      { freq: 783.99, when: 0.32 },  /* G5  */
+      { freq: 1046.50, when: 0.48 }  /* C6  */
+    ];
+    notes.forEach(function (n) {
+      /* Two oscillators per note: sine fundamental + triangle octave above
+         for a touch of bell-like sparkle. */
+      var oscA = ctx.createOscillator();
+      var oscB = ctx.createOscillator();
+      var gain = ctx.createGain();
+      oscA.type = "sine";
+      oscB.type = "triangle";
+      oscA.frequency.value = n.freq;
+      oscB.frequency.value = n.freq * 2;
+      var t0 = ctx.currentTime + n.when;
+      /* Soft attack + slow exponential decay = bell envelope. Peak gain
+         is gentle (0.16) so the chime doesn't startle anyone. */
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
+      oscA.connect(gain);
+      oscB.connect(gain);
+      gain.connect(ctx.destination);
+      oscA.start(t0);
+      oscB.start(t0);
+      oscA.stop(t0 + 1.5);
+      oscB.stop(t0 + 1.5);
+    });
+  }
+
+  /* beepDone(repeats=1) — play the pleasant chime N times in a row,
+     spaced ~1.8s apart so they ring distinctly without harsh overlap.
+     v5.16.3: default back to 1, callers pass the count they want
+     (timer = 4 reps; alarm = 3 reps). */
+  function beepDone(repeats) {
+    if (typeof repeats !== "number" || repeats < 1) repeats = 1;
     try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      var ctx = audioCtx;
-      var notes = [
-        { freq: 523.25, when: 0.00 },  /* C5  */
-        { freq: 659.25, when: 0.16 },  /* E5  */
-        { freq: 783.99, when: 0.32 },  /* G5  */
-        { freq: 1046.50, when: 0.48 }  /* C6  */
-      ];
-      notes.forEach(function (n) {
-        /* Two oscillators per note: sine fundamental + triangle octave above
-           for a touch of bell-like sparkle. */
-        var oscA = ctx.createOscillator();
-        var oscB = ctx.createOscillator();
-        var gain = ctx.createGain();
-        oscA.type = "sine";
-        oscB.type = "triangle";
-        oscA.frequency.value = n.freq;
-        oscB.frequency.value = n.freq * 2;
-        var t0 = ctx.currentTime + n.when;
-        /* Soft attack + slow exponential decay = bell envelope. Peak gain
-           is gentle (0.16) so the chime doesn't startle anyone. */
-        gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
-        oscA.connect(gain);
-        oscB.connect(gain);
-        gain.connect(ctx.destination);
-        oscA.start(t0);
-        oscB.start(t0);
-        oscA.stop(t0 + 1.5);
-        oscB.stop(t0 + 1.5);
-      });
+      for (var r = 0; r < repeats; r++) {
+        setTimeout(playSingleChime, r * 1800);
+      }
     } catch (e) { /* WebAudio unavailable — fail silently */ }
   }
   function timerFinish() {
@@ -1830,7 +1847,8 @@
     timerDisplayEl.classList.add("timer-done");
     setTimerFeedback(TEXT[currentLang].timerDone, false);
     refreshTimerButtonLabels();
-    beepDone();
+    /* Timer rings 4 times (v5.16.3 — user request). ~7 seconds total. */
+    beepDone(4);
     /* Remove blink after the 5 iterations (0.6s × 5 = 3s) */
     setTimeout(function () { timerDisplayEl.classList.remove("timer-done"); }, 3500);
   }
@@ -2162,7 +2180,7 @@
      Shape: { tzId, hh, mm } or null. We DON'T persist the firing target
      timestamp — it's recomputed on load so it always points to the next
      occurrence, even if the user closed the tab for hours/days. */
-  var alarmState = { tzId: null, hh: 7, mm: 0, target: 0, firing: false };
+  var alarmState = { tzId: null, hh: 7, mm: 0, target: 0, firing: false, ringIntervalId: null };
 
   function saveAlarm() {
     try {
@@ -2325,9 +2343,10 @@
 
   function cancelAlarm() {
     if (alarmState.firing) {
-      /* Dismiss the firing state */
+      /* Dismiss the firing state — stop the continuous ringing loop too */
       alarmState.firing = false;
       alarmStatusEl.classList.remove("alarm-firing");
+      stopAlarmRinging();
     }
     var hadArmed = alarmState.target > 0;
     alarmState.target = 0;
@@ -2339,17 +2358,26 @@
   }
 
   function fireAlarm() {
+    if (alarmState.firing) return; /* safety — don't stack intervals */
     alarmState.firing = true;
     alarmState.target = 0;
     saveAlarm();
     renderAlarmStatus("firing");
     refreshAlarmButtonLabels();
     alarmCancelBtn.disabled = false;
-    /* Three beep waves over ~6 seconds via the same WebAudio path
-       the timer uses. We re-call beepDone twice with a delay. */
-    beepDone();
-    setTimeout(beepDone, 1400);
-    setTimeout(beepDone, 2800);
+    /* v5.16.4: ring CONTINUOUSLY every 3 seconds until the user presses
+       Dismiss. One chime ≈ 1.9 sec, gap ≈ 1.1 sec → phone-ring rhythm.
+       Stored interval id is cleared in cancelAlarm() (= the Dismiss path). */
+    playSingleChime();
+    if (alarmState.ringIntervalId) clearInterval(alarmState.ringIntervalId);
+    alarmState.ringIntervalId = setInterval(playSingleChime, 3000);
+  }
+  /* Stop any running alarm chime loop. Called from cancelAlarm. */
+  function stopAlarmRinging() {
+    if (alarmState.ringIntervalId) {
+      clearInterval(alarmState.ringIntervalId);
+      alarmState.ringIntervalId = null;
+    }
   }
 
   /* Check alarm fire condition every second from the same clock-tick
