@@ -9256,19 +9256,19 @@ body {
   h1 { font-size: 28px; }
 }
 
-/* ULTRAWIDE: 21:9 and 32:9 monitors */
-@media (min-aspect-ratio: 2/1) and (min-width: 1800px) {
+/* v5.55.4 — Ultrawide threshold raised from 1800px to 2400px so that
+   normal 1920×~1000 monitors (which technically have ~2:1 ratio when
+   browser chrome is eating vertical space) don’t trigger this rule. */
+@media (min-aspect-ratio: 2/1) and (min-width: 2400px) {
   .app { max-width: 1100px; }
   .admin-modal { max-width: 720px; }
   .ddos-overlay { padding: 32px 15%; }
 }
 
-/* LARGE DESKTOPS: 1440-2400px */
-@media (min-width: 1440px) {
-  .app { max-width: 980px; }
-  .output { font-size: 22px; }
-  textarea { font-size: 18px; }
-}
+/* v5.55.4 — Large Desktop block REMOVED (was 1440px+).
+   User on 1920×932 was getting app capped to 980px which made the
+   content look cramped on their monitor. Removed entirely so 1440-2400px
+   range uses the default .app max-width from the base styles. */
 
 /* 4K / RETINA-SCALED: 2400px+ effective viewport */
 @media (min-width: 2400px) {
@@ -9362,11 +9362,10 @@ body {
   .top-bar { padding-right: 120px; }
 }
 
-/* HOVER-CAPABLE precision pointers: mouse/trackpad */
-@media (hover: hover) and (pointer: fine) {
-  .settings-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
-  .settings-slider::-moz-range-thumb     { width: 18px; height: 18px; }
-}
+/* v5.55.5 — precision-pointer slider-thumb override REMOVED. User on
+   1920×1080 @1x asked for zero screen-type optimizations. Sliders
+   now use the base thumb size on every device (mouse, touch, stylus).
+   Touch tap-target inflation lives in @media (hover: none) elsewhere. */
 
 /* ZERO-MOTION + ZERO-DATA combined: extreme accessibility */
 @media (prefers-reduced-motion: reduce) and (prefers-reduced-data: reduce) {
