@@ -4,51 +4,53 @@
    ============================================================ */
 
 :root,
+/* ──────── Dark theme — v5.23.1 redesign: actually dark.
+            Previous version stacked 4 bright radial blobs (opacity up to
+            0.55) on top of a navy base — the result felt closer to a
+            purple-blue lava lamp than a "dark" theme. Now: deeper base
+            + just 2 very-subtle accent hints (opacity ≤ 0.12). ──────── */
 [data-theme="dark"] {
   color-scheme: dark;
   --bg-gradient:
-    radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.55) 0%, transparent 48%),
-    radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.42) 0%, transparent 50%),
-    radial-gradient(circle at 72% 88%, rgba(244, 114, 182, 0.36) 0%, transparent 52%),
-    radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.32) 0%, transparent 50%),
-    linear-gradient(135deg, #161b3a 0%, #0d0f24 100%);
+    radial-gradient(ellipse at 15% 12%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(56, 189, 248, 0.08) 0%, transparent 55%),
+    linear-gradient(160deg, #0d0f22 0%, #07091a 100%);
 
   --text: #ffffff;
   --text-dim: rgba(255, 255, 255, 0.42);
   --text-soft: rgba(255, 255, 255, 0.85);
-  --text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  --text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
 
-  --glass-bg: rgba(255, 255, 255, 0.06);
-  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.1);
   --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-border-soft: rgba(255, 255, 255, 0.1);
-  --glass-inset: rgba(255, 255, 255, 0.18);
-  --glass-inset-soft: rgba(255, 255, 255, 0.06);
+  --glass-border-soft: rgba(255, 255, 255, 0.08);
+  --glass-inset: rgba(255, 255, 255, 0.16);
+  --glass-inset-soft: rgba(255, 255, 255, 0.05);
 
-  --output-bg: rgba(0, 0, 0, 0.28);
+  --output-bg: rgba(0, 0, 0, 0.4);
   --output-border: rgba(255, 255, 255, 0.08);
-  --output-inset-bottom: rgba(0, 0, 0, 0.2);
+  --output-inset-bottom: rgba(0, 0, 0, 0.3);
 
   --accent: #6a5cff;
-  --accent-bg: rgba(106, 92, 255, 0.45);
-  --accent-border: rgba(133, 122, 255, 0.6);
+  --accent-bg: rgba(106, 92, 255, 0.55);
+  --accent-border: rgba(133, 122, 255, 0.7);
   --accent-glow: rgba(106, 92, 255, 0.45);
 
   --copy-bg: rgba(106, 92, 255, 0.5);
-  --copy-bg-hover: rgba(122, 109, 255, 0.62);
-  --copy-border: rgba(133, 122, 255, 0.6);
-  --copy-border-hover: rgba(160, 150, 255, 0.72);
+  --copy-bg-hover: rgba(122, 109, 255, 0.65);
+  --copy-border: rgba(133, 122, 255, 0.65);
+  --copy-border-hover: rgba(160, 150, 255, 0.78);
   --copied-bg: rgba(69, 196, 104, 0.55);
   --copied-border: rgba(120, 220, 150, 0.7);
   --copied-glow: rgba(69, 196, 104, 0.4);
 
   --link: #b8b0ff;
-  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.55);
 
   --nf-bg:
-    radial-gradient(circle at 18% 25%, rgba(139, 92, 246, 0.42) 0%, transparent 52%),
-    radial-gradient(circle at 82% 75%, rgba(56, 189, 248, 0.32) 0%, transparent 50%),
-    linear-gradient(140deg, #1d2230 0%, #11162a 100%);
+    radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
+    linear-gradient(160deg, #0d0f22 0%, #07091a 100%);
   --nf-code-gradient: linear-gradient(180deg, #d0d6e0 0%, #7d8595 100%);
 }
 
@@ -100,20 +102,20 @@
   --nf-code-gradient: linear-gradient(180deg, #6a5cff 0%, #b8b0ff 100%);
 }
 
-/* ──────── Rainbow theme — psychedelic "Виталий лучший" palette
-            (v5.9.0 — swapped with school per user request). Hot pink →
-            orange → yellow → violet → blue → magenta, continuously
-            flowing. This is the same vibe as the secret-code reveal. ──────── */
+/* ──────── Rainbow theme ("Переливающаяся" в UI) — psychedelic flowing
+            palette. v5.26.0: lightness уменьшен ~×2 — было слишком ярко
+            при долгом использовании; сохраняется тот же hue/saturation,
+            но фон значительно темнее (комфортно глазам). ──────── */
 [data-theme="rainbow"] {
   color-scheme: dark;
   --bg-gradient: linear-gradient(135deg,
-    #ff006e   0%,
-    #ff5e00  16%,
-    #ffbe0b  32%,
-    #8338ec  50%,
-    #3a86ff  66%,
-    #c200fb  82%,
-    #ff006e 100%);
+    #800037   0%,   /* dark pink   (was #ff006e) */
+    #802f00  16%,   /* dark orange (was #ff5e00) */
+    #806000  32%,   /* dark gold   (was #ffbe0b) */
+    #421c76  50%,   /* dark violet (was #8338ec) */
+    #1d4380  66%,   /* dark blue   (was #3a86ff) */
+    #61007e  82%,   /* dark magenta(was #c200fb) */
+    #800037 100%);
 
   --text: #ffffff;
   --text-dim: rgba(255, 255, 255, 0.62);
@@ -916,9 +918,11 @@ html.theme-transition *::after {
 }
 
 .theme-switch button[data-theme-btn="dark"]::before {
+  /* v5.23.1: swatch matches the new properly-dark theme (was way too purple) */
   background:
-    radial-gradient(circle at 30% 30%, #8b7dff 0%, transparent 60%),
-    linear-gradient(135deg, #1a1f3a 0%, #6a5cff 100%);
+    radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.5) 0%, transparent 60%),
+    linear-gradient(160deg, #0d0f22 0%, #07091a 100%);
+  border-color: rgba(133, 122, 255, 0.45);
 }
 
 .theme-switch button[data-theme-btn="night"]::before {
@@ -932,11 +936,9 @@ html.theme-transition *::after {
 }
 
 .theme-switch button[data-theme-btn="rainbow"]::before {
-  /* v5.9.0: swatch now reflects the psychedelic palette (hot pink →
-     orange → yellow → violet → blue → magenta) so the button visually
-     previews what you actually get when you click it. */
+  /* v5.26.0: swatch matches the darker palette of the theme */
   background: conic-gradient(from 0deg,
-    #ff006e, #ff5e00, #ffbe0b, #8338ec, #3a86ff, #c200fb, #ff006e);
+    #800037, #802f00, #806000, #421c76, #1d4380, #61007e, #800037);
   border-color: rgba(255, 255, 255, 0.6);
   animation: swatchSpin 6s linear infinite;
 }
@@ -2138,12 +2140,12 @@ html:not(.page-noir) {
   border-color: rgba(255, 140, 150, 0.7);
 }
 
-/* Timer ms toggle (v5.15.0) — checkbox + label, centered */
+/* Timer ms toggle (v5.15.0 / v5.25.0: now uses toggle-switch UI) */
 .timer-ms-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 10px;
   font-size: 13px;
   color: var(--text-soft);
@@ -2151,11 +2153,62 @@ html:not(.page-noir) {
   -webkit-user-select: none;
   user-select: none;
 }
-.timer-ms-toggle input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+
+/* ──────── Toggle-switch UI (v5.25.0) — iOS-style sliders instead of
+            native checkboxes. Wrap any checkbox in this structure:
+              <span class="toggle-switch">
+                <input type="checkbox" />
+                <span class="toggle-slider"></span>
+              </span>
+            CSS-only — no JS state. ──────── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.toggle-switch input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.toggle-switch .toggle-slider {
+  position: absolute;
+  inset: 0;
   cursor: pointer;
-  accent-color: var(--accent);
+  background: rgba(120, 120, 130, 0.32);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 24px;
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+.toggle-switch .toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(18px);
+}
+.toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.toggle-switch input:disabled + .toggle-slider {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ──────── Alarm clock (v5.14.0) ──────── */
@@ -3198,6 +3251,30 @@ footer a:hover {
   color: var(--text-soft);
 }
 
+/* --- Volume slider row (v5.24.0) --- */
+.sound-volume-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.sound-volume-row > label {
+  font-size: 13px;
+  color: var(--text-soft);
+  min-width: 80px;
+}
+.sound-volume-row > input[type="range"] {
+  flex: 1;
+}
+.sound-volume-row > span {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--accent);
+  min-width: 44px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ──────── Tools tab (v5.22.0) ──────── */
 .passgen-row { margin-bottom: 12px; }
 .passgen-len-label {
@@ -3222,17 +3299,12 @@ footer a:hover {
 .passgen-check {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
 }
-.passgen-check input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
+/* v5.25.0: passgen-check now uses toggle-switch — no need to style raw checkbox */
 .passgen-output-row {
   display: flex;
   gap: 8px;
@@ -3296,6 +3368,12 @@ footer a:hover {
 }
 .lorem-controls > label > input {
   width: 80px;
+}
+.lorem-limit-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 2px;
 }
 .lorem-lang-toggle {
   display: flex;

@@ -99,6 +99,7 @@
       <button type="button" class="tab-btn" data-tab="fonts" role="tab" aria-selected="false" id="tab-btn-fonts"></button>
       <button type="button" class="tab-btn" data-tab="calc" role="tab" aria-selected="false" id="tab-btn-calc"></button>
       <button type="button" class="tab-btn" data-tab="time" role="tab" aria-selected="false" id="tab-btn-time"></button>
+      <button type="button" class="tab-btn" data-tab="tools" role="tab" aria-selected="false" id="tab-btn-tools"></button>
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
       <!-- Secret tab is always kept LAST. Do not reorder. -->
       <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
@@ -309,9 +310,9 @@
           <button type="button" class="tool-btn timer-add-btn timer-sub-btn" data-add-sec="-60">−1m</button>
           <button type="button" class="tool-btn timer-add-btn timer-sub-btn" data-add-sec="-300">−5m</button>
         </div>
-        <!-- Millisecond precision toggle (v5.15.0) -->
+        <!-- Millisecond precision toggle (v5.15.0 / v5.25.0 switch UI) -->
         <label class="timer-ms-toggle">
-          <input type="checkbox" id="timer-ms-toggle" />
+          <span class="toggle-switch"><input type="checkbox" id="timer-ms-toggle" /><span class="toggle-slider"></span></span>
           <span id="timer-ms-label"></span>
         </label>
         <div class="timer-feedback" id="timer-feedback"></div>
@@ -356,6 +357,93 @@
       </div>
     </section>
 
+    <!-- Tools tab (v5.25.0: restored from Settings — utilities that don't
+         affect site state belong in their own tab). -->
+    <section id="tab-tools" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-tools" hidden>
+      <h1 id="tools-title"></h1>
+
+      <!-- Password generator -->
+      <div class="tool-section">
+        <h3 id="passgen-label"></h3>
+        <div class="passgen-row">
+          <label class="passgen-len-label">
+            <span id="passgen-len-text"></span>
+            <input type="range" id="passgen-len" class="settings-slider" min="4" max="64" value="16" />
+            <span id="passgen-len-value">16</span>
+          </label>
+        </div>
+        <div class="passgen-checks">
+          <label class="passgen-check">
+            <span class="toggle-switch"><input type="checkbox" id="passgen-lower" checked /><span class="toggle-slider"></span></span>
+            <span id="passgen-lower-text"></span>
+          </label>
+          <label class="passgen-check">
+            <span class="toggle-switch"><input type="checkbox" id="passgen-upper" checked /><span class="toggle-slider"></span></span>
+            <span id="passgen-upper-text"></span>
+          </label>
+          <label class="passgen-check">
+            <span class="toggle-switch"><input type="checkbox" id="passgen-digit" checked /><span class="toggle-slider"></span></span>
+            <span id="passgen-digit-text"></span>
+          </label>
+          <label class="passgen-check">
+            <span class="toggle-switch"><input type="checkbox" id="passgen-symbol" /><span class="toggle-slider"></span></span>
+            <span id="passgen-symbol-text"></span>
+          </label>
+        </div>
+        <div class="passgen-output-row">
+          <input type="text" id="passgen-output" class="calc-input passgen-output" readonly />
+          <button type="button" id="passgen-generate" class="tool-btn"></button>
+          <button type="button" id="passgen-copy" class="tool-btn"></button>
+        </div>
+      </div>
+
+      <!-- Random number -->
+      <div class="tool-section">
+        <h3 id="randnum-label"></h3>
+        <div class="randnum-row">
+          <label><span id="randnum-min-text"></span><input type="number" id="randnum-min" class="calc-input" value="1" /></label>
+          <label><span id="randnum-max-text"></span><input type="number" id="randnum-max" class="calc-input" value="100" /></label>
+        </div>
+        <div class="randnum-controls">
+          <button type="button" id="randnum-generate" class="tool-btn"></button>
+          <div class="randnum-result" id="randnum-result">—</div>
+        </div>
+      </div>
+
+      <!-- Lorem ipsum: paragraphs limit raised to 50 (v5.25.0) -->
+      <div class="tool-section">
+        <h3 id="lorem-label"></h3>
+        <div class="lorem-controls">
+          <label>
+            <span id="lorem-count-text"></span>
+            <input type="number" id="lorem-count" class="calc-input" value="3" min="1" max="50" />
+            <span class="lorem-limit-hint" id="lorem-limit-hint"></span>
+          </label>
+          <div class="lorem-lang-toggle">
+            <button type="button" class="tool-btn lorem-lang-btn active" data-lorem-lang="lat">Lorem</button>
+            <button type="button" class="tool-btn lorem-lang-btn" data-lorem-lang="rus">Рыба</button>
+          </div>
+          <button type="button" id="lorem-generate" class="tool-btn"></button>
+          <button type="button" id="lorem-copy" class="tool-btn"></button>
+        </div>
+        <textarea id="lorem-output" class="home-input lorem-output" readonly></textarea>
+      </div>
+
+      <!-- Color picker / converter -->
+      <div class="tool-section">
+        <h3 id="color-label"></h3>
+        <div class="color-row">
+          <input type="color" id="color-picker" class="color-picker" value="#6a5cff" />
+          <input type="text" id="color-hex" class="calc-input color-hex" value="#6a5cff" />
+        </div>
+        <div class="color-formats">
+          <div class="color-format"><span class="color-format-label">HEX</span><span class="color-format-value" id="color-hex-display">#6a5cff</span></div>
+          <div class="color-format"><span class="color-format-label">RGB</span><span class="color-format-value" id="color-rgb">rgb(106, 92, 255)</span></div>
+          <div class="color-format"><span class="color-format-label">HSL</span><span class="color-format-value" id="color-hsl">hsl(245, 100%, 68%)</span></div>
+        </div>
+      </div>
+    </section>
+
     <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
       <h1 id="settings-title"></h1>
 
@@ -377,79 +465,17 @@
         <div id="settings-size-sample" class="settings-size-sample">Hello 123 · Привет</div>
       </div>
 
-      <!-- v5.22.0: Sound toggle — controls UI feedback sounds + timer/alarm chime. -->
+      <!-- v5.22.0 / v5.24.0: Sound toggle + volume slider — controls UI
+           feedback sounds + timer/alarm chime. Volume = 0 effectively
+           mutes; the toggle is a hard on/off independent of volume. -->
       <div class="settings-section">
         <h3 id="settings-sound-label"></h3>
         <p class="settings-hint" id="settings-sound-hint"></p>
         <button type="button" id="sound-toggle-btn" class="settings-btn"></button>
-      </div>
-
-      <!-- v5.23.0: Utility functions moved from the (now removed) Tools tab.
-           Password gen, random number, lorem ipsum, color converter all live
-           here in Settings now. -->
-
-      <!-- Password generator -->
-      <div class="settings-section">
-        <h3 id="passgen-label"></h3>
-        <div class="passgen-row">
-          <label class="passgen-len-label">
-            <span id="passgen-len-text"></span>
-            <input type="range" id="passgen-len" class="settings-slider" min="4" max="64" value="16" />
-            <span id="passgen-len-value">16</span>
-          </label>
-        </div>
-        <div class="passgen-checks">
-          <label class="passgen-check"><input type="checkbox" id="passgen-lower" checked /><span id="passgen-lower-text"></span></label>
-          <label class="passgen-check"><input type="checkbox" id="passgen-upper" checked /><span id="passgen-upper-text"></span></label>
-          <label class="passgen-check"><input type="checkbox" id="passgen-digit" checked /><span id="passgen-digit-text"></span></label>
-          <label class="passgen-check"><input type="checkbox" id="passgen-symbol" /><span id="passgen-symbol-text"></span></label>
-        </div>
-        <div class="passgen-output-row">
-          <input type="text" id="passgen-output" class="calc-input passgen-output" readonly />
-          <button type="button" id="passgen-generate" class="tool-btn"></button>
-          <button type="button" id="passgen-copy" class="tool-btn"></button>
-        </div>
-      </div>
-
-      <!-- Random number -->
-      <div class="settings-section">
-        <h3 id="randnum-label"></h3>
-        <div class="randnum-row">
-          <label><span id="randnum-min-text"></span><input type="number" id="randnum-min" class="calc-input" value="1" /></label>
-          <label><span id="randnum-max-text"></span><input type="number" id="randnum-max" class="calc-input" value="100" /></label>
-        </div>
-        <div class="randnum-controls">
-          <button type="button" id="randnum-generate" class="tool-btn"></button>
-          <div class="randnum-result" id="randnum-result">—</div>
-        </div>
-      </div>
-
-      <!-- Lorem ipsum -->
-      <div class="settings-section">
-        <h3 id="lorem-label"></h3>
-        <div class="lorem-controls">
-          <label><span id="lorem-count-text"></span><input type="number" id="lorem-count" class="calc-input" value="3" min="1" max="20" /></label>
-          <div class="lorem-lang-toggle">
-            <button type="button" class="tool-btn lorem-lang-btn active" data-lorem-lang="lat">Lorem</button>
-            <button type="button" class="tool-btn lorem-lang-btn" data-lorem-lang="rus">Рыба</button>
-          </div>
-          <button type="button" id="lorem-generate" class="tool-btn"></button>
-          <button type="button" id="lorem-copy" class="tool-btn"></button>
-        </div>
-        <textarea id="lorem-output" class="home-input lorem-output" readonly></textarea>
-      </div>
-
-      <!-- Color picker / converter -->
-      <div class="settings-section">
-        <h3 id="color-label"></h3>
-        <div class="color-row">
-          <input type="color" id="color-picker" class="color-picker" value="#6a5cff" />
-          <input type="text" id="color-hex" class="calc-input color-hex" value="#6a5cff" />
-        </div>
-        <div class="color-formats">
-          <div class="color-format"><span class="color-format-label">HEX</span><span class="color-format-value" id="color-hex-display">#6a5cff</span></div>
-          <div class="color-format"><span class="color-format-label">RGB</span><span class="color-format-value" id="color-rgb">rgb(106, 92, 255)</span></div>
-          <div class="color-format"><span class="color-format-label">HSL</span><span class="color-format-value" id="color-hsl">hsl(245, 100%, 68%)</span></div>
+        <div class="sound-volume-row">
+          <label for="sound-volume" id="sound-volume-label"></label>
+          <input type="range" id="sound-volume" class="settings-slider" min="0" max="100" value="80" />
+          <span id="sound-volume-value">80%</span>
         </div>
       </div>
 

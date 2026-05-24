@@ -44,6 +44,10 @@
       settingsSoundHint: "Включить или отключить звуковые уведомления (клики, переключения, таймер, будильник).",
       soundOn: "🔊 Звук включён",
       soundOff: "🔇 Звук выключен",
+      soundVolumeLabel: "Громкость",
+      tabTools: "Инструменты",
+      toolsTitle: "Полезные инструменты",
+      loremLimit: "1–50 абзацев",
       passgenLabel: "Генератор паролей",
       passgenLenText: "Длина:",
       passgenLower: "a–z",
@@ -218,6 +222,10 @@
       settingsSoundHint: "Turn UI feedback sounds (clicks, switches, timer, alarm) on or off.",
       soundOn: "🔊 Sound is on",
       soundOff: "🔇 Sound is off",
+      soundVolumeLabel: "Volume",
+      tabTools: "Tools",
+      toolsTitle: "Handy tools",
+      loremLimit: "1–50 paragraphs",
       passgenLabel: "Password generator",
       passgenLenText: "Length:",
       passgenLower: "a–z",
@@ -438,7 +446,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.23.0";
+  var VERSION = "v5.26.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -495,12 +503,17 @@
   var extraThemesGridEl          = document.getElementById("extra-themes-grid");
   /* Reset warning (v5.20.0) */
   var settingsResetWarningEl     = document.getElementById("settings-reset-warning");
-  /* Sound toggle (v5.22.0) */
+  /* Sound toggle + volume (v5.22.0 / v5.24.0) */
   var settingsSoundLabelEl       = document.getElementById("settings-sound-label");
   var settingsSoundHintEl        = document.getElementById("settings-sound-hint");
   var soundToggleBtn             = document.getElementById("sound-toggle-btn");
-  /* v5.23.0: Tools tab removed — utility functions moved into Settings.
-     Refs below now point to elements inside #tab-settings. */
+  var soundVolumeLabelEl         = document.getElementById("sound-volume-label");
+  var soundVolumeEl              = document.getElementById("sound-volume");
+  var soundVolumeValueEl         = document.getElementById("sound-volume-value");
+  /* Tools tab (v5.25.0: restored from Settings) */
+  var tabBtnTools                = document.getElementById("tab-btn-tools");
+  var toolsTitleEl               = document.getElementById("tools-title");
+  var loremLimitHintEl           = document.getElementById("lorem-limit-hint");
   /* Password generator */
   var passgenLabelEl   = document.getElementById("passgen-label");
   var passgenLenTextEl = document.getElementById("passgen-len-text");
@@ -705,9 +718,12 @@
     tabBtnFonts.textContent       = t.tabFonts;
     tabBtnCalc.textContent        = t.tabCalc;
     tabBtnTime.textContent        = t.tabTime;
+    tabBtnTools.textContent       = t.tabTools;
     tabBtnSecret.textContent      = t.tabSecret;
     tabBtnSettings.textContent    = t.tabSettings;
-    /* Utility functions inside Settings (v5.23.0 — moved from removed Tools tab) */
+    /* Tools tab labels (v5.25.0 — restored from Settings) */
+    toolsTitleEl.textContent      = t.toolsTitle;
+    loremLimitHintEl.textContent  = "(" + t.loremLimit + ")";
     passgenLabelEl.textContent    = t.passgenLabel;
     passgenLenTextEl.textContent  = t.passgenLenText;
     passgenLowerTxt.textContent   = t.passgenLower;
@@ -728,6 +744,7 @@
     /* Sound toggle labels */
     settingsSoundLabelEl.textContent = t.settingsSoundLabel;
     settingsSoundHintEl.textContent  = t.settingsSoundHint;
+    soundVolumeLabelEl.textContent   = t.soundVolumeLabel;
     refreshSoundButtonLabel();
     /* Secret tab labels */
     secretTitleEl.textContent     = t.secretTitle;
@@ -857,9 +874,9 @@
   /* --------- theme --------- */
   var THEME_COLORS = {
     light:          "#eef2ff",
-    dark:           "#161b3a",
+    dark:            "#0d0f22",   /* v5.23.1: was #161b3a — now properly dark */
     night:          "#0a0a1f",   /* v5.19.1: midnight indigo (was pure black) */
-    rainbow:        "#ff006e",
+    rainbow:        "#800037",   /* v5.26.0: matches darker palette */
     school:         "#0f2c4a",
     "black-orange": "#000000",   /* v5.19.0 new themes */
     "neon-green":   "#020c02",
@@ -1863,11 +1880,13 @@
       var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
       showSecretFeedback("", false);
       showSecretMessage(msg);
+      playUiSound("unlock");   /* v5.26.0: magical 4-note arpeggio on reveal */
       if (typeof entry.action === "function") {
         try { entry.action(); } catch (e) {}
       }
     } else {
       showSecretFeedback(TEXT[currentLang].secretError, true);
+      playUiSound("error");
     }
   }
 
@@ -2101,9 +2120,12 @@
       oscB.frequency.value = n.freq * 2;
       var t0 = ctx.currentTime + n.when;
       /* Soft attack + slow exponential decay = bell envelope. Peak gain
-         is gentle (0.16) so the chime doesn't startle anyone. */
+         is gentle (0.16) so the chime doesn't startle anyone.
+         v5.24.0: scaled by soundVolume (0.0–1.0). */
+      var chimePeak = 0.16 * soundVolume;
+      if (chimePeak < 0.0001) chimePeak = 0.0001;
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(chimePeak, t0 + 0.03);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
       oscA.connect(gain);
       oscB.connect(gain);
@@ -2787,12 +2809,18 @@
      respect this gate (so muting kills the timer/alarm chime too).
      ============================================================ */
   var soundEnabled = true;
+  var soundVolume = 0.8;        /* v5.24.0: 0.0–1.0, scales all gains */
   try {
     if (localStorage.getItem("bananafont:soundMuted") === "1") soundEnabled = false;
+    var savedVol = localStorage.getItem("bananafont:soundVolume");
+    if (savedVol !== null && savedVol !== "") {
+      var v = parseFloat(savedVol);
+      if (!isNaN(v) && v >= 0 && v <= 1) soundVolume = v;
+    }
   } catch (e) {}
 
   function playUiSound(name) {
-    if (!soundEnabled) return;
+    if (!soundEnabled || soundVolume <= 0) return;
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       var ctx = audioCtx;
@@ -2807,22 +2835,95 @@
           break;
         case "error":   playTone(ctx, 220,  0.08,  0.18); break;
         case "select":  playTone(ctx, 1100, 0.05,  0.07); break;
+        /* ── v5.26.0: new sounds ── */
+        case "pop":     playPop(ctx);     break;     /* sharp downward chirp */
+        case "whoosh":  playWhoosh(ctx);  break;     /* freq sweep — transitions */
+        case "confirm":                              /* 3-note ascending arpeggio */
+          playTone(ctx, 660, 0.05, 0.1);
+          setTimeout(function () { playTone(ctx,  880, 0.05, 0.1);  }, 80);
+          setTimeout(function () { playTone(ctx, 1320, 0.06, 0.14); }, 160);
+          break;
+        case "unlock":                               /* magical 4-note G-major arpeggio */
+          var unlockNotes = [392, 494, 587, 784];
+          unlockNotes.forEach(function (f, idx) {
+            setTimeout(function () { playTone(ctx, f, 0.055, 0.18); }, idx * 60);
+          });
+          break;
       }
     } catch (e) {}
   }
+  /* ── pop ── short popcorn-style downward square-wave chirp.
+     Quick to play, distinctive — good for visual effects (emoji rain). */
+  function playPop(ctx) {
+    var actualGain = 0.05 * soundVolume;
+    if (actualGain < 0.0001) actualGain = 0.0001;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = "square";
+    var t0 = ctx.currentTime;
+    osc.frequency.setValueAtTime(900, t0);
+    osc.frequency.exponentialRampToValueAtTime(180, t0 + 0.08);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(actualGain, t0 + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.12);
+  }
+  /* ── whoosh ── sawtooth descending frequency sweep, mimics a soft
+     transition swoosh. Good for tab/theme switches. */
+  function playWhoosh(ctx) {
+    var actualGain = 0.025 * soundVolume;
+    if (actualGain < 0.0001) actualGain = 0.0001;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = "sawtooth";
+    var t0 = ctx.currentTime;
+    osc.frequency.setValueAtTime(1500, t0);
+    osc.frequency.exponentialRampToValueAtTime(380, t0 + 0.15);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(actualGain, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.18);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.2);
+  }
   function playTone(ctx, freq, peakGain, dur) {
+    /* v5.24.0: scale by user-set volume. Floor at 0.0001 because
+       exponentialRampToValueAtTime can't accept 0 (math: log(0)). */
+    var actualGain = peakGain * soundVolume;
+    if (actualGain < 0.0001) actualGain = 0.0001;
     var osc = ctx.createOscillator();
     var g = ctx.createGain();
     osc.type = "sine";
     osc.frequency.value = freq;
     var t0 = ctx.currentTime;
     g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(peakGain, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(actualGain, t0 + 0.008);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     osc.connect(g).connect(ctx.destination);
     osc.start(t0);
     osc.stop(t0 + dur + 0.02);
   }
+
+  /* Throttled tick for sliders — fires at most once per 80ms to avoid
+     a constant buzz while dragging. v5.24.0. */
+  var lastSliderTickAt = 0;
+  function playSliderTick() {
+    var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+    if (now - lastSliderTickAt < 80) return;
+    lastSliderTickAt = now;
+    playUiSound("tick");
+  }
+  /* Attach to all range inputs (settings size, password length, volume,
+     plus any future ones). Uses event delegation on document so future
+     sliders added dynamically also work. */
+  document.addEventListener("input", function (e) {
+    var el = e.target;
+    if (el && el.tagName === "INPUT" && el.type === "range") {
+      playSliderTick();
+    }
+  });
 
   function refreshSoundButtonLabel() {
     var t = TEXT[currentLang];
@@ -2835,16 +2936,46 @@
     refreshSoundButtonLabel();
     if (soundEnabled) playUiSound("click"); /* audible confirmation */
   });
-  /* Wire UI sounds into key actions */
-  for (var ti = 0; ti < tabButtons.length; ti++) {
-    tabButtons[ti].addEventListener("click", function () { playUiSound("tab"); });
-  }
-  for (var thi = 0; thi < themeButtons.length; thi++) {
-    themeButtons[thi].addEventListener("click", function () { playUiSound("select"); });
-  }
-  for (var lgi = 0; lgi < langButtons.length; lgi++) {
-    langButtons[lgi].addEventListener("click", function () { playUiSound("click"); });
-  }
+  /* Volume slider — initial sync from loaded soundVolume + live updates */
+  soundVolumeEl.value = Math.round(soundVolume * 100);
+  soundVolumeValueEl.textContent = Math.round(soundVolume * 100) + "%";
+  soundVolumeEl.addEventListener("input", function () {
+    var pct = parseInt(soundVolumeEl.value, 10);
+    if (isNaN(pct)) pct = 0;
+    soundVolume = pct / 100;
+    soundVolumeValueEl.textContent = pct + "%";
+    try { localStorage.setItem("bananafont:soundVolume", String(soundVolume)); } catch (e) {}
+    /* The slider tick (via global "input" listener) plays at the
+       new volume — gives the user immediate audible feedback. */
+  });
+  /* v5.25.0: universal UI-sound delegation. ONE click listener on
+     document picks the right sound based on what was clicked, so
+     every button/toggle/select in the app gets audio feedback —
+     including any added in the future, automatically. */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    /* If a button (or anything inside one) was clicked */
+    var btn = t.closest ? t.closest("button") : null;
+    if (btn && !btn.disabled) {
+      /* v5.26.0: tab-btn → whoosh (transition feel), themes → select,
+         everything else → generic click. */
+      if (btn.classList.contains("tab-btn"))                  playUiSound("whoosh");
+      else if (btn.dataset && btn.dataset.themeBtn)            playUiSound("select");
+      else if (btn.classList.contains("extra-theme-btn"))      playUiSound("select");
+      else if (btn.dataset && btn.dataset.lang)                playUiSound("click");
+      else                                                     playUiSound("click");
+      return;
+    }
+    /* Checkbox toggle (incl. our toggle-switch UI) */
+    var cb = (t.tagName === "INPUT" && t.type === "checkbox") ? t : null;
+    if (cb) { playUiSound("click"); return; }
+  });
+  /* Native <select> change events — separate listener (change, not click,
+     because users can choose with the keyboard too) */
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.tagName === "SELECT") playUiSound("click");
+  });
   /* Gate the existing beepDone through the sound toggle */
   var originalPlaySingleChime = playSingleChime;
   playSingleChime = function () {
@@ -2885,7 +3016,7 @@
       out += pool.charAt(idx);
     }
     passgenOutputEl.value = out;
-    playUiSound("success");
+    playUiSound("confirm");   /* v5.26.0: confirm = 3-note ascending */
   }
   passgenLenEl.addEventListener("input", function () {
     passgenLenValueEl.textContent = passgenLenEl.value;
@@ -2946,7 +3077,7 @@
     "переход эффект градиент тень тип размер вес жирный курсив подчёркнутый").split(" ");
   var currentLoremLang = "lat";
   function generateLorem() {
-    var count = Math.max(1, Math.min(20, parseInt(loremCountEl.value, 10) || 3));
+    var count = Math.max(1, Math.min(50, parseInt(loremCountEl.value, 10) || 3));
     var words = currentLoremLang === "rus" ? LOREM_RUS_WORDS : LOREM_LAT_WORDS;
     var paragraphs = [];
     for (var p = 0; p < count; p++) {
@@ -3065,6 +3196,7 @@
   function emojiRain(emoji, count) {
     var ch = emoji || "🍌";
     var n = count || 25;
+    playUiSound("pop");   /* v5.26.0: pop sound on rain trigger */
     for (var i = 0; i < n; i++) {
       (function (i) {
         var b = document.createElement("div");
