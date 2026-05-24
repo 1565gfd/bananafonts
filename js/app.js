@@ -356,7 +356,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.16.4";
+  var VERSION = "v5.16.7";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1678,10 +1678,12 @@
     return swAccumulated;
   }
   function stopwatchTick() {
+    /* Guard against in-flight rAF callbacks firing after Reset/Pause.
+       cancelAnimationFrame() doesn't synchronously abort a callback that
+       was already queued for this frame — we must early-return ourselves. */
+    if (swState !== "running") return;
     stopwatchDisplay.textContent = formatStopwatch(stopwatchElapsed());
-    if (swState === "running") {
-      swRafId = requestAnimationFrame(stopwatchTick);
-    }
+    swRafId = requestAnimationFrame(stopwatchTick);
   }
   function refreshStopwatchButtonLabels() {
     var t = TEXT[currentLang];
@@ -1853,6 +1855,10 @@
     setTimeout(function () { timerDisplayEl.classList.remove("timer-done"); }, 3500);
   }
   function timerTick() {
+    /* Guard against in-flight rAF / setInterval callbacks firing after
+       Reset/Pause. cancelAnimationFrame/clearInterval don't synchronously
+       abort a callback already queued for this frame — early-return. */
+    if (tmState !== "running") return;
     var remain = tmEndAt - performance.now();
     if (remain <= 0) {
       timerFinish();
@@ -1860,7 +1866,7 @@
     }
     tmRemainingMs = remain;
     timerDisplayEl.textContent = formatTimer(remain);
-    if (timerShowMs && tmState === "running") {
+    if (timerShowMs) {
       tmRafId = requestAnimationFrame(timerTick);
     }
   }
@@ -2003,12 +2009,18 @@
     }
   } catch (e) {}
   applyMsVisibility();
-  /* Keep the display in sync with the input fields while idle */
+  /* Keep the display in sync with the input fields while idle.
+     v5.16.6: don't blink the display to 00:00 while the user is editing
+     and any input is momentarily empty. Once they type a valid number,
+     the display updates. */
   function timerInputsChanged() {
-    if (tmState === "idle") {
-      var ms = readTimerInputs();
-      timerDisplayEl.textContent = formatTimer(ms === null ? 0 : ms);
-    }
+    if (tmState !== "idle") return;
+    /* If any required input is empty (mid-edit), leave the display alone. */
+    if (timerMinEl.value === "" || timerSecEl.value === "") return;
+    if (timerShowMs && timerMsEl.value === "") return;
+    var ms = readTimerInputs();
+    if (ms === null) return;   /* invalid — don't paint 00:00 either */
+    timerDisplayEl.textContent = formatTimer(ms);
   }
   timerStartBtn.addEventListener("click", timerToggle);
   timerResetBtn.addEventListener("click", timerReset);
@@ -2184,7 +2196,12 @@
 
   function saveAlarm() {
     try {
-      if (alarmState.tzId) {
+      /* v5.16.7: persist ONLY when actively armed (target > 0). Otherwise
+         remove from localStorage so the alarm doesn't auto-revive on
+         reload after firing or cancelling. Previously fireAlarm() kept
+         the alarm in storage (because tzId stays set for UI continuity),
+         which made reload re-arm it for the next day — surprising. */
+      if (alarmState.tzId && alarmState.target > 0) {
         localStorage.setItem("bananafont:alarm", JSON.stringify({
           tzId: alarmState.tzId, hh: alarmState.hh, mm: alarmState.mm
         }));
