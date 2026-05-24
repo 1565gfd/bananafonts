@@ -22,11 +22,22 @@
       themeLight: "Светлая",
       themeDark: "Тёмная",
       themeNight: "Ночная",
+      themeRainbow: "Радужная",
+      themeSchool: "Школа",
       ttUniversal: "🇷🇺 🇬🇧 Поддерживает кириллицу и латиницу",
       ttUnicode: "🇬🇧 Только латиница и цифры. В Telegram Desktop Windows может не работать (нормализация Unicode)",
       ttCombining: "🇷🇺 🇬🇧 Подчёркнутый/зачёркнутый — работает везде, включая Telegram Desktop Windows и кириллицу",
       tabHome: "Главная",
       tabFonts: "Шрифты",
+      tabSecret: "Секретные коды",
+      secretTitle: "Секретные коды",
+      secretIntro: "Введите специальный код, чтобы открыть скрытое сообщение.",
+      secretLabel: "Код",
+      secretPlaceholder: "Введите код...",
+      secretSubmit: "Проверить",
+      secretError: "Неверный код",
+      secretEmpty: "Сначала введите код",
+      secretSchoolUnlocked: "Тема школы активирована 🏫",
       tabSettings: "Настройки",
       homeTitle: "Banana",
       homeIntro: "Помогающий сайт: инструменты для текста, шрифты для Word, Unicode-стили для Telegram и Discord.",
@@ -89,11 +100,22 @@
       themeLight: "Light",
       themeDark: "Dark",
       themeNight: "Night",
+      themeRainbow: "Rainbow",
+      themeSchool: "School",
       ttUniversal: "🇷🇺 🇬🇧 Supports Cyrillic and Latin",
       ttUnicode: "🇬🇧 Latin and digits only. May not work in Telegram Desktop Windows (Unicode normalization)",
       ttCombining: "🇷🇺 🇬🇧 Underline/strikethrough — works everywhere including Telegram Desktop Windows and Cyrillic",
       tabHome: "Home",
       tabFonts: "Fonts",
+      tabSecret: "Secret codes",
+      secretTitle: "Secret codes",
+      secretIntro: "Enter a special code to unlock a hidden message.",
+      secretLabel: "Code",
+      secretPlaceholder: "Enter code...",
+      secretSubmit: "Submit",
+      secretError: "Wrong code",
+      secretEmpty: "Enter a code first",
+      secretSchoolUnlocked: "School theme unlocked 🏫",
       tabSettings: "Settings",
       homeTitle: "Banana",
       homeIntro: "A helper site: text tools, fonts for Word, Unicode styles for Telegram and Discord.",
@@ -224,7 +246,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.4.1";
+  var VERSION = "v5.8.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -278,6 +300,15 @@
   var tabBtnFonts       = document.getElementById("tab-btn-fonts");
   var tabBtnSettings    = document.getElementById("tab-btn-settings");
   var tabBtnCalc        = document.getElementById("tab-btn-calc");
+  var tabBtnSecret      = document.getElementById("tab-btn-secret");
+  /* Secret tab refs */
+  var secretTitleEl     = document.getElementById("secret-title");
+  var secretIntroEl     = document.getElementById("secret-intro");
+  var secretLabelEl     = document.getElementById("secret-label");
+  var secretInputEl     = document.getElementById("secret-input");
+  var secretSubmitEl    = document.getElementById("secret-submit");
+  var secretFeedbackEl  = document.getElementById("secret-feedback");
+  var secretResultEl    = document.getElementById("secret-result");
   /* Calculator refs */
   var calcTitleEl       = document.getElementById("calc-title");
   var calcModeBtns      = document.querySelectorAll(".calc-mode-btn");
@@ -298,10 +329,9 @@
   /* --------- state --------- */
   var currentIdx = 0;
   var currentLang = "en";
+  var VALID_THEMES = ["light", "dark", "night", "rainbow", "school"];
   var currentTheme = document.documentElement.dataset.theme || "dark";
-  if (currentTheme !== "light" && currentTheme !== "dark" && currentTheme !== "night") {
-    currentTheme = "dark";
-  }
+  if (VALID_THEMES.indexOf(currentTheme) === -1) currentTheme = "dark";
 
   /* --------- language --------- */
   function readSavedLang() {
@@ -342,17 +372,30 @@
       t.footerSuffix +
       " · " +
       VERSION;
+    var THEME_LABEL_KEYS = {
+      light: "themeLight",
+      dark: "themeDark",
+      night: "themeNight",
+      rainbow: "themeRainbow",
+      school: "themeSchool"
+    };
     for (var j = 0; j < themeButtons.length; j++) {
       var btn = themeButtons[j];
       var key = btn.dataset.themeBtn;
-      btn.textContent = key === "light" ? t.themeLight :
-                        key === "night" ? t.themeNight : t.themeDark;
+      btn.textContent = t[THEME_LABEL_KEYS[key]] || key;
     }
     /* Tab labels and Settings panel content */
     tabBtnHome.textContent        = t.tabHome;
     tabBtnFonts.textContent       = t.tabFonts;
     tabBtnCalc.textContent        = t.tabCalc;
+    tabBtnSecret.textContent      = t.tabSecret;
     tabBtnSettings.textContent    = t.tabSettings;
+    /* Secret tab labels */
+    secretTitleEl.textContent     = t.secretTitle;
+    secretIntroEl.textContent     = t.secretIntro;
+    secretLabelEl.textContent     = t.secretLabel;
+    secretInputEl.placeholder     = t.secretPlaceholder;
+    secretSubmitEl.textContent    = t.secretSubmit;
     /* Calculator labels */
     calcTitleEl.textContent       = t.calcTitle;
     calcModeBtns[0].textContent   = t.calcModeBasic;
@@ -435,7 +478,13 @@
   }
 
   /* --------- theme --------- */
-  var THEME_COLORS = { light: "#eef2ff", dark: "#161b3a", night: "#000000" };
+  var THEME_COLORS = {
+    light:   "#eef2ff",
+    dark:    "#161b3a",
+    night:   "#000000",
+    rainbow: "#6a5cff",
+    school:  "#ff006e"
+  };
   var themeTransitionTimer = null;
 
   function setMobileBarColor(theme) {
@@ -1137,17 +1186,119 @@
   unitsFromVal.addEventListener("input", convertUnits);
 
   /* ============================================================
+     SECRET CODES TAB
+     Each code is an object { message, action? }.
+       message — string shown in the result card (or function returning string)
+       action  — optional function fired after the card is shown
+     Easy to extend: add new { "CODE": { message, action } } entries.
+     ============================================================ */
+  var SECRET_CODES = {
+    "ILOVELIBSCHOOL": {
+      message: "Виталий лучший"
+    },
+    "LIBERATEDSCHOOL": {
+      /* Message is computed from TEXT at call time so it follows the
+         current language. Returned as function. */
+      message: function () { return TEXT[currentLang].secretSchoolUnlocked; },
+      action: function () { setTheme("school"); }
+    }
+  };
+
+  function showSecretFeedback(text, isError) {
+    secretFeedbackEl.textContent = text;
+    secretFeedbackEl.classList.toggle("error", !!isError);
+    secretFeedbackEl.style.opacity = text ? "1" : "0";
+  }
+
+  function showSecretMessage(msg) {
+    /* Replace previous message so animation re-fires */
+    secretResultEl.innerHTML = "";
+    var card = document.createElement("div");
+    card.className = "secret-message";
+    /* Text in its own span so the absolutely-positioned close button
+       does not overlap the text. */
+    var textSpan = document.createElement("span");
+    textSpan.className = "secret-message-text";
+    textSpan.textContent = msg;
+    card.appendChild(textSpan);
+    /* Close button (×) — removes the message from view */
+    var closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "secret-close";
+    closeBtn.setAttribute("aria-label", "Close");
+    closeBtn.textContent = "×";
+    closeBtn.addEventListener("click", function () {
+      secretResultEl.innerHTML = "";
+    });
+    card.appendChild(closeBtn);
+    secretResultEl.appendChild(card);
+    /* Celebration: heart rain + rainbow flash */
+    if (typeof emojiRain === "function") emojiRain("❤️", 24);
+    triggerRainbow();
+  }
+
+  /* Short rainbow hue-rotate sweep on <html>. Cleans up after itself.
+     Respects prefers-reduced-motion. */
+  var rainbowTimer = null;
+  function triggerRainbow() {
+    var html = document.documentElement;
+    if (prefersReducedMotion) return;
+    if (rainbowTimer) clearTimeout(rainbowTimer);
+    html.classList.add("rainbow-active");
+    rainbowTimer = setTimeout(function () {
+      html.classList.remove("rainbow-active");
+      rainbowTimer = null;
+    }, 3000);
+  }
+
+  function checkSecretCode() {
+    var raw = (secretInputEl.value || "").trim();
+    if (!raw) {
+      showSecretFeedback(TEXT[currentLang].secretEmpty, true);
+      return;
+    }
+    var code = raw.toUpperCase();
+    if (Object.prototype.hasOwnProperty.call(SECRET_CODES, code)) {
+      var entry = SECRET_CODES[code];
+      var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
+      showSecretFeedback("", false);
+      showSecretMessage(msg);
+      if (typeof entry.action === "function") {
+        try { entry.action(); } catch (e) {}
+      }
+    } else {
+      showSecretFeedback(TEXT[currentLang].secretError, true);
+    }
+  }
+
+  secretSubmitEl.addEventListener("click", checkSecretCode);
+  secretInputEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      checkSecretCode();
+    }
+  });
+  /* Clear stale error feedback as soon as the user starts typing again */
+  secretInputEl.addEventListener("input", function () {
+    if (secretFeedbackEl.classList.contains("error")) {
+      showSecretFeedback("", false);
+    }
+  });
+
+  /* ============================================================
      EASTER EGGS — hidden features for the curious.
      Not mentioned in UI. Let the user discover them.
      ============================================================ */
 
-  /* 🍌 Banana rain — drop emoji from the top with random spread + spin */
-  function bananaRain(count) {
+  /* Generic emoji rain — drop any emoji from the top with random
+     spread, size, rotation. Default emoji: 🍌. */
+  function emojiRain(emoji, count) {
+    var ch = emoji || "🍌";
     var n = count || 25;
     for (var i = 0; i < n; i++) {
       (function (i) {
         var b = document.createElement("div");
-        b.textContent = "🍌";
+        b.textContent = ch;
         b.style.position = "fixed";
         b.style.top = "-60px";
         b.style.left = (Math.random() * 100) + "vw";
@@ -1166,6 +1317,8 @@
       })(i);
     }
   }
+  /* Backward-compat alias — old code & dev console keep working */
+  function bananaRain(count) { emojiRain("🍌", count); }
 
   /* 🎨 Console banner — greet developers who open DevTools */
   try {
@@ -1180,11 +1333,16 @@
     console.log("%c  · Konami code: ↑↑↓↓←→←→BA", hintStyle);
     console.log("%c  · Click on \"banana.team\" in the footer 5 times", hintStyle);
     console.log("%c  · Type \"banana\" anywhere in the Home tab textarea", hintStyle);
-    console.log("%c  · bananaRain() — try it!", hintStyle);
+    console.log("%c  · bananaRain() / emojiRain(\"❤️\", 30) — try it!", hintStyle);
+    console.log("%c  · Secret-codes tab: hidden code hides in plain sight 🔎", hintStyle);
+    console.log("%c    (try View Source ⌘+U  or  Select-All ⌘+A then paste)", hintStyle);
   } catch (e) {}
 
-  /* Expose bananaRain on window so devs can call it from console */
-  try { window.bananaRain = bananaRain; } catch (e) {}
+  /* Expose helpers on window so devs can call them from console */
+  try {
+    window.bananaRain = bananaRain;
+    window.emojiRain  = emojiRain;
+  } catch (e) {}
 
   /* 🍌 Click footer 5 times → banana rain */
   var footerClickCount = 0;

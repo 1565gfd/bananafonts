@@ -100,6 +100,122 @@
   --nf-code-gradient: linear-gradient(180deg, #6a5cff 0%, #b8b0ff 100%);
 }
 
+/* ──────── Rainbow theme — true ROYGBIV with prismatic shimmer overlay
+            (v5.8.0 redesign). Two stacked linear-gradients at near-opposite
+            angles. The top layer is a semi-transparent prism that scrolls
+            COUNTER to the base layer — produces a diagonal shimmer that
+            reads as "rainbow" (not "psychedelic"). The base is a clean
+            ROYGBIV: red→orange→yellow→green→cyan→blue→violet. ──────── */
+[data-theme="rainbow"] {
+  color-scheme: dark;
+  --bg-gradient:
+    /* Top: prismatic shimmer overlay (counter-scrolls in animation) */
+    linear-gradient(60deg,
+      hsla(330, 100%, 70%, 0.45)  0%,
+      hsla( 30, 100%, 65%, 0.40) 25%,
+      hsla(120, 100%, 65%, 0.40) 50%,
+      hsla(210, 100%, 70%, 0.40) 75%,
+      hsla(300, 100%, 70%, 0.45) 100%),
+    /* Base: clean ROYGBIV rainbow */
+    linear-gradient(135deg,
+      #ff1744   0%,   /* red    */
+      #ff7a00  16%,   /* orange */
+      #ffe300  33%,   /* yellow */
+      #00e676  50%,   /* green  */
+      #00b8ff  66%,   /* cyan   */
+      #2962ff  83%,   /* blue   */
+      #aa00ff 100%);  /* violet */
+
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --text-soft: rgba(255, 255, 255, 0.92);
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+
+  --glass-bg: rgba(255, 255, 255, 0.16);
+  --glass-bg-hover: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-soft: rgba(255, 255, 255, 0.3);
+  --glass-inset: rgba(255, 255, 255, 0.5);
+  --glass-inset-soft: rgba(255, 255, 255, 0.15);
+
+  --output-bg: rgba(0, 0, 0, 0.35);
+  --output-border: rgba(255, 255, 255, 0.25);
+  --output-inset-bottom: rgba(0, 0, 0, 0.25);
+
+  --accent: #ffffff;
+  --accent-bg: rgba(255, 255, 255, 0.5);
+  --accent-border: rgba(255, 255, 255, 0.85);
+  --accent-glow: rgba(255, 255, 255, 0.6);
+
+  --copy-bg: rgba(255, 255, 255, 0.4);
+  --copy-bg-hover: rgba(255, 255, 255, 0.55);
+  --copy-border: rgba(255, 255, 255, 0.7);
+  --copy-border-hover: rgba(255, 255, 255, 0.95);
+  --copied-bg: rgba(80, 220, 130, 0.6);
+  --copied-border: rgba(120, 240, 160, 0.85);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+
+  --link: #ffffff;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+  --nf-bg: linear-gradient(135deg,
+      hsl(0, 75%, 55%)   0%,
+      hsl(140, 60%, 45%) 50%,
+      hsl(245, 70%, 55%) 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffffff 0%, #ffe680 100%);
+}
+
+/* ──────── School theme — psychedelic flowing colors (unlocked via
+            secret code LIBERATEDSCHOOL). Same vibe as the "Виталий
+            лучший" reveal: hot pink → orange → violet → magenta. ──────── */
+[data-theme="school"] {
+  color-scheme: dark;
+  --bg-gradient: linear-gradient(135deg,
+    #ff006e   0%,
+    #ff5e00  16%,
+    #ffbe0b  32%,
+    #8338ec  50%,
+    #3a86ff  66%,
+    #c200fb  82%,
+    #ff006e 100%);
+
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.62);
+  --text-soft: rgba(255, 255, 255, 0.92);
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+
+  --glass-bg: rgba(255, 255, 255, 0.18);
+  --glass-bg-hover: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-soft: rgba(255, 255, 255, 0.28);
+  --glass-inset: rgba(255, 255, 255, 0.5);
+  --glass-inset-soft: rgba(255, 255, 255, 0.16);
+
+  --output-bg: rgba(0, 0, 0, 0.4);
+  --output-border: rgba(255, 255, 255, 0.3);
+  --output-inset-bottom: rgba(0, 0, 0, 0.25);
+
+  --accent: #ffffff;
+  --accent-bg: rgba(255, 0, 110, 0.85);
+  --accent-border: rgba(255, 80, 160, 1);
+  --accent-glow: rgba(255, 0, 110, 0.6);
+
+  --copy-bg: rgba(255, 0, 110, 0.85);
+  --copy-bg-hover: rgba(255, 60, 140, 0.95);
+  --copy-border: rgba(255, 80, 160, 1);
+  --copy-border-hover: rgba(255, 120, 180, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+
+  --link: #ffffff;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+  --nf-bg: linear-gradient(135deg,
+    #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffffff 0%, #ffe680 100%);
+}
+
 [data-theme="night"] {
   color-scheme: dark;
   --bg-gradient:
@@ -353,6 +469,21 @@ html.theme-transition *::after {
     linear-gradient(135deg, #000000 0%, #1a0f00 100%);
   border-color: rgba(255, 157, 68, 0.5);
 }
+
+.theme-switch button[data-theme-btn="rainbow"]::before {
+  background: conic-gradient(from 0deg,
+    #ff3b3b, #ff9933, #ffe53b, #58d24a, #34c9ff, #5a4ddc, #c85cff, #ff3b3b);
+  border-color: rgba(255, 255, 255, 0.6);
+  animation: swatchSpin 6s linear infinite;
+}
+
+@keyframes swatchSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* School theme has NO button — unlocked via secret code LIBERATEDSCHOOL.
+   No swatch needed; the psychedelic animated background itself is the
+   visual indicator that the theme is active (no logo as of v5.7.2). */
 
 .theme-switch button:hover,
 .lang-switch button:hover {
@@ -720,6 +851,161 @@ html.theme-transition *::after {
 
 .settings-about a:hover {
   text-decoration: underline;
+}
+
+/* Off-screen hidden hint for the secret-code seeker.
+   Stays in normal text flow so Ctrl+A / Ctrl+C captures it,
+   but is positioned far off-canvas so it's never seen on screen.
+   Do NOT use display:none — that excludes it from selection too. */
+.hidden-hint {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ============================================================
+   Secret codes tab
+   ============================================================ */
+
+.secret-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.secret-row #secret-input {
+  flex: 1;
+  min-width: 180px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.secret-row #secret-submit {
+  flex: 0 0 auto;
+}
+
+.secret-feedback {
+  margin-top: 10px;
+  min-height: 22px;
+  font-size: 14px;
+  color: var(--text-soft);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.secret-feedback.error {
+  color: #ff5566;
+  opacity: 1;
+}
+
+.secret-result {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.secret-message {
+  position: relative;
+  display: inline-block;
+  padding: 28px 56px 28px 46px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6a5cff 0%, #ff9d44 100%);
+  color: #ffffff;
+  font-size: 44px;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(106, 92, 255, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+  word-break: break-word;
+  animation: secretReveal 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.secret-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.12s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.secret-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.secret-close:active {
+  transform: scale(0.9);
+}
+
+/* Rainbow effect — short hue-rotate sweep on <html> when secret code matches */
+@keyframes rainbowSweep {
+  0%   { filter: hue-rotate(0deg) saturate(1.25); }
+  50%  { filter: hue-rotate(180deg) saturate(1.4); }
+  100% { filter: hue-rotate(360deg) saturate(1.25); }
+}
+
+html.rainbow-active {
+  animation: rainbowSweep 3s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.rainbow-active {
+    animation: none;
+  }
+}
+
+@keyframes secretReveal {
+  0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60%  { transform: scale(1.08) rotate(8deg); opacity: 1; }
+  80%  { transform: scale(0.96) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .secret-message {
+    font-size: 30px;
+    padding: 20px 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .secret-message {
+    font-size: 24px;
+    padding: 16px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secret-message {
+    animation: none;
+  }
 }
 
 /* ============================================================
@@ -1522,4 +1808,78 @@ footer a:hover {
   [data-theme="night"] .theme-switch button:not(.active) {
     background: rgba(40, 30, 15, 0.95);
   }
+  [data-theme="rainbow"] .app,
+  [data-theme="rainbow"] textarea,
+  [data-theme="rainbow"] .not-found-card {
+    background: rgba(40, 40, 60, 0.92);
+  }
+  [data-theme="rainbow"] .output {
+    background: rgba(0, 0, 0, 0.55);
+  }
+  [data-theme="rainbow"] .fonts button:not(.active),
+  [data-theme="rainbow"] .lang-switch button:not(.active),
+  [data-theme="rainbow"] .theme-switch button:not(.active) {
+    background: rgba(60, 60, 90, 0.9);
+  }
+  [data-theme="school"] .app,
+  [data-theme="school"] textarea,
+  [data-theme="school"] .not-found-card {
+    background: rgba(15, 35, 60, 0.96);
+  }
+  [data-theme="school"] .output {
+    background: rgba(0, 10, 25, 0.95);
+  }
+  [data-theme="school"] .fonts button:not(.active),
+  [data-theme="school"] .lang-switch button:not(.active),
+  [data-theme="school"] .theme-switch button:not(.active) {
+    background: rgba(25, 55, 90, 0.92);
+  }
 }
+
+/* ──────── Flowing colors animations ──────── */
+
+/* Rainbow: TWO layers (overlay + base) scroll in OPPOSITE directions for
+   a diagonal prismatic shimmer. Background-size has two values to match
+   the two gradient layers; positions in the keyframe are paired the same
+   way (overlay-pos, base-pos). Slightly faster than v5.7 (12s) so the
+   shimmer reads as "rainbow flowing", not stale. */
+[data-theme="rainbow"] body {
+  background-size: 360% 360%, 300% 300%;
+  animation: rainbowFlow 12s linear infinite;
+}
+
+@keyframes rainbowFlow {
+  0%   { background-position: 100%   0%,   0% 100%; }
+  50%  { background-position:   0% 100%, 100%   0%; }
+  100% { background-position: 100%   0%,   0% 100%; }
+}
+
+/* School: single-layer psychedelic flow — kept as it was in v5.7.1 (the
+   user explicitly asked to leave school alone in v5.8.0). Faster (10s)
+   for extra psychedelic vibe. */
+[data-theme="school"] body {
+  background-size: 300% 300%;
+  animation: schoolFlow 10s linear infinite;
+}
+
+@keyframes schoolFlow {
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+
+/* Honor user preference — don't animate if reduced motion is set */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="rainbow"] body,
+  [data-theme="school"] body {
+    animation: none;
+  }
+  .theme-switch button[data-theme-btn="rainbow"]::before {
+    animation: none;
+  }
+}
+
+/* The school-theme logo was intentionally removed in v5.7.2 at user
+   request ("лого убери так уж и быть") after multiple failed SVG
+   reproduction attempts. The psychedelic gradient background is the
+   only visual indicator that school theme is active. */

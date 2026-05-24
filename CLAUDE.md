@@ -140,6 +140,11 @@ v5.3.0 → v5.3.1 PATCH").
 
 | Версия | Что |
 |--------|-----|
+| v5.8.x | **Rainbow redesign**: чистый ROYGBIV base (red→orange→yellow→green→cyan→blue→violet) + prismatic shimmer overlay (60deg) который скроллится в **противоположную** сторону от base (135deg). Двухслойная animation `rainbowFlow` (12s, 2 background-size, парные positions). School не трогали — у него теперь **отдельный** keyframe `schoolFlow`. |
+| v5.7.x | **Psychedelic** School theme (v5.7.1 redesign из navy/gold); анимированный flowing gradient (10s, быстрее rainbow). Логотип школы добавлен в v5.7.1 и удалён в v5.7.2 — больше не пытайся его рисовать. |
+| v5.6.x | Rainbow theme (анимированная, 14s flowing gradient, 8 hue-stops); first cut School темы (navy/gold) |
+| v5.5.x | Secret Codes tab + `ILOVELIBSCHOOL` → «Виталий лучший»; код `LIBERATEDSCHOOL` разблокирует school-тему; universal emoji rain; скрытые подсказки кода |
+| v5.4.x | Скрытые приколы (console banner, Konami code, banana rain, type "banana"); 404 → auto-teleport на главную |
 | v5.3.x | Line operations (sort/dedupe/remove empty) |
 | v5.2.x | Combining-стили (Underline/Strike) для Telegram Desktop Windows; light theme active contrast fix |
 | v5.1.x | Калькулятор: Базовый/Геометрия/Единицы; флаги на кнопках шрифтов; drag-fix |
@@ -152,6 +157,143 @@ v5.3.0 → v5.3.1 PATCH").
 | v3.0.0 | **Миграция Next.js → pure static** (главное архитектурное изменение) |
 | v2.x   | Next.js + middleware (deprecated, падал на Vercel) |
 | v1.x   | Изначальная простая версия |
+
+## Вкладка «Секретные коды» (v5.5.x)
+
+Пятая видимая вкладка, **ВСЕГДА последняя** в навигации и в DOM
+(после Settings). Есть HTML-комментарии в обоих местах напоминающие
+не переставлять. Имеет:
+- `<input id="secret-input">` (uppercase via CSS `text-transform`)
+- Кнопку «Проверить»
+- Feedback line (error red)
+- Result block с большой надписью при правильном коде, **с крестиком
+  × для закрытия** (button.secret-close в углу карточки)
+
+Placeholder в input **намеренно generic** ("Введите код..." / "Enter
+code...") — НЕ ставить туда пример кода, это спойлер!
+
+JS: словарь `SECRET_CODES` (ключи в UPPERCASE, значения — текст
+сообщения). При совпадении: показывает `.secret-message` карточку с
+gradient background и `secretReveal` keyframe-анимацией + **heart rain
+24 штуки** (❤️ через `emojiRain("❤️", 24)`) + **rainbow sweep**
+(класс `html.rainbow-active` на 3 сек, hue-rotate 0°→360°).
+
+Текущие коды:
+- `ILOVELIBSCHOOL` → "Виталий лучший"
+
+Чтобы добавить новый код — просто `SECRET_CODES["NEW_CODE"] = "Text";`
+ничего больше не нужно.
+
+Сравнение **case-insensitive** (input приводится к UPPERCASE через
+`.toUpperCase()`). Пробелы по краям trim'аются.
+
+Enter в input — то же что клик «Проверить». При начале ввода после
+ошибки feedback автоматически очищается.
+
+## 2 новые темы: Rainbow + School (v5.6.0 / v5.7.0)
+
+**5 тем** в `VALID_THEMES`: light / dark / night / **rainbow** / **school**.
+
+В UI **4 видимые кнопки**: light / dark / night / **rainbow**.
+**School намеренно не имеет кнопки** — это **секретная тема**,
+разблокируется только вводом кода `LIBERATEDSCHOOL` в вкладке
+«Секретные коды». После активации сохраняется в localStorage; работает
+как полноценная тема. См. ниже раздел про SECRET_CODES.
+
+- **Rainbow** (v5.8.0 redesign) — **двухслойная** анимированная тема.
+  Base — чистый ROYGBIV linear-gradient 135deg (#ff1744 red → #ff7a00
+  orange → #ffe300 yellow → #00e676 green → #00b8ff cyan → #2962ff
+  blue → #aa00ff violet). Сверху — prismatic shimmer overlay 60deg
+  (5 hsla стопов на ~45% alpha). Keyframe `rainbowFlow` 12s linear —
+  два layer'а скроллятся в **противоположных** направлениях, что даёт
+  диагональный prism shimmer (читается как «радуга», а не как
+  «психоделика»). `background-size: 360% 360%, 300% 300%` (две пары —
+  по числу gradient-слоёв). Conic-swatch на кнопке крутится 6s linear.
+  Уважает `prefers-reduced-motion: reduce` — обе анимации выключаются.
+- **School** — **psychedelic** тема (v5.7.1 redesign): тот же
+  визуальный язык что и reveal-эффект «Виталий лучший». Фон —
+  flowing linear-gradient через hot pink → orange → yellow → violet →
+  blue → magenta (7 stops с возвратом на #ff006e). С v5.8.0 у школы
+  **собственный keyframe `schoolFlow`** (10s linear, single-layer
+  horizontal scroll), отдельный от rainbow — это чтобы редизайн
+  rainbow не задел школу. Accent — pink `#ff006e`. Text белый.
+  Glass более яркий (rgba(255,255,255,0.18)). НЕТ кнопки в
+  навигации — только через секретный код `LIBERATEDSCHOOL`.
+
+**Логотип школы был удалён в v5.7.2** по просьбе пользователя
+(«лого убери так уж и быть») после нескольких неудачных попыток
+воспроизвести исходное изображение SVG-ом. **Не добавляй сюда
+никакого логотипа** обратно, пока пользователь явно не попросит.
+Психоделический анимированный фон + pink accent — единственный
+визуальный индикатор того, что school-тема активна.
+
+При добавлении новой темы — обнови:
+1. `VALID_THEMES` массив в JS
+2. `VALID` в anti-FOUC скриптах **обоих** HTML-файлов
+3. `THEME_COLORS` map (для динамического meta theme-color)
+4. `THEME_LABEL_KEYS` map (для labels в applyLang)
+5. локализацию в `TEXT.ru` и `TEXT.en`
+6. CSS variables block (`[data-theme="..."] {...}`)
+7. (если есть UI button) swatch CSS
+
+## Секретные коды (v5.7.0 redesign)
+
+`SECRET_CODES` теперь словарь **объектов** `{ message, action? }`:
+
+```js
+var SECRET_CODES = {
+  "ILOVELIBSCHOOL": { message: "Виталий лучший" },
+  "LIBERATEDSCHOOL": {
+    message: function () { return TEXT[currentLang].secretSchoolUnlocked; },
+    action:  function () { setTheme("school"); }
+  }
+};
+```
+
+- `message` — строка ИЛИ функция возвращающая строку (используется когда
+  текст зависит от языка / runtime state).
+- `action` — необязательная функция вызываемая ПОСЛЕ показа карточки.
+  Используется для side-effects вроде смены темы.
+
+Добавить новый код = одна запись. Если message зависит от языка —
+делай function. Если action имеет смысл — добавляй action.
+
+LIBERATEDSCHOOL — **не подсказан** ни в `hidden-hint` span, ни в HTML
+comment, ни в console. Любопытные сами догадаются (название школы
+очевидно после reveal `ILOVELIBSCHOOL`).
+
+## Скрытые подсказки кода (v5.5.2)
+
+В сайте намеренно спрятаны **2 подсказки** к коду `ILOVELIBSCHOOL`,
+для разных типов «искателей секретов»:
+
+1. **HTML-комментарий в `<head>`** (`index.html` сразу после `<meta charset>`).
+   Содержит явный rebus-намёк "Я. Люблю. Свою. Школу." / "I. Love. My. School.".
+   Findable через View Source (Ctrl+U).
+
+2. **Off-screen hidden span** `<span class="hidden-hint">` в `<body>`
+   (перед секцией tab-secret). Внутри — буквально `[ secret code hint:
+   ILOVELIBSCHOOL ]`. CSS-класс `.hidden-hint` использует
+   `position: absolute; left: -10000px; opacity: 0` — visually
+   невидимо, **но** остаётся в text-flow и `user-select: text`, поэтому
+   при Ctrl+A (select all) → Ctrl+C (copy) → paste в редактор пользователь
+   увидит лишний скрытый текст с подсказкой.
+   `aria-hidden="true"` чтобы screen readers не читали вслух.
+
+3. **Console banner** в `js/app.js` упоминает «Secret-codes tab: hidden
+   code hides in plain sight 🔎» с подсказкой про View Source / Select-All.
+
+Если будешь добавлять новые коды — добавь сюда соответствующий
+способ подсказки. **НЕ** удаляй существующие подсказки — это часть
+дизайна "скрытое в открытом доступе".
+
+## Universal emoji rain (v5.5.1)
+
+Функция `bananaRain` рефакторена в `emojiRain(emoji, count)` —
+generic. Старая `bananaRain(count)` оставлена как alias для backward
+compat (console и easter eggs всё ещё работают). Оба экспортированы
+в `window`. Используй `emojiRain("❤️", 30)` чтобы устроить heart rain
+из console.
 
 ## 404 → auto-teleport home (v5.4.1)
 

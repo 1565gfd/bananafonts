@@ -2,6 +2,16 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
+  <!--
+    ════════════════════════════════════════════════════════════════
+    🤫 Подсказка для тех, кто ищет секретный код:
+
+      Я. Люблю. Свою. Школу.
+      I . Love . My . School.
+
+      Дальше — догадайся сам(а). Введи догадку в последней вкладке.
+    ════════════════════════════════════════════════════════════════
+  -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#161b3a" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#eef2ff" media="(prefers-color-scheme: light)" />
@@ -26,9 +36,10 @@
        don't get a flash of wrong theme or language. */
     (function () {
       var root = document.documentElement;
+      var VALID = ["light", "dark", "night", "rainbow", "school"];
       try {
         var s = localStorage.getItem("bananafont:theme");
-        if (s === "light" || s === "dark" || s === "night") {
+        if (s && VALID.indexOf(s) !== -1) {
           root.dataset.theme = s;
         } else {
           var p = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
@@ -62,6 +73,12 @@
         <button type="button" data-theme-btn="light" aria-label="Light theme"></button>
         <button type="button" data-theme-btn="dark" aria-label="Dark theme"></button>
         <button type="button" data-theme-btn="night" aria-label="Night theme"></button>
+        <button type="button" data-theme-btn="rainbow" aria-label="Rainbow theme"></button>
+        <!-- School theme button is intentionally REMOVED.
+             School theme is unlocked only via the secret code LIBERATEDSCHOOL
+             in the "Секретные коды" tab. The theme is otherwise fully working
+             (in VALID_THEMES, in CSS, in setTheme) and persists in localStorage
+             once unlocked. -->
       </div>
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang="ru">RU</button>
@@ -74,6 +91,8 @@
       <button type="button" class="tab-btn" data-tab="fonts" role="tab" aria-selected="false" id="tab-btn-fonts"></button>
       <button type="button" class="tab-btn" data-tab="calc" role="tab" aria-selected="false" id="tab-btn-calc"></button>
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
+      <!-- Secret tab is always kept LAST. Do not reorder. -->
+      <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
     </nav>
 
     <section id="tab-home" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-home">
@@ -222,7 +241,40 @@
       </div>
     </section>
 
+    <!-- Secret tab section — always last in DOM order to match tab button order. -->
+    <section id="tab-secret" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-secret" hidden>
+      <h1 id="secret-title"></h1>
+      <p class="home-intro" id="secret-intro"></p>
+
+      <div class="tool-section">
+        <h3 id="secret-label"></h3>
+        <div class="secret-row">
+          <input type="text" id="secret-input" class="calc-input" placeholder="" autocomplete="off" spellcheck="false" />
+          <button type="button" id="secret-submit" class="tool-btn"></button>
+        </div>
+        <div id="secret-feedback" class="secret-feedback"></div>
+      </div>
+
+      <div id="secret-result" class="secret-result"></div>
+    </section>
+
     <footer id="footer"></footer>
+
+    <!-- NOTE: The school-theme logo SVG used to live here, but the user
+         asked to remove it after several failed attempts to reproduce
+         the source image faithfully ("лого убери так уж и быть" — v5.7.2).
+         The psychedelic background + accent palette is the only visual
+         indicator that the school theme is active. Do NOT re-add a logo
+         here unless the user explicitly requests it. -->
+
+    <!--
+      Off-screen invisible hint: lands in the clipboard when user
+      selects-all (Ctrl+A) and copies (Ctrl+C). Visually invisible
+      (opacity 0, far off the viewport), but a selectable text node
+      that stays in flow — so it ends up in the paste buffer.
+      aria-hidden so screen readers don't read it aloud.
+    -->
+    <span class="hidden-hint" aria-hidden="true">[ secret code hint: ILOVELIBSCHOOL ]</span>
   </main>
 
   <script src="/js/app.js" defer></script>
