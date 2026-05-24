@@ -38,6 +38,11 @@
       secretError: "Неверный код",
       secretEmpty: "Сначала введите код",
       secretSchoolUnlocked: "Тема школы активирована 🏫",
+      secretChips: "С возвращением из магазина! 🍟",
+      secretMatrix: "Wake up, Neo… 💊",
+      secret42: "Ответ на главный вопрос жизни, вселенной и всего такого 🌌",
+      secretParty: "Время веселья! 🎉🎊",
+      secretFlip: "Вверх тормашками 🙃",
       tabSettings: "Настройки",
       homeTitle: "Banana",
       homeIntro: "Помогающий сайт: инструменты для текста, шрифты для Word, Unicode-стили для Telegram и Discord.",
@@ -116,6 +121,11 @@
       secretError: "Wrong code",
       secretEmpty: "Enter a code first",
       secretSchoolUnlocked: "School theme unlocked 🏫",
+      secretChips: "Welcome back from the store! 🍟",
+      secretMatrix: "Wake up, Neo… 💊",
+      secret42: "The answer to life, the universe and everything 🌌",
+      secretParty: "Party time! 🎉🎊",
+      secretFlip: "Upside down 🙃",
       tabSettings: "Settings",
       homeTitle: "Banana",
       homeIntro: "A helper site: text tools, fonts for Word, Unicode styles for Telegram and Discord.",
@@ -246,7 +256,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.9.0";
+  var VERSION = "v5.10.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -1201,6 +1211,44 @@
          current language. Returned as function. */
       message: function () { return TEXT[currentLang].secretSchoolUnlocked; },
       action: function () { setTheme("school"); }
+    },
+
+    /* ── v5.10.0 chip-run pack — added while the author was at the
+          store buying chips. Five new codes for the curious. ── */
+
+    "ILOVECHIPS": {
+      message: function () { return TEXT[currentLang].secretChips; },
+      action:  function () { emojiRain("🍟", 60); }
+    },
+
+    "MATRIX": {
+      message: function () { return TEXT[currentLang].secretMatrix; },
+      action:  function () { matrixRain(); }
+    },
+
+    "42": {
+      /* The answer to life, the universe and everything (HHGTTG). */
+      message: function () { return TEXT[currentLang].secret42; },
+      action:  function () { triggerRainbow(); }
+    },
+
+    "PARTY": {
+      message: function () { return TEXT[currentLang].secretParty; },
+      action:  function () {
+        /* Stagger a few different emoji rains so the screen feels busy */
+        var partyEmojis = ["🎉", "🎊", "🥳", "🎈", "🎂", "✨"];
+        for (var i = 0; i < partyEmojis.length; i++) {
+          (function (e, idx) {
+            setTimeout(function () { emojiRain(e, 14); }, idx * 90);
+          })(partyEmojis[i], i);
+        }
+        triggerRainbow();
+      }
+    },
+
+    "FLIP": {
+      message: function () { return TEXT[currentLang].secretFlip; },
+      action:  function () { flipPage(); }
     }
   };
 
@@ -1320,6 +1368,74 @@
   /* Backward-compat alias — old code & dev console keep working */
   function bananaRain(count) { emojiRain("🍌", count); }
 
+  /* ── Matrix-style green character rain ── classic falling katakana +
+     latin glyphs in neon green for ~5 seconds, then fades and removes
+     itself. Respects prefers-reduced-motion by showing a 1.5s static
+     overlay instead of the full animation. */
+  function matrixRain() {
+    var canvas = document.createElement("canvas");
+    canvas.style.cssText = [
+      "position:fixed", "inset:0",
+      "width:100vw", "height:100vh",
+      "pointer-events:none",
+      "z-index:9998",
+      "opacity:0",
+      "transition:opacity 0.4s ease"
+    ].join(";");
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    requestAnimationFrame(function () { canvas.style.opacity = "1"; });
+
+    var chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHJKLMNPQRSTUVWXYZ0123456789".split("");
+    var fontSize = 16;
+    var columns = Math.max(1, Math.floor(canvas.width / fontSize));
+    var drops = new Array(columns);
+    for (var i = 0; i < columns; i++) drops[i] = Math.random() * -50;
+
+    var interval = setInterval(function () {
+      /* Translucent black overlay creates the fade-trail effect */
+      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff41";
+      ctx.font = fontSize + "px monospace";
+      for (var c = 0; c < drops.length; c++) {
+        var ch = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(ch, c * fontSize, drops[c] * fontSize);
+        if (drops[c] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[c] = 0;
+        }
+        drops[c]++;
+      }
+    }, prefersReducedMotion ? 999999 : 40);
+
+    var duration = prefersReducedMotion ? 1500 : 5500;
+    setTimeout(function () {
+      canvas.style.opacity = "0";
+      setTimeout(function () {
+        clearInterval(interval);
+        if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      }, 500);
+    }, duration);
+  }
+
+  /* ── Page flip ── rotates <html> 180° for ~3 seconds, then back.
+     Implemented in CSS via .page-flipped class so the transition is
+     hardware-accelerated. Respects prefers-reduced-motion (snaps
+     instantly with no transition). */
+  function flipPage() {
+    var html = document.documentElement;
+    if (html.classList.contains("page-flipped")) return; /* don't stack */
+    html.classList.add("page-flipped");
+    setTimeout(function () {
+      html.classList.remove("page-flipped");
+    }, 3000);
+  }
+
   /* 🎨 Console banner — greet developers who open DevTools */
   try {
     var bigStyle = "font-size: 36px; font-weight: 700; color: #ff9d44; " +
@@ -1334,7 +1450,8 @@
     console.log("%c  · Click on \"banana.team\" in the footer 5 times", hintStyle);
     console.log("%c  · Type \"banana\" anywhere in the Home tab textarea", hintStyle);
     console.log("%c  · bananaRain() / emojiRain(\"❤️\", 30) — try it!", hintStyle);
-    console.log("%c  · Secret-codes tab: hidden code hides in plain sight 🔎", hintStyle);
+    console.log("%c  · matrixRain() / flipPage() — visual easter eggs", hintStyle);
+    console.log("%c  · Secret-codes tab: 7 codes hidden in the site 🔎", hintStyle);
     console.log("%c    (try View Source ⌘+U  or  Select-All ⌘+A then paste)", hintStyle);
   } catch (e) {}
 
@@ -1342,6 +1459,8 @@
   try {
     window.bananaRain = bananaRain;
     window.emojiRain  = emojiRain;
+    window.matrixRain = matrixRain;
+    window.flipPage   = flipPage;
   } catch (e) {}
 
   /* 🍌 Click footer 5 times → banana rain */

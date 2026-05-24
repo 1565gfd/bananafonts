@@ -140,6 +140,7 @@ v5.3.0 → v5.3.1 PATCH").
 
 | Версия | Что |
 |--------|-----|
+| v5.10.x | **Chip-run pack**: +5 секретных кодов (`ILOVECHIPS`, `MATRIX`, `42`, `PARTY`, `FLIP`) → итого 7. Новые helper-функции: `matrixRain()` (canvas-оверлей с зелёными katakana 5 сек) и `flipPage()` (поворот html на 180° на 3 сек). Все коды локализованы (ru+en). Console banner обновлён. |
 | v5.9.x | **Темы swap**: rainbow получил psychedelic палитру «Виталий лучший» (hot pink → orange → yellow → violet → blue → magenta, 10s flowing); school возвращён в navy/gold реального сайта школы (#0f2c4a → #061528 base + gold accent #ffd54a) и снова **статичен** (без анимации). Conic-swatch на rainbow-кнопке теперь тоже psychedelic. Keyframe `schoolFlow` удалён. |
 | v5.8.x | Rainbow redesign в чистый ROYGBIV (отменён в v5.9.0 при swap'е). |
 | v5.7.x | School psychedelic experiment (v5.7.1 из navy/gold; v5.7.2 удалили логотип; **в v5.9.0 откатили палитру обратно к navy/gold**). |
@@ -234,31 +235,47 @@ Enter в input — то же что клик «Проверить». При на
 6. CSS variables block (`[data-theme="..."] {...}`)
 7. (если есть UI button) swatch CSS
 
-## Секретные коды (v5.7.0 redesign)
+## Секретные коды (v5.7.0 redesign, расширен в v5.10.0)
 
-`SECRET_CODES` теперь словарь **объектов** `{ message, action? }`:
-
-```js
-var SECRET_CODES = {
-  "ILOVELIBSCHOOL": { message: "Виталий лучший" },
-  "LIBERATEDSCHOOL": {
-    message: function () { return TEXT[currentLang].secretSchoolUnlocked; },
-    action:  function () { setTheme("school"); }
-  }
-};
-```
+`SECRET_CODES` — словарь **объектов** `{ message, action? }`:
 
 - `message` — строка ИЛИ функция возвращающая строку (используется когда
   текст зависит от языка / runtime state).
 - `action` — необязательная функция вызываемая ПОСЛЕ показа карточки.
-  Используется для side-effects вроде смены темы.
+  Используется для side-effects (смена темы, emoji rain, и т.д.).
 
 Добавить новый код = одна запись. Если message зависит от языка —
 делай function. Если action имеет смысл — добавляй action.
 
-LIBERATEDSCHOOL — **не подсказан** ни в `hidden-hint` span, ни в HTML
-comment, ни в console. Любопытные сами догадаются (название школы
-очевидно после reveal `ILOVELIBSCHOOL`).
+### Текущие коды (7)
+
+| Код | Сообщение | Side-effect | Подсказан? |
+|---|---|---|---|
+| `ILOVELIBSCHOOL` | «Виталий лучший» | — | да (3 подсказки) |
+| `LIBERATEDSCHOOL` | Тема школы активирована 🏫 | `setTheme("school")` — разблокирует navy/gold школьную тему | нет |
+| `ILOVECHIPS` | С возвращением из магазина! 🍟 | `emojiRain("🍟", 60)` | нет |
+| `MATRIX` | Wake up, Neo… 💊 | `matrixRain()` — canvas-оверлей с падающими зелёными katakana ~5 сек | нет |
+| `42` | Ответ на главный вопрос жизни 🌌 | `triggerRainbow()` — hue-rotate sweep 3 сек | нет |
+| `PARTY` | Время веселья! 🎉🎊 | 6 разных emoji rains подряд (`🎉🎊🥳🎈🎂✨`) + rainbow sweep | нет |
+| `FLIP` | Вверх тормашками 🙃 | `flipPage()` — html.page-flipped class, поворот 180° на 3 сек, потом обратно | нет |
+
+LIBERATEDSCHOOL и chip-run pack — **не подсказаны** ни в `hidden-hint`
+span, ни в HTML comment, ни в console. Любопытные сами догадаются
+(LIBERATEDSCHOOL очевиден после reveal `ILOVELIBSCHOOL`; остальные —
+"чисто на пощупать").
+
+### Helper functions (v5.10.0)
+
+В `js/app.js` добавлены 2 новые визуальные функции (рядом с `emojiRain`):
+- `matrixRain()` — создаёт fullscreen canvas с зелёными падающими
+  символами в стиле Matrix, через ~5 сек fadeout + removeChild. Уважает
+  `prefers-reduced-motion` (показывает статичный кадр 1.5 сек вместо).
+- `flipPage()` — добавляет класс `page-flipped` на `<html>`, через 3 сек
+  убирает. Защищён от стэкания (если уже flipped — игнорирует повторный
+  вызов). Анимация в CSS (cubic-bezier transition).
+
+Обе функции выставлены на `window.*` для DevTools-доступа
+(вместе с `bananaRain`, `emojiRain`).
 
 ## Скрытые подсказки кода (v5.5.2)
 
