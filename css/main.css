@@ -1602,12 +1602,21 @@ html:not(.page-noir) {
   -webkit-appearance: none;
   margin: 0;
 }
-.timer-colon {
+.timer-colon,
+.timer-dot {
   font-size: 28px;
   font-weight: 700;
   color: var(--text-soft);
   -webkit-user-select: none;
   user-select: none;
+}
+.timer-dot {
+  font-size: 32px;
+  margin: 0 -2px 0 -2px;
+}
+/* Milliseconds field — slightly wider to fit 3 digits comfortably */
+.timer-ms-field {
+  width: 110px;
 }
 .timer-display.timer-done {
   animation: timerBlink 0.6s ease-in-out 5;

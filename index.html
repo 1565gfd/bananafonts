@@ -280,6 +280,9 @@
           <input type="number" id="timer-min" class="calc-input timer-input" value="5" min="0" max="999" step="1" inputmode="numeric" aria-label="minutes" />
           <span class="timer-colon">:</span>
           <input type="number" id="timer-sec" class="calc-input timer-input" value="0" min="0" max="59" step="1" inputmode="numeric" aria-label="seconds" />
+          <!-- Milliseconds field — visible only when timerShowMs is on -->
+          <span class="timer-dot" id="timer-ms-wrap" hidden>.</span>
+          <input type="number" id="timer-ms" class="calc-input timer-input timer-ms-field" value="0" min="0" max="999" step="1" inputmode="numeric" aria-label="milliseconds" hidden />
         </div>
         <div class="timer-display" id="timer-display">05:00</div>
         <div class="time-controls">

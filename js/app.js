@@ -143,7 +143,7 @@
       settingsResetHint: "Очистит сохранённые настройки и перезагрузит страницу.",
       settingsResetConfirm: "Точно сбросить все настройки?",
       settingsAboutLabel: "О сайте",
-      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура)."
+      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура) и сложение/вычитание/умножение/деление простых дробей.\n\n• Время: часы Москвы / Еревана / Нью-Йорка, секундомер, таймер с миллисекундами и быстрым добавлением времени, будильник с выбором часового пояса.\n\n• Секретные коды: вкладка с 19 скрытыми кодами — emoji-дожди, спецэффекты, мета-код. Найди их сам.\n\n• Темы: 4 видимые (Светлая / Тёмная / Ночь / Радужная анимированная) + одна секретная, разблокируется кодом.\n\n• PWA: можно установить на телефон, работает в Telegram-браузере."
     },
     en: {
       title: "Fonts for Word and Telegram",
@@ -276,7 +276,7 @@
       settingsResetHint: "Clears saved settings and reloads the page.",
       settingsResetConfirm: "Really reset all settings?",
       settingsAboutLabel: "About",
-      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature)."
+      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature) and add/subtract/multiply/divide for simple fractions.\n\n• Time: clocks for Moscow / Yerevan / New York, stopwatch, timer with milliseconds and quick add-time buttons, alarm with timezone picker.\n\n• Secret codes: a tab with 19 hidden codes — emoji rains, special effects, a meta-code. Find them yourself.\n\n• Themes: 4 visible (Light / Dark / Night / animated Rainbow) + a secret one unlocked via a code.\n\n• PWA: installable on phones, works inside the Telegram in-app browser."
     }
   };
 
@@ -356,7 +356,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.15.0";
+  var VERSION = "v5.16.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -441,6 +441,8 @@
   var timerAddBtns      = document.querySelectorAll(".timer-add-btn");
   var timerMsToggleEl   = document.getElementById("timer-ms-toggle");
   var timerMsLabelEl    = document.getElementById("timer-ms-label");
+  var timerMsEl         = document.getElementById("timer-ms");
+  var timerMsWrapEl     = document.getElementById("timer-ms-wrap");
   /* Alarm refs */
   var alarmLabelEl      = document.getElementById("alarm-label");
   var alarmHintEl       = document.getElementById("alarm-hint");
@@ -1738,22 +1740,31 @@
   var timerShowMs = false;
   var audioCtx = null;
 
+  function pad3(n) { return (n < 10 ? "00" : n < 100 ? "0" : "") + n; }
   function readTimerInputs() {
     var m = parseInt(timerMinEl.value, 10);
     var s = parseInt(timerSecEl.value, 10);
     if (isNaN(m) || m < 0)   return null;
     if (isNaN(s) || s < 0 || s > 59) return null;
-    return (m * 60 + s) * 1000;
+    /* Milliseconds field is honored only when ms-mode is on. Ignored
+       (treated as 0) otherwise, even if the user typed something. */
+    var ms = 0;
+    if (timerShowMs) {
+      ms = parseInt(timerMsEl.value, 10);
+      if (isNaN(ms)) ms = 0;
+      if (ms < 0 || ms > 999) return null;
+    }
+    return (m * 60 + s) * 1000 + ms;
   }
   function formatTimer(ms) {
     if (ms < 0) ms = 0;
     if (timerShowMs) {
-      /* mm:ss.cs (centiseconds) — readable + matches stopwatch style */
+      /* mm:ss.mmm — true 3-digit millisecond precision */
       var totalSecFloor = Math.floor(ms / 1000);
       var mmMs = Math.floor(totalSecFloor / 60);
       var ssMs = totalSecFloor % 60;
-      var csMs = Math.floor((ms % 1000) / 10);
-      return pad2(mmMs) + ":" + pad2(ssMs) + "." + pad2(csMs);
+      var msMs = ms % 1000;
+      return pad2(mmMs) + ":" + pad2(ssMs) + "." + pad3(msMs);
     }
     /* default: round UP to whole second so "00:01" doesn't flicker to "00:00" too early */
     var totalSec = Math.ceil(ms / 1000);
@@ -1771,21 +1782,42 @@
     timerFeedbackEl.style.color = isError ? "#ff6b7a" : "";
   }
   function beepDone() {
-    /* Three short beeps via WebAudio API — no asset needed. */
+    /* Pleasant ascending C-major arpeggio (C5 → E5 → G5 → C6) via
+       WebAudio API. Each note: soft attack (30ms), long bell-like
+       decay (~1.4s). Notes overlap to form a chord — feels like a
+       gentle chime, not a harsh alarm pip. v5.16.0 redesign. */
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       var ctx = audioCtx;
-      [0, 0.25, 0.5].forEach(function (delay) {
-        var osc = ctx.createOscillator();
+      var notes = [
+        { freq: 523.25, when: 0.00 },  /* C5  */
+        { freq: 659.25, when: 0.16 },  /* E5  */
+        { freq: 783.99, when: 0.32 },  /* G5  */
+        { freq: 1046.50, when: 0.48 }  /* C6  */
+      ];
+      notes.forEach(function (n) {
+        /* Two oscillators per note: sine fundamental + triangle octave above
+           for a touch of bell-like sparkle. */
+        var oscA = ctx.createOscillator();
+        var oscB = ctx.createOscillator();
         var gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
-        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + delay + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.18);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(ctx.currentTime + delay);
-        osc.stop(ctx.currentTime + delay + 0.2);
+        oscA.type = "sine";
+        oscB.type = "triangle";
+        oscA.frequency.value = n.freq;
+        oscB.frequency.value = n.freq * 2;
+        var t0 = ctx.currentTime + n.when;
+        /* Soft attack + slow exponential decay = bell envelope. Peak gain
+           is gentle (0.16) so the chime doesn't startle anyone. */
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.4);
+        oscA.connect(gain);
+        oscB.connect(gain);
+        gain.connect(ctx.destination);
+        oscA.start(t0);
+        oscB.start(t0);
+        oscA.stop(t0 + 1.5);
+        oscB.stop(t0 + 1.5);
       });
     } catch (e) { /* WebAudio unavailable — fail silently */ }
   }
@@ -1916,11 +1948,22 @@
   }
 
   /* ── Millisecond display toggle ──
-     Switches display format and tick rate. If timer is running, restart
-     the ticker so the new rate takes effect immediately. */
+     Switches display format, tick rate (rAF vs 250ms interval), and
+     visibility of the manual ms input field. If timer is running,
+     restart the ticker so the new rate takes effect immediately. */
+  function applyMsVisibility() {
+    if (timerShowMs) {
+      timerMsWrapEl.removeAttribute("hidden");
+      timerMsEl.removeAttribute("hidden");
+    } else {
+      timerMsWrapEl.setAttribute("hidden", "");
+      timerMsEl.setAttribute("hidden", "");
+    }
+  }
   function onTimerMsToggle() {
     timerShowMs = !!timerMsToggleEl.checked;
     try { localStorage.setItem("bananafont:timerMs", timerShowMs ? "1" : "0"); } catch (e) {}
+    applyMsVisibility();
     if (tmState === "running") {
       stopTimerTicker();
       startTimerTicker();
@@ -1941,6 +1984,7 @@
       timerMsToggleEl.checked = true;
     }
   } catch (e) {}
+  applyMsVisibility();
   /* Keep the display in sync with the input fields while idle */
   function timerInputsChanged() {
     if (tmState === "idle") {
@@ -1952,6 +1996,7 @@
   timerResetBtn.addEventListener("click", timerReset);
   timerMinEl.addEventListener("input", timerInputsChanged);
   timerSecEl.addEventListener("input", timerInputsChanged);
+  timerMsEl.addEventListener("input",  timerInputsChanged);
   /* Quick-add buttons (v5.15.0) */
   for (var addI = 0; addI < timerAddBtns.length; addI++) {
     (function (btn) {
