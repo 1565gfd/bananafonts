@@ -101,6 +101,23 @@
       timerInvalid: "Введите корректное время (минуты ≥ 0, секунды 0–59).",
       timerRunning: "Идёт обратный отсчёт…",
       timerPaused: "На паузе.",
+      timerMsToggle: "Показывать миллисекунды",
+      timerAddedToast: "Добавлено: ",
+      alarmLabel: "Будильник",
+      alarmHint: "Сначала выберите свой часовой пояс, потом установите время будильника. Будильник сработает, когда время в выбранной зоне совпадёт с указанным.",
+      alarmTzLabel: "Часовой пояс",
+      alarmTzPlaceholder: "— выберите часовой пояс —",
+      alarmTzAuto: "Авто (системный)",
+      alarmTimeLabel: "Время будильника",
+      alarmSet: "Установить",
+      alarmCancel: "Отменить",
+      alarmDismiss: "Выключить",
+      alarmArmed: "Будильник установлен на ",
+      alarmArmedSuffix: ".",
+      alarmFiring: "🔔 Будильник звонит! Время вышло.",
+      alarmNoTz: "Сначала выберите свой часовой пояс.",
+      alarmInvalidTime: "Введите корректное время (часы 0–23, минуты 0–59).",
+      alarmCancelled: "Будильник отменён.",
       geomShapeLabel: "Фигура",
       shapeRectangle: "Прямоугольник",
       shapeSquare: "Квадрат",
@@ -217,6 +234,23 @@
       timerInvalid: "Enter a valid time (minutes ≥ 0, seconds 0–59).",
       timerRunning: "Counting down…",
       timerPaused: "Paused.",
+      timerMsToggle: "Show milliseconds",
+      timerAddedToast: "Added: ",
+      alarmLabel: "Alarm clock",
+      alarmHint: "First pick your timezone, then set the alarm time. The alarm will fire when the time in the chosen zone matches.",
+      alarmTzLabel: "Timezone",
+      alarmTzPlaceholder: "— choose a timezone —",
+      alarmTzAuto: "Auto (system)",
+      alarmTimeLabel: "Alarm time",
+      alarmSet: "Set",
+      alarmCancel: "Cancel",
+      alarmDismiss: "Dismiss",
+      alarmArmed: "Alarm set for ",
+      alarmArmedSuffix: ".",
+      alarmFiring: "🔔 Alarm! Time to wake up.",
+      alarmNoTz: "Please pick your timezone first.",
+      alarmInvalidTime: "Enter a valid time (hours 0–23, minutes 0–59).",
+      alarmCancelled: "Alarm cancelled.",
       geomShapeLabel: "Shape",
       shapeRectangle: "Rectangle",
       shapeSquare: "Square",
@@ -322,7 +356,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.13.0";
+  var VERSION = "v5.15.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -404,6 +438,23 @@
   var timerStartBtn     = document.getElementById("timer-start");
   var timerResetBtn     = document.getElementById("timer-reset");
   var timerFeedbackEl   = document.getElementById("timer-feedback");
+  var timerAddBtns      = document.querySelectorAll(".timer-add-btn");
+  var timerMsToggleEl   = document.getElementById("timer-ms-toggle");
+  var timerMsLabelEl    = document.getElementById("timer-ms-label");
+  /* Alarm refs */
+  var alarmLabelEl      = document.getElementById("alarm-label");
+  var alarmHintEl       = document.getElementById("alarm-hint");
+  var alarmTzLabelEl    = document.getElementById("alarm-tz-label");
+  var alarmTzSelectEl   = document.getElementById("alarm-tz");
+  var alarmTzPlaceholderEl = document.getElementById("alarm-tz-placeholder");
+  var alarmTzTimeEl     = document.getElementById("alarm-tz-time");
+  var alarmStepTimeEl   = document.getElementById("alarm-step-time");
+  var alarmTimeLabelEl  = document.getElementById("alarm-time-label");
+  var alarmHourEl       = document.getElementById("alarm-hour");
+  var alarmMinEl        = document.getElementById("alarm-min");
+  var alarmSetBtn       = document.getElementById("alarm-set");
+  var alarmCancelBtn    = document.getElementById("alarm-cancel");
+  var alarmStatusEl     = document.getElementById("alarm-status");
 
   /* Fraction calculator refs */
   var fracIntroEl       = document.getElementById("frac-intro");
@@ -521,6 +572,25 @@
        state-dependent labels (Start↔Pause) are also refreshed by their handlers. */
     refreshStopwatchButtonLabels();
     refreshTimerButtonLabels();
+    /* Alarm labels */
+    alarmLabelEl.textContent      = t.alarmLabel;
+    alarmHintEl.textContent       = t.alarmHint;
+    alarmTzLabelEl.textContent    = t.alarmTzLabel;
+    alarmTimeLabelEl.textContent  = t.alarmTimeLabel;
+    alarmSetBtn.textContent       = t.alarmSet;
+    /* Cancel/Dismiss label is state-dependent — refresh from handler */
+    refreshAlarmButtonLabels();
+    rebuildAlarmTzSelect();
+    /* Rebuild clock formatters so AM/PM follows language (en → 12h, ru → 24h) */
+    rebuildClockFormatters();
+    /* Re-render any alarm status that includes a time (so it uses the new locale).
+       Guarded because alarmState/renderAlarmStatus are declared later — at the
+       first applyLang() call during init they're hoisted-but-undefined. */
+    if (typeof alarmState !== "undefined" && alarmState && alarmState.target > 0) {
+      renderAlarmStatus("armed");
+    }
+    /* Timer-ms label */
+    timerMsLabelEl.textContent = t.timerMsToggle;
     /* Calculator labels */
     calcTitleEl.textContent       = t.calcTitle;
     calcModeBtns[0].textContent   = t.calcModeBasic;
@@ -1441,6 +1511,13 @@
       /* Huge blue 67 takes over the screen for 3 seconds. */
       message: function () { return TEXT[currentLang].secret67; },
       action:  function () { showBigNumber(67, "#1e88ff"); }
+    },
+
+    /* Math-puzzle code: the equation evaluates to 67, and the reveal is
+       the English spelling. Message is the same string in both languages —
+       per user request, "six seven" is not localised. */
+    "10+10+20+20+7": {
+      message: "six seven"
     }
   };
 
@@ -1530,27 +1607,38 @@
      ============================================================ */
 
   /* ── World clocks ── use Intl.DateTimeFormat with explicit timeZone.
-     Three Intl instances are reused; cheap to tick once per second. */
+     v5.15.0: format is now language-aware. RU → 24-hour ("ru-RU"),
+     EN → 12-hour with AM/PM ("en-US"). Formatters are rebuilt whenever
+     the user switches language via rebuildClockFormatters(). */
   var TZ_MOSCOW  = "Europe/Moscow";
   var TZ_YEREVAN = "Asia/Yerevan";
   var TZ_NEWYORK = "America/New_York";
+  function clockLocale() { return currentLang === "en" ? "en-US" : "ru-RU"; }
+  function clockHour12() { return currentLang === "en"; }
   function makeTimeFmt(tz) {
-    return new Intl.DateTimeFormat("en-GB", {
+    return new Intl.DateTimeFormat(clockLocale(), {
       hour: "2-digit", minute: "2-digit", second: "2-digit",
-      hour12: false, timeZone: tz
+      hour12: clockHour12(), timeZone: tz
     });
   }
   function makeDateFmt(tz) {
-    return new Intl.DateTimeFormat("en-GB", {
+    return new Intl.DateTimeFormat(clockLocale(), {
       weekday: "short", day: "2-digit", month: "short", timeZone: tz
     });
   }
-  var fmtMoscow   = makeTimeFmt(TZ_MOSCOW);
-  var fmtYerevan  = makeTimeFmt(TZ_YEREVAN);
-  var fmtNewYork  = makeTimeFmt(TZ_NEWYORK);
-  var dfmtMoscow  = makeDateFmt(TZ_MOSCOW);
-  var dfmtYerevan = makeDateFmt(TZ_YEREVAN);
-  var dfmtNewYork = makeDateFmt(TZ_NEWYORK);
+  var fmtMoscow, fmtYerevan, fmtNewYork;
+  var dfmtMoscow, dfmtYerevan, dfmtNewYork;
+  function rebuildClockFormatters() {
+    fmtMoscow   = makeTimeFmt(TZ_MOSCOW);
+    fmtYerevan  = makeTimeFmt(TZ_YEREVAN);
+    fmtNewYork  = makeTimeFmt(TZ_NEWYORK);
+    dfmtMoscow  = makeDateFmt(TZ_MOSCOW);
+    dfmtYerevan = makeDateFmt(TZ_YEREVAN);
+    dfmtNewYork = makeDateFmt(TZ_NEWYORK);
+    /* Invalidate the alarm-TZ formatter so it gets rebuilt with the new locale on next tick */
+    fmtAlarmTzId = null;
+  }
+  rebuildClockFormatters();
 
   function tickClocks() {
     var now = new Date();
@@ -1636,13 +1724,18 @@
   stopwatchResetBtn.addEventListener("click", stopwatchReset);
   stopwatchLapBtn.addEventListener("click", stopwatchLap);
 
-  /* ── Timer ── countdown to zero. setInterval is fine here (we don't
-     need sub-second precision in the display). On finish we beep via
-     WebAudio (no external asset) and visually flash the display. */
+  /* ── Timer ── countdown to zero. v5.15.0 additions:
+       - Quick-add buttons (+30s, +1m, +5m) work in any state
+       - Optional millisecond display via timerShowMs toggle (uses rAF
+         instead of setInterval for smooth ms display when on)
+     On finish we beep via WebAudio (no external asset) and visually
+     flash the display. */
   var tmState = "idle";       /* idle | running | paused | done */
   var tmRemainingMs = 0;
   var tmEndAt = 0;             /* performance.now() target for finish */
   var tmIntervalId = null;
+  var tmRafId = null;
+  var timerShowMs = false;
   var audioCtx = null;
 
   function readTimerInputs() {
@@ -1654,6 +1747,15 @@
   }
   function formatTimer(ms) {
     if (ms < 0) ms = 0;
+    if (timerShowMs) {
+      /* mm:ss.cs (centiseconds) — readable + matches stopwatch style */
+      var totalSecFloor = Math.floor(ms / 1000);
+      var mmMs = Math.floor(totalSecFloor / 60);
+      var ssMs = totalSecFloor % 60;
+      var csMs = Math.floor((ms % 1000) / 10);
+      return pad2(mmMs) + ":" + pad2(ssMs) + "." + pad2(csMs);
+    }
+    /* default: round UP to whole second so "00:01" doesn't flicker to "00:00" too early */
     var totalSec = Math.ceil(ms / 1000);
     var mm = Math.floor(totalSec / 60);
     var ss = totalSec % 60;
@@ -1708,20 +1810,36 @@
     }
     tmRemainingMs = remain;
     timerDisplayEl.textContent = formatTimer(remain);
+    if (timerShowMs && tmState === "running") {
+      tmRafId = requestAnimationFrame(timerTick);
+    }
+  }
+  function startTimerTicker() {
+    /* Use rAF when ms-precision is on (smooth ~60fps); otherwise
+       cheap setInterval at 250ms (4× per sec, good for whole-second display). */
+    stopTimerTicker();
+    if (timerShowMs) {
+      tmRafId = requestAnimationFrame(timerTick);
+    } else {
+      tmIntervalId = setInterval(timerTick, 250);
+    }
+  }
+  function stopTimerTicker() {
+    if (tmIntervalId) { clearInterval(tmIntervalId); tmIntervalId = null; }
+    if (tmRafId)      { cancelAnimationFrame(tmRafId); tmRafId = null; }
   }
   function timerToggle() {
     if (tmState === "running") {
       /* pause */
       tmRemainingMs = Math.max(0, tmEndAt - performance.now());
       tmState = "paused";
-      if (tmIntervalId) clearInterval(tmIntervalId);
-      tmIntervalId = null;
+      stopTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerPaused, false);
     } else if (tmState === "paused") {
       /* resume */
       tmEndAt = performance.now() + tmRemainingMs;
       tmState = "running";
-      tmIntervalId = setInterval(timerTick, 250);
+      startTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerRunning, false);
     } else {
       /* start fresh from inputs */
@@ -1735,14 +1853,13 @@
       tmState = "running";
       timerDisplayEl.classList.remove("timer-done");
       timerDisplayEl.textContent = formatTimer(ms);
-      tmIntervalId = setInterval(timerTick, 250);
+      startTimerTicker();
       setTimerFeedback(TEXT[currentLang].timerRunning, false);
     }
     refreshTimerButtonLabels();
   }
   function timerReset() {
-    if (tmIntervalId) clearInterval(tmIntervalId);
-    tmIntervalId = null;
+    stopTimerTicker();
     tmState = "idle";
     tmRemainingMs = 0;
     var ms = readTimerInputs();
@@ -1751,6 +1868,79 @@
     setTimerFeedback("", false);
     refreshTimerButtonLabels();
   }
+  /* ── Add time to the timer (v5.15.0) ──
+     Works in any state:
+       - idle: bumps the input fields (and display)
+       - running: extends the current endAt by N seconds
+       - paused: extends the saved remaining
+       - done: re-arms with N seconds and starts running */
+  function timerAddSeconds(addSec) {
+    var addMs = addSec * 1000;
+    if (tmState === "running") {
+      tmEndAt += addMs;
+      tmRemainingMs = Math.max(0, tmEndAt - performance.now());
+      timerDisplayEl.textContent = formatTimer(tmRemainingMs);
+    } else if (tmState === "paused") {
+      tmRemainingMs += addMs;
+      timerDisplayEl.textContent = formatTimer(tmRemainingMs);
+    } else if (tmState === "done") {
+      /* re-arm fresh */
+      tmRemainingMs = addMs;
+      tmEndAt = performance.now() + addMs;
+      tmState = "running";
+      timerDisplayEl.classList.remove("timer-done");
+      timerDisplayEl.textContent = formatTimer(addMs);
+      startTimerTicker();
+      refreshTimerButtonLabels();
+      setTimerFeedback(TEXT[currentLang].timerRunning, false);
+    } else {
+      /* idle — bump the input fields, keep display in sync */
+      var curMs = readTimerInputs() || 0;
+      var newMs = curMs + addMs;
+      var totalSec = Math.floor(newMs / 1000);
+      timerMinEl.value = Math.floor(totalSec / 60);
+      timerSecEl.value = totalSec % 60;
+      timerDisplayEl.textContent = formatTimer(newMs);
+    }
+    /* Brief toast in the feedback row */
+    var toastMins = Math.floor(addSec / 60);
+    var toastSecs = addSec % 60;
+    var human = (toastMins > 0 ? toastMins + "m " : "") + (toastSecs > 0 ? toastSecs + "s" : "");
+    setTimerFeedback(TEXT[currentLang].timerAddedToast + "+" + human.trim(), false);
+    /* If running, restore the running-message after a moment */
+    if (tmState === "running") {
+      setTimeout(function () {
+        if (tmState === "running") setTimerFeedback(TEXT[currentLang].timerRunning, false);
+      }, 1200);
+    }
+  }
+
+  /* ── Millisecond display toggle ──
+     Switches display format and tick rate. If timer is running, restart
+     the ticker so the new rate takes effect immediately. */
+  function onTimerMsToggle() {
+    timerShowMs = !!timerMsToggleEl.checked;
+    try { localStorage.setItem("bananafont:timerMs", timerShowMs ? "1" : "0"); } catch (e) {}
+    if (tmState === "running") {
+      stopTimerTicker();
+      startTimerTicker();
+    } else {
+      /* repaint display with new format */
+      var ms;
+      if (tmState === "paused")    ms = tmRemainingMs;
+      else if (tmState === "done") ms = 0;
+      else                          ms = readTimerInputs() || 0;
+      timerDisplayEl.textContent = formatTimer(ms);
+    }
+  }
+  /* Restore saved preference on load */
+  try {
+    var savedMs = localStorage.getItem("bananafont:timerMs");
+    if (savedMs === "1") {
+      timerShowMs = true;
+      timerMsToggleEl.checked = true;
+    }
+  } catch (e) {}
   /* Keep the display in sync with the input fields while idle */
   function timerInputsChanged() {
     if (tmState === "idle") {
@@ -1762,6 +1952,17 @@
   timerResetBtn.addEventListener("click", timerReset);
   timerMinEl.addEventListener("input", timerInputsChanged);
   timerSecEl.addEventListener("input", timerInputsChanged);
+  /* Quick-add buttons (v5.15.0) */
+  for (var addI = 0; addI < timerAddBtns.length; addI++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        var sec = parseInt(btn.dataset.addSec, 10);
+        if (!isNaN(sec) && sec > 0) timerAddSeconds(sec);
+      });
+    })(timerAddBtns[addI]);
+  }
+  /* Millisecond toggle (v5.15.0) */
+  timerMsToggleEl.addEventListener("change", onTimerMsToggle);
   /* Initial paint */
   refreshStopwatchButtonLabels();
   refreshTimerButtonLabels();
@@ -1849,6 +2050,291 @@
   });
   /* Initial paint */
   recalcFraction();
+
+  /* ============================================================
+     ALARM CLOCK (v5.14.0) — user must pick a timezone first, then
+     set HH:MM. Alarm fires when the time in the chosen zone matches.
+     Persists in localStorage across reloads.
+     ============================================================ */
+
+  /* Curated timezone list — city name in both languages + IANA id.
+     Add more here if needed. */
+  var ALARM_TIMEZONES = [
+    { id: "__auto__",            ru: "Авто (системный)",  en: "Auto (system)"   },
+    { id: "UTC",                 ru: "UTC",              en: "UTC"             },
+    { id: "Europe/Moscow",       ru: "Москва",           en: "Moscow"          },
+    { id: "Europe/London",       ru: "Лондон",           en: "London"          },
+    { id: "Europe/Berlin",       ru: "Берлин",           en: "Berlin"          },
+    { id: "Europe/Paris",        ru: "Париж",            en: "Paris"           },
+    { id: "Europe/Kyiv",         ru: "Киев",             en: "Kyiv"            },
+    { id: "Asia/Yerevan",        ru: "Ереван",           en: "Yerevan"         },
+    { id: "Asia/Tbilisi",        ru: "Тбилиси",          en: "Tbilisi"         },
+    { id: "Asia/Dubai",          ru: "Дубай",            en: "Dubai"           },
+    { id: "Asia/Kolkata",        ru: "Дели",             en: "Delhi"           },
+    { id: "Asia/Shanghai",       ru: "Шанхай",           en: "Shanghai"        },
+    { id: "Asia/Tokyo",          ru: "Токио",            en: "Tokyo"           },
+    { id: "Australia/Sydney",    ru: "Сидней",           en: "Sydney"          },
+    { id: "America/Los_Angeles", ru: "Лос-Анджелес",     en: "Los Angeles"     },
+    { id: "America/Chicago",     ru: "Чикаго",           en: "Chicago"         },
+    { id: "America/New_York",    ru: "Нью-Йорк",         en: "New York"        },
+    { id: "America/Sao_Paulo",   ru: "Сан-Паулу",        en: "São Paulo"       }
+  ];
+  /* Resolve __auto__ to the actual system timezone (IANA string) */
+  function resolveTz(id) {
+    if (id === "__auto__") {
+      try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+      catch (e) { return "UTC"; }
+    }
+    return id;
+  }
+
+  function rebuildAlarmTzSelect() {
+    var t = TEXT[currentLang];
+    /* Preserve current selection */
+    var prev = alarmTzSelectEl.value;
+    alarmTzSelectEl.innerHTML = "";
+    /* Placeholder option (empty value) — required-first-pick UX */
+    var ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = t.alarmTzPlaceholder;
+    ph.id = "alarm-tz-placeholder";
+    alarmTzSelectEl.appendChild(ph);
+    for (var i = 0; i < ALARM_TIMEZONES.length; i++) {
+      var tz = ALARM_TIMEZONES[i];
+      var opt = document.createElement("option");
+      opt.value = tz.id;
+      var name = tz[currentLang] || tz.en;
+      opt.textContent = (tz.id === "__auto__" || tz.id === "UTC")
+        ? name
+        : name + " (" + tz.id + ")";
+      alarmTzSelectEl.appendChild(opt);
+    }
+    /* Restore previous selection */
+    alarmTzSelectEl.value = prev || "";
+  }
+
+  /* ── Alarm state ── persisted to localStorage under bananafont:alarm.
+     Shape: { tzId, hh, mm } or null. We DON'T persist the firing target
+     timestamp — it's recomputed on load so it always points to the next
+     occurrence, even if the user closed the tab for hours/days. */
+  var alarmState = { tzId: null, hh: 7, mm: 0, target: 0, firing: false };
+
+  function saveAlarm() {
+    try {
+      if (alarmState.tzId) {
+        localStorage.setItem("bananafont:alarm", JSON.stringify({
+          tzId: alarmState.tzId, hh: alarmState.hh, mm: alarmState.mm
+        }));
+      } else {
+        localStorage.removeItem("bananafont:alarm");
+      }
+    } catch (e) {}
+  }
+  function loadAlarm() {
+    try {
+      var s = localStorage.getItem("bananafont:alarm");
+      if (!s) return;
+      var p = JSON.parse(s);
+      if (!p || typeof p.tzId !== "string") return;
+      if (typeof p.hh !== "number" || typeof p.mm !== "number") return;
+      /* Repopulate the UI */
+      alarmTzSelectEl.value = p.tzId;
+      alarmHourEl.value = p.hh;
+      alarmMinEl.value = p.mm;
+      alarmState.tzId = p.tzId;
+      alarmState.hh = p.hh;
+      alarmState.mm = p.mm;
+      alarmState.target = computeNextAlarm(p.tzId, p.hh, p.mm);
+      onTzPicked();
+      renderAlarmStatus("armed");
+    } catch (e) {}
+  }
+
+  /* Compute the next firing timestamp (Date.now()-style) for HH:MM in
+     the given timezone. If today's HH:MM has already passed in that
+     zone, the alarm is scheduled for tomorrow's HH:MM in that zone.
+     DST quirks: if HH:MM is skipped by DST, the alarm fires at the
+     next valid HH:MM — usually next day. Acceptable for a casual UI. */
+  function computeNextAlarm(tzId, hh, mm) {
+    var tz = resolveTz(tzId);
+    /* IMPORTANT: keep hour12:false here regardless of user language —
+       we do integer math on the hour part (0–23). With hour12:true the
+       hour part would be "01"–"12" + a separate dayPeriod, breaking math. */
+    var fmt = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hour12: false, timeZone: tz
+    });
+    var parts = fmt.formatToParts(new Date());
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) if (parts[i].type === type) return +parts[i].value;
+      return 0;
+    };
+    var nowSec = get("hour") * 3600 + get("minute") * 60 + get("second");
+    var targetSec = hh * 3600 + mm * 60;
+    var deltaSec;
+    if (targetSec > nowSec) {
+      deltaSec = targetSec - nowSec;
+    } else {
+      deltaSec = (24 * 3600 - nowSec) + targetSec;
+    }
+    return Date.now() + deltaSec * 1000;
+  }
+
+  function refreshAlarmButtonLabels() {
+    var t = TEXT[currentLang];
+    /* alarmState may be hoisted-undefined at first applyLang() call during init. */
+    var firing = (typeof alarmState !== "undefined" && alarmState && alarmState.firing);
+    alarmCancelBtn.textContent = firing ? t.alarmDismiss : t.alarmCancel;
+  }
+
+  function setAlarmFieldsLocked(locked) {
+    /* Toggle Step 2 inputs enabled/disabled based on TZ pick */
+    alarmHourEl.disabled = locked;
+    alarmMinEl.disabled  = locked;
+    alarmSetBtn.disabled = locked;
+    /* Cancel button is only enabled when there's something to cancel/dismiss */
+    alarmCancelBtn.disabled = locked
+      ? true
+      : !(alarmState.target > 0 || alarmState.firing);
+    alarmStepTimeEl.classList.toggle("alarm-locked", locked);
+  }
+
+  function onTzPicked() {
+    var tzId = alarmTzSelectEl.value;
+    if (!tzId) {
+      setAlarmFieldsLocked(true);
+      alarmTzTimeEl.textContent = "—";
+      return;
+    }
+    setAlarmFieldsLocked(false);
+    updateAlarmTzTime();
+  }
+
+  /* Show live current time in the chosen TZ next to the dropdown.
+     Updated together with the world clocks via tickClocks().
+     v5.15.0: lang-aware (EN → 12h with AM/PM, RU → 24h). */
+  var fmtAlarmTz = null;
+  var fmtAlarmTzId = null;
+  function updateAlarmTzTime() {
+    var tzId = alarmTzSelectEl.value;
+    if (!tzId) { alarmTzTimeEl.textContent = "—"; return; }
+    var tz = resolveTz(tzId);
+    if (tz !== fmtAlarmTzId) {
+      fmtAlarmTz = new Intl.DateTimeFormat(clockLocale(), {
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        hour12: clockHour12(), timeZone: tz
+      });
+      fmtAlarmTzId = tz;
+    }
+    alarmTzTimeEl.textContent = fmtAlarmTz.format(new Date());
+  }
+
+  function renderAlarmStatus(kind) {
+    var t = TEXT[currentLang];
+    alarmStatusEl.classList.remove("alarm-armed", "alarm-firing");
+    if (kind === "armed") {
+      var tzEntry = null;
+      for (var i = 0; i < ALARM_TIMEZONES.length; i++) {
+        if (ALARM_TIMEZONES[i].id === alarmState.tzId) { tzEntry = ALARM_TIMEZONES[i]; break; }
+      }
+      var name = tzEntry ? (tzEntry[currentLang] || tzEntry.en) : alarmState.tzId;
+      var hhmm = pad2(alarmState.hh) + ":" + pad2(alarmState.mm);
+      alarmStatusEl.textContent = t.alarmArmed + hhmm + " (" + name + ")" + t.alarmArmedSuffix;
+      alarmStatusEl.classList.add("alarm-armed");
+    } else if (kind === "firing") {
+      alarmStatusEl.textContent = t.alarmFiring;
+      alarmStatusEl.classList.add("alarm-firing");
+    } else if (kind === "cancelled") {
+      alarmStatusEl.textContent = t.alarmCancelled;
+      setTimeout(function () {
+        if (alarmStatusEl.textContent === t.alarmCancelled) alarmStatusEl.textContent = "";
+      }, 2500);
+    } else if (kind === "noTz") {
+      alarmStatusEl.textContent = t.alarmNoTz;
+    } else if (kind === "invalid") {
+      alarmStatusEl.textContent = t.alarmInvalidTime;
+    } else {
+      alarmStatusEl.textContent = "";
+    }
+  }
+
+  function setAlarm() {
+    var tzId = alarmTzSelectEl.value;
+    if (!tzId) { renderAlarmStatus("noTz"); return; }
+    var hh = parseInt(alarmHourEl.value, 10);
+    var mm = parseInt(alarmMinEl.value, 10);
+    if (isNaN(hh) || hh < 0 || hh > 23 || isNaN(mm) || mm < 0 || mm > 59) {
+      renderAlarmStatus("invalid");
+      return;
+    }
+    alarmState.tzId = tzId;
+    alarmState.hh = hh;
+    alarmState.mm = mm;
+    alarmState.target = computeNextAlarm(tzId, hh, mm);
+    alarmState.firing = false;
+    saveAlarm();
+    alarmCancelBtn.disabled = false;
+    refreshAlarmButtonLabels();
+    renderAlarmStatus("armed");
+  }
+
+  function cancelAlarm() {
+    if (alarmState.firing) {
+      /* Dismiss the firing state */
+      alarmState.firing = false;
+      alarmStatusEl.classList.remove("alarm-firing");
+    }
+    var hadArmed = alarmState.target > 0;
+    alarmState.target = 0;
+    saveAlarm();
+    refreshAlarmButtonLabels();
+    alarmCancelBtn.disabled = true;
+    if (hadArmed) renderAlarmStatus("cancelled");
+    else renderAlarmStatus("");
+  }
+
+  function fireAlarm() {
+    alarmState.firing = true;
+    alarmState.target = 0;
+    saveAlarm();
+    renderAlarmStatus("firing");
+    refreshAlarmButtonLabels();
+    alarmCancelBtn.disabled = false;
+    /* Three beep waves over ~6 seconds via the same WebAudio path
+       the timer uses. We re-call beepDone twice with a delay. */
+    beepDone();
+    setTimeout(beepDone, 1400);
+    setTimeout(beepDone, 2800);
+  }
+
+  /* Check alarm fire condition every second from the same clock-tick
+     loop — see tickClocks below. Hooked in via alarmTick(). */
+  function alarmTick() {
+    if (alarmState.firing) return;
+    if (!alarmState.target) return;
+    if (Date.now() >= alarmState.target) fireAlarm();
+  }
+
+  alarmTzSelectEl.addEventListener("change", onTzPicked);
+  alarmSetBtn.addEventListener("click", setAlarm);
+  alarmCancelBtn.addEventListener("click", cancelAlarm);
+  /* Re-validate when user changes the time inputs */
+  alarmHourEl.addEventListener("input", function () { /* live preview only */ });
+  alarmMinEl.addEventListener("input",  function () { /* live preview only */ });
+
+  /* Initial paint of the alarm UI */
+  rebuildAlarmTzSelect();
+  setAlarmFieldsLocked(true);   /* Step 2 starts locked */
+  loadAlarm();                  /* restore from localStorage if any */
+
+  /* Independent 1Hz tick for the alarm — updates the live TZ-time
+     display and checks the fire condition. Kept separate from
+     tickClocks() so we don't have to monkey-patch the existing world-
+     clocks loop. Both intervals are cheap (just text updates). */
+  setInterval(function () {
+    updateAlarmTzTime();
+    alarmTick();
+  }, 1000);
 
   /* ============================================================
      EASTER EGGS — hidden features for the curious.
@@ -2012,7 +2498,7 @@
     console.log("%c  · bananaRain() / emojiRain(\"❤️\", 30) — try it!", hintStyle);
     console.log("%c  · matrixRain() / flipPage() / shakePage() / noirPage()", hintStyle);
     console.log("%c  · showBigNumber(67, \"#1e88ff\") — try a giant number", hintStyle);
-    console.log("%c  · Secret-codes tab: 18 codes hidden in the site 🔎", hintStyle);
+    console.log("%c  · Secret-codes tab: 19 codes hidden in the site 🔎", hintStyle);
     console.log("%c    (try View Source ⌘+U  or  Select-All ⌘+A then paste)", hintStyle);
     console.log("%c  · Try the SECRET code itself — it counts for you 🤫", hintStyle);
   } catch (e) {}

@@ -286,7 +286,56 @@
           <button type="button" id="timer-start" class="tool-btn"></button>
           <button type="button" id="timer-reset" class="tool-btn"></button>
         </div>
+        <!-- Quick add-time buttons (v5.15.0): work whether idle / running / paused -->
+        <div class="time-controls timer-add-row">
+          <button type="button" class="tool-btn timer-add-btn" data-add-sec="30">+30s</button>
+          <button type="button" class="tool-btn timer-add-btn" data-add-sec="60">+1m</button>
+          <button type="button" class="tool-btn timer-add-btn" data-add-sec="300">+5m</button>
+        </div>
+        <!-- Millisecond precision toggle (v5.15.0) -->
+        <label class="timer-ms-toggle">
+          <input type="checkbox" id="timer-ms-toggle" />
+          <span id="timer-ms-label"></span>
+        </label>
         <div class="timer-feedback" id="timer-feedback"></div>
+      </div>
+
+      <!-- Alarm clock: user must pick a timezone FIRST, only then can they
+           set an alarm time. Time picker stays disabled until TZ chosen. -->
+      <div class="time-section alarm-section">
+        <h3 id="alarm-label"></h3>
+        <p class="alarm-hint" id="alarm-hint"></p>
+
+        <!-- Step 1: timezone picker -->
+        <div class="alarm-step">
+          <div class="alarm-step-num">1</div>
+          <div class="alarm-step-body">
+            <label for="alarm-tz" id="alarm-tz-label"></label>
+            <select id="alarm-tz" class="calc-select">
+              <option value="" id="alarm-tz-placeholder"></option>
+            </select>
+            <div class="alarm-tz-time" id="alarm-tz-time">—</div>
+          </div>
+        </div>
+
+        <!-- Step 2: alarm time (disabled until TZ picked) -->
+        <div class="alarm-step" id="alarm-step-time">
+          <div class="alarm-step-num">2</div>
+          <div class="alarm-step-body">
+            <label id="alarm-time-label"></label>
+            <div class="alarm-inputs">
+              <input type="number" id="alarm-hour" class="calc-input timer-input" value="7" min="0" max="23" step="1" inputmode="numeric" aria-label="hour" disabled />
+              <span class="timer-colon">:</span>
+              <input type="number" id="alarm-min" class="calc-input timer-input" value="0" min="0" max="59" step="1" inputmode="numeric" aria-label="minute" disabled />
+            </div>
+            <div class="time-controls">
+              <button type="button" id="alarm-set" class="tool-btn" disabled></button>
+              <button type="button" id="alarm-cancel" class="tool-btn" disabled></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alarm-status" id="alarm-status"></div>
       </div>
     </section>
 

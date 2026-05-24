@@ -1626,6 +1626,152 @@ html:not(.page-noir) {
   opacity: 0.85;
 }
 
+/* Timer quick-add buttons (v5.15.0) */
+.timer-add-row {
+  margin-top: 8px;
+}
+.timer-add-btn {
+  min-width: 70px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Timer ms toggle (v5.15.0) — checkbox + label, centered */
+.timer-ms-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.timer-ms-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* ──────── Alarm clock (v5.14.0) ──────── */
+.alarm-section {
+  /* Mirror .time-section but allow our own step layout */
+}
+.alarm-hint {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+.alarm-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 10px;
+  border-radius: 10px;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  margin-bottom: 10px;
+  transition: opacity 0.2s ease;
+}
+#alarm-step-time {
+  /* Visually dimmed until TZ chosen. The .alarm-locked class is
+     toggled by JS based on TZ select value. */
+}
+.alarm-step.alarm-locked {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.alarm-step-num {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent-border);
+}
+.alarm-step-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.alarm-step-body > label {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+.alarm-tz-time {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-top: 2px;
+  min-height: 22px;
+}
+.alarm-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.alarm-status {
+  margin-top: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-soft);
+  min-height: 22px;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+.alarm-status:empty { display: none; }
+.alarm-status.alarm-armed {
+  background: rgba(80, 220, 130, 0.15);
+  border-color: rgba(80, 220, 130, 0.5);
+  color: var(--text);
+}
+.alarm-status.alarm-firing {
+  background: rgba(255, 90, 110, 0.2);
+  border-color: rgba(255, 90, 110, 0.65);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+  animation: alarmFlash 0.7s ease-in-out infinite;
+}
+@keyframes alarmFlash {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 90, 110, 0); }
+  50%      { box-shadow: 0 0 0 6px rgba(255, 90, 110, 0.35); }
+}
+
+@media (max-width: 600px) {
+  .alarm-step {
+    padding: 10px 8px;
+  }
+  .alarm-step-num {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .alarm-status.alarm-firing {
+    animation: none;
+  }
+}
+
 @media (max-width: 600px) {
   .clocks-grid {
     grid-template-columns: 1fr;

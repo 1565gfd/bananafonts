@@ -140,7 +140,9 @@ v5.3.0 → v5.3.1 PATCH").
 
 | Версия | Что |
 |--------|-----|
-| v5.13.x | **Код `67`**: огромная синяя 67 на весь экран при вводе. Новый helper `showBigNumber(num, color)` — fullscreen overlay с backdrop-blur, pop-in/out animation, generic для любых будущих гигантских чисел. Всего кодов **18**. |
+| v5.15.x | **Таймер: +30s/+1m/+5m кнопки** (работают в любом state — idle, running, paused, done); **опциональный ms-режим** через чекбокс «Показывать миллисекунды» (display `mm:ss.cs`, tick через `requestAnimationFrame`); preference сохраняется в localStorage. **Часы теперь lang-aware**: RU → 24h формат, EN → 12h с AM/PM (через `clockLocale()` + `clockHour12()`, formatters пересоздаются в `applyLang`). Алгоритм будильника (`computeNextAlarm`) остался 24h hardcoded — мы делаем int-math на hour part. |
+| v5.14.x | **Будильник** в вкладке «Время» (под таймером). Двухшаговый UX: Step 1 — обязательный выбор часового пояса (18 пресетов от Сан-Паулу до Сиднея + «Авто (системный)»), Step 2 разблокируется только после выбора TZ. Алгоритм next-occurrence через `Intl.DateTimeFormat.formatToParts` для целевой TZ. Persists в localStorage (`bananafont:alarm`) с пересчётом next-target при загрузке. Fire — 3 волны WebAudio beep + красный pulsing статус. Dismiss / cancel. |
+| v5.13.x | **Код `67`** (v5.13.0): огромная синяя 67 на весь экран при вводе. Новый helper `showBigNumber(num, color)` — fullscreen overlay с backdrop-blur, pop-in/out animation, generic для любых будущих гигантских чисел. **Код `10+10+20+20+7`** (v5.13.1): математический пазл, выдаёт надпись «six seven» (одинаково ru+en, не локализуется). Всего кодов **19**. |
 | v5.12.x | **Новая вкладка «Время»** (между Calc и Settings): 3 live-часы (Москва/Ереван/Нью-Йорк через `Intl.DateTimeFormat` с timeZone), секундомер (millisec через performance.now + rAF, lap-list), таймер (мин:сек, pause/resume, WebAudio beep на финиш). **+ 4-й режим калькулятора «Дроби»** — a/b op c/d с автосокращением через gcd, рендерится stacked mini-fraction. Все строки локализованы. |
 | v5.11.x | **Mega-pack**: +10 секретных кодов (`HEART`, `SNOW`, `PIZZA`, `MEOW`, `UNICORN`, `SHAKE`, `MOON`, `SUN`, `NOIR`, `SECRET`) → итого **17**. Новые helper'ы: `shakePage()` (earthquake-shake 1.5 сек) и `noirPage()` (grayscale filter 3 сек). `SECRET` — мета-код, считает остальные коды динамически. `MOON`/`SUN` свапают тему + дождь. Все 10 кодов локализованы (ru+en). |
 | v5.10.x | **Chip-run pack**: +5 секретных кодов (`ILOVECHIPS`, `MATRIX`, `42`, `PARTY`, `FLIP`) → итого 7. Новые helper-функции: `matrixRain()` (canvas-оверлей с зелёными katakana 5 сек) и `flipPage()` (поворот html на 180° на 3 сек). Все коды локализованы (ru+en). Console banner обновлён. |
@@ -250,7 +252,7 @@ Enter в input — то же что клик «Проверить». При на
 Добавить новый код = одна запись. Если message зависит от языка —
 делай function. Если action имеет смысл — добавляй action.
 
-### Текущие коды (18)
+### Текущие коды (19)
 
 | Код | Сообщение | Side-effect | Подсказан? |
 |---|---|---|---|
@@ -272,6 +274,7 @@ Enter в input — то же что клик «Проверить». При на
 | `NOIR` | Чёрно-белое кино 🎬 | `noirPage()` — `filter: grayscale(1) contrast(1.08)` на 3 сек | нет |
 | `SECRET` | «Ты нашёл мета-код! Всего кодов: N 🔍» | `emojiRain("🔍", 20)`. **N считается динамически** через `Object.keys(SECRET_CODES).length` — всегда актуальное число | нет |
 | `67` | 67 💙 | `showBigNumber(67, "#1e88ff")` — гигантская синяя 67 во весь экран с pop-анимацией, ~3 сек | нет |
+| `10+10+20+20+7` | «six seven» (одинаково в обоих языках, **намеренно не локализуется** — раскрытие шутки про 67) | — | нет |
 
 Только `ILOVELIBSCHOOL` имеет 3 подсказки (HTML comment, hidden-hint span,
 console). Остальные 16 — **не подсказаны** нигде в UI; находятся через
@@ -353,6 +356,51 @@ early-return для `shakePage` и `matrixRain`).
 - Все labels локализованы (ru+en); `refreshStopwatchButtonLabels` / `refreshTimerButtonLabels` вызываются и из `applyLang` (при смене языка), и при смене state (Start↔Pause)
 - Audio: `audioCtx` создаётся лениво на первый финиш (нельзя создавать раньше user interaction по правилам browser — а Start-клик уже это interaction)
 - `.timer-done` CSS keyframe уважает `prefers-reduced-motion` (выключен)
+
+## Будильник (v5.14.0)
+
+Четвёртая секция вкладки «Время» (после таймера). **Двухшаговый UX —
+сначала TZ, потом время**: Step 2 (time-inputs + кнопки) визуально и
+функционально заблокирован (`.alarm-locked` class, `disabled` атрибуты)
+пока пользователь не выберет часовой пояс.
+
+**Список часовых поясов** — 18 пресетов в `ALARM_TIMEZONES`:
+- Спец. `__auto__` → разрешается в `Intl.DateTimeFormat().resolvedOptions().timeZone`
+- UTC
+- 5 европейских (Москва, Лондон, Берлин, Париж, Киев)
+- 7 азиатских (Ереван, Тбилиси, Дубай, Дели, Шанхай, Токио)
+- 4 американских (Сан-Паулу, Чикаго, Нью-Йорк, Лос-Анджелес)
+- Сидней
+
+Каждая запись — `{ id: "Europe/Moscow", ru: "Москва", en: "Moscow" }`.
+Селект перестраивается при смене языка через `rebuildAlarmTzSelect()`.
+
+**Next-occurrence алгоритм** (`computeNextAlarm(tzId, hh, mm)`):
+1. Через `Intl.DateTimeFormat(...).formatToParts(new Date())` достаём
+   текущие HH:MM:SS в **целевой** TZ
+2. `nowSec = hh*3600 + mm*60 + ss`, `targetSec = hh*3600 + mm*60`
+3. Если `targetSec > nowSec` → today, иначе → tomorrow (delta + 24h)
+4. Возвращаем `Date.now() + deltaSec * 1000` — это absolute timestamp,
+   с которым потом сравниваем `Date.now()` каждую секунду
+
+DST edge case: если HH:MM попадает в час, который DST «пропускает» —
+будильник просто не выстрелит сегодня, выстрелит завтра. Приемлемо.
+
+**Persistence**: `localStorage["bananafont:alarm"]` = `{ tzId, hh, mm }`.
+Target timestamp **НЕ** сохраняется — пересчитывается при загрузке через
+`loadAlarm()` → всегда указывает на ближайшее следующее срабатывание,
+даже если пользователь закрывал вкладку на часы/дни.
+
+**Fire**: `fireAlarm()` устанавливает `alarmState.firing = true`, статус
+получает класс `.alarm-firing` (красный, пульсирующий — keyframe
+`alarmFlash` с box-shadow), плюс **3 волны beep** через тот же
+WebAudio path что таймер (`beepDone()` + setTimeout 1400ms + 2800ms).
+Кнопка Cancel меняет текст на Dismiss (`refreshAlarmButtonLabels`).
+
+**Tick**: отдельный `setInterval(fn, 1000)` — обновляет live time
+выбранной TZ рядом с дропдауном (`alarmTzTimeEl`) и проверяет
+`Date.now() >= alarmState.target`. Кэширует `Intl.DateTimeFormat`
+инстанс по id, чтобы не создавать новый каждый тик.
 
 ## Дроби в калькуляторе (v5.12.0)
 
