@@ -732,18 +732,19 @@ footer a:hover {
 
 @media (max-width: 360px) {
   .theme-switch button {
-    font-size: 0; /* hide label, keep swatch */
     min-width: 36px;
-    padding: 0 10px;
-    gap: 0;
+    padding: 0 8px 0 6px;
+    gap: 4px;
+    font-size: 12px;
   }
   .theme-switch button::before {
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
   }
   .lang-switch button {
-    min-width: 44px;
-    padding: 0 10px;
+    min-width: 40px;
+    padding: 0 8px;
+    font-size: 13px;
   }
   h1 {
     font-size: 18px;

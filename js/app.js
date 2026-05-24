@@ -97,7 +97,7 @@
     { label: "Mono",         kind: "unicode", transform: "mono" }
   ];
 
-  var VERSION = "v4.1.1";
+  var VERSION = "v4.1.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
