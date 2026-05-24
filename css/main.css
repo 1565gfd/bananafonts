@@ -8718,10 +8718,27 @@ body.ddos-active { /* marker only — no animation */ }
   background: linear-gradient(90deg, #7289da, #5868c0);
   color: #fff;
 }
-.account-profile-badge.role-moderator {
+.account-profile-badge.role-helper {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
   background: linear-gradient(90deg, #43b581, #2d8c5e);
   color: #fff;
+}
+
+
+/* ============================================================
+   v5.50.0 — ROLE-BASED PANEL GATING
+   data-min-role on any element = minimum tier needed to see it.
+   Hierarchy: creator > admin > helper.
+   - admin-role-helper:    hides [data-min-role="admin"] AND [creator]
+   - admin-role-admin:     hides [data-min-role="creator"]
+   - admin-role-creator:   sees everything
+   Outside admin mode: no role class → nothing is gated (sections
+   stay in DOM but admin panel itself is closed anyway).
+   ============================================================ */
+body.admin-role-helper [data-min-role="admin"],
+body.admin-role-helper [data-min-role="creator"],
+body.admin-role-admin     [data-min-role="creator"] {
+  display: none !important;
 }

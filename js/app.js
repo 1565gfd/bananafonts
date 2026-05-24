@@ -666,7 +666,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.49.0";
+  var VERSION = "v5.50.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -2586,7 +2586,26 @@
     }, 3000);
   }
 
+  /* v5.50.0 — 5-second cooldown between secret-code submissions */
+  var _lastSecretSubmitMs = 0;
+  var SECRET_COOLDOWN_MS  = 5000;
   function checkSecretCode() {
+    /* Rate-limit check FIRST — runs even on empty/invalid input so spamming
+       Enter on an empty field can't bypass the timer. */
+    var elapsed = Date.now() - _lastSecretSubmitMs;
+    if (elapsed < SECRET_COOLDOWN_MS) {
+      var wait = Math.ceil((SECRET_COOLDOWN_MS - elapsed) / 1000);
+      showSecretFeedback(
+        currentLang === "en"
+          ? "Wait " + wait + "s before next code"
+          : "Подожди " + wait + " сек. до следующего кода",
+        true
+      );
+      playUiSound("fail");
+      return;
+    }
+    _lastSecretSubmitMs = Date.now();
+
     var raw = (secretInputEl.value || "").trim();
     if (!raw) {
       showSecretFeedback(TEXT[currentLang].secretEmpty, true);
@@ -3247,6 +3266,11 @@
     adminUnlocked = true;
     try { localStorage.setItem("bananafont:admin", "1"); } catch (e) {}
     adminBadgeEl.removeAttribute("hidden");
+    /* v5.50.0 — sync body class with active role so CSS can gate UI
+       per role (data-min-role="admin"/"creator" attributes on sections). */
+    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-moderator");
+    var roleClass = (typeof _activeRole === "string" && _activeRole) ? _activeRole : "admin";
+    document.body.classList.add("admin-role-" + roleClass);
     /* v5.47.8 — stealth activation: no heart-rain / rainbow flash /
        celebration message. Just a quiet unlock sound and the panel
        slides in. Matches the rest of the de-flashed admin UI. */
@@ -3258,6 +3282,8 @@
     try { localStorage.removeItem("bananafont:admin"); } catch (e) {}
     adminBadgeEl.setAttribute("hidden", "");
     closeAdminPanel();
+    /* v5.50.0 — clear role body classes when leaving admin */
+    document.body.classList.remove("admin-role-creator", "admin-role-admin", "admin-role-moderator");
     playUiSound("knock");   /* v5.38.2 — "leaving" feel */
   }
   function openAdminPanel() {
@@ -4382,8 +4408,12 @@
       b.className = "settings-btn silent-btn";
       b.textContent = TEXT[currentLang][tool.textKey] || tool.textKey;
       /* v5.48.5 — tools flagged `danger: true` get the bright-red
-         pulsing treatment (see .power-danger CSS rule). */
-      if (tool.danger) b.classList.add("power-danger");
+         pulsing treatment (see .power-danger CSS rule).
+         v5.50.1 — danger tools are also creator-only via data-min-role. */
+      if (tool.danger) {
+        b.classList.add("power-danger");
+        b.setAttribute("data-min-role", "creator");
+      }
       b.addEventListener("click", function () {
         try {
           var out = tool.run();
@@ -4425,7 +4455,12 @@
   };
 
   /* Restore admin badge on load if previously unlocked */
-  if (adminUnlocked) adminBadgeEl.removeAttribute("hidden");
+  if (adminUnlocked) {
+    adminBadgeEl.removeAttribute("hidden");
+    /* v5.50.0 — also restore body role-class on reload */
+    var _rc = (typeof _activeRole === "string" && _activeRole) ? _activeRole : "admin";
+    document.body.classList.add("admin-role-" + _rc);
+  }
 
   /* ============================================================
      ALARM CLOCK (v5.14.0) — user must pick a timezone first, then
@@ -7469,9 +7504,9 @@
       var nm = document.createElement("span");
       nm.className = "account-list-name";
       var roleSigil = "";
-      if (acc.role === "creator")        roleSigil = " 👑";
-      else if (acc.role === "admin")     roleSigil = " 🛡";
-      else if (acc.role === "moderator") roleSigil = " 🌿";
+      if (acc.role === "creator")     roleSigil = " 👑";
+      else if (acc.role === "admin")  roleSigil = " 🛡";
+      else if (acc.role === "helper") roleSigil = " 🌿";
       else if (acc.username.toLowerCase() === OWNER_USERNAME) roleSigil = " 👑";
       nm.textContent = acc.username + roleSigil;
       item.appendChild(av); item.appendChild(nm);
@@ -7601,24 +7636,33 @@
 
   /* Role registry. `encoded` = XOR-encoded plaintext via key "BANANA"
      (decoded at runtime by _ad). Plaintext stays off-repo. */
+  /* v5.50.2 — three codes with truly different structures:
+       creator: 21-char ALL-CAPS + DIGITS, no separators
+       admin:   23-char mixed-case + dots/slashes/dashes + word
+       helper:  24-char lowercase pangram with kebab-dashes
+     No role-name hints in any plaintext (compared in UPPERCASE form).
+     XOR-encoded with key "BANANA". Plaintexts off-repo. */
   var ROLES = {
     creator: {
       username: "creator",
       color:    "#ffd700",       /* gold */
       badge:    "👑 CREATOR",
-      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 13, 19, 11, 0, 22, 14, 28, 108, 5, 120, 18, 117, 0, 118, 6, 114, 6, 116]
+      encoded:  [26, 10, 122, 17, 121, 12, 123, 15, 124, 3, 123, 13, 115, 23, 118, 9, 125, 19, 116, 16, 119]
     },
     admin: {
       username: "admin",
       color:    "#7289da",       /* discord blurple */
       badge:    "🛡 ADMIN",
-      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 22, 120, 5, 115, 18, 117, 3, 121, 20, 114, 19, 118, 28, 116]
+      encoded:  [15, 21, 121, 111, 31, 27, 118, 110, 2, 17, 119, 108, 21, 10, 124, 108, 11, 21, 7, 19, 0, 0, 2]
     },
-    moderator: {
-      username: "moderator",
-      color:    "#43b581",       /* mod green */
-      badge:    "🌿 MOD",
-      encoded:  [115, 116, 120, 116, 9, 7, 6, 108, 3, 14, 10, 108, 8, 117, 2, 121, 12, 119, 22, 120, 28, 116, 13, 115, 15, 121]
+    /* v5.50.2 — "moderator" renamed to "helper" per user: модератор это
+       как помогатель. Internal role key stays as "helper", visible
+       username/badge reflect that. */
+    helper: {
+      username: "helper",
+      color:    "#43b581",       /* helper green */
+      badge:    "🌿 ПОМОЩНИК",
+      encoded:  [19, 20, 7, 2, 5, 108, 4, 14, 22, 108, 4, 20, 15, 17, 29, 108, 2, 0, 24, 24, 99, 5, 1, 6]
     }
   };
 
@@ -7703,17 +7747,15 @@
   if (typeof logoutAdmin === "function") {
     var _origLogoutAdmin = logoutAdmin;
     logoutAdmin = function () {
-      var cur = getCurrentAccount();
-      var wasRoleAccount = !!(cur && cur.username &&
-        ROLE_USERNAMES.indexOf(cur.username.toLowerCase()) !== -1);
+      /* v5.50.2 — admin-side logout no longer touches account session.
+         The user explicitly wants these decoupled: closing admin mode
+         leaves you logged into the role-account (the avatar stays in
+         the widget). To fully drop the session, click ⏻ on the widget
+         which IS still coupled (logging out the account also kills
+         admin status — see widget handler below). */
       _origLogoutAdmin();
-      /* v5.49.0 — clear active role + persisted localStorage flag */
       _activeRole = null;
       try { localStorage.removeItem("bananafont:role"); } catch (e) {}
-      if (wasRoleAccount) {
-        setCurrentAccountId(null);
-        refreshAccountWidget();
-      }
     };
   }
 

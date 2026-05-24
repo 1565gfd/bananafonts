@@ -1006,14 +1006,14 @@
       </div>
 
       <!-- v5.30.0: localStorage inspector -->
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="admin">
         <h3 id="admin-storage-title"></h3>
         <p class="admin-hint" id="admin-storage-hint"></p>
         <table id="admin-storage-table" class="admin-storage-table"></table>
       </div>
 
       <!-- v5.30.0: export/import settings -->
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="admin">
         <h3 id="admin-io-title"></h3>
         <p class="admin-hint" id="admin-io-hint"></p>
         <div class="admin-io-row">
@@ -1024,7 +1024,7 @@
       </div>
 
       <!-- v5.38.0 — 5 admin-only sections -->
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="creator">
         <h3 id="admin-repl-title"></h3>
         <p class="admin-hint" id="admin-repl-hint"></p>
         <textarea id="admin-repl-input" class="admin-repl-input" placeholder="document.title; // или setTheme('owner')"></textarea>
@@ -1043,7 +1043,7 @@
         </div>
       </div>
 
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="admin">
         <h3 id="admin-burn-title"></h3>
         <p class="admin-hint" id="admin-burn-hint"></p>
         <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
@@ -1051,7 +1051,7 @@
         </div>
       </div>
 
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="admin">
         <h3 id="admin-filter-title"></h3>
         <p class="admin-hint" id="admin-filter-hint"></p>
         <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
@@ -1059,7 +1059,7 @@
         </div>
       </div>
 
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="creator">
         <h3 id="admin-lockout-title"></h3>
         <p class="admin-hint" id="admin-lockout-hint"></p>
         <div class="admin-actions" style="margin-top:8px;padding-top:0;border-top:0;">
@@ -1068,7 +1068,7 @@
       </div>
 
       <!-- v5.39.0 — 20 admin power tools (one button each, fires immediately) -->
-      <div class="admin-section">
+      <div class="admin-section" data-min-role="admin">
         <h3 id="admin-power-title"></h3>
         <p class="admin-hint" id="admin-power-hint"></p>
         <div id="admin-power-grid" class="admin-power-grid"></div>
@@ -1076,7 +1076,7 @@
       </div>
 
       <div class="admin-actions">
-        <button type="button" id="admin-clear-storage" class="settings-btn settings-btn-danger silent-btn"></button>
+        <button type="button" id="admin-clear-storage" data-min-role="creator" class="settings-btn settings-btn-danger silent-btn"></button>
         <button type="button" id="admin-logout" class="settings-btn silent-btn"></button>
       </div>
     </div>
