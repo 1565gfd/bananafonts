@@ -22,8 +22,6 @@
       themeLight: "Светлая",
       themeDark: "Тёмная",
       themeNight: "Ночная",
-      legendUniversal: "🇷🇺🇬🇧 Word и Google — поддерживают кириллицу и латиницу",
-      legendUnicode: "🇬🇧 Unicode-стили — только латиница и цифры (для Telegram, Discord)",
       ttUniversal: "🇷🇺🇬🇧 Поддерживает кириллицу и латиницу",
       ttUnicode: "🇬🇧 Только латиница и цифры — для Telegram/Discord"
     },
@@ -37,8 +35,6 @@
       themeLight: "Light",
       themeDark: "Dark",
       themeNight: "Night",
-      legendUniversal: "🇷🇺🇬🇧 Word and Google — Cyrillic and Latin",
-      legendUnicode: "🇬🇧 Unicode styles — Latin and digits only (for Telegram, Discord)",
       ttUniversal: "🇷🇺🇬🇧 Supports Cyrillic and Latin",
       ttUnicode: "🇬🇧 Latin and digits only — for Telegram/Discord"
     }
@@ -101,13 +97,12 @@
     { label: "Mono",         kind: "unicode", transform: "mono" }
   ];
 
-  var VERSION = "v3.2.6";
+  var VERSION = "v4.1.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
   var inputEl   = document.getElementById("input");
   var fontsEl   = document.getElementById("fonts");
-  var legendEl  = document.getElementById("fonts-legend");
   var outputEl  = document.getElementById("output");
   var footerEl  = document.getElementById("footer");
   var copyBtn   = document.getElementById("copy-btn");
@@ -134,7 +129,7 @@
 
   /* Elements whose text changes when language switches — fade these. */
   function getFadeTargets() {
-    var list = [titleEl, inputEl, legendEl, footerEl, copyBtn];
+    var list = [titleEl, inputEl, footerEl, copyBtn];
     for (var i = 0; i < themeButtons.length; i++) list.push(themeButtons[i]);
     return list;
   }
@@ -155,9 +150,6 @@
     titleEl.textContent = t.title;
     inputEl.placeholder = t.placeholder;
     copyBtn.textContent = copyBtn.classList.contains("copied") ? t.copied : t.copy;
-    legendEl.innerHTML =
-      '<span>' + t.legendUniversal + '</span>' +
-      '<span>' + t.legendUnicode + '</span>';
     footerEl.innerHTML =
       t.footerPrefix +
       ' <a href="https://github.com/1565gfd" target="_blank" rel="noopener noreferrer">1565gfd</a> ' +
@@ -211,7 +203,24 @@
   }
 
   /* --------- theme --------- */
+  var THEME_COLORS = { light: "#eef2ff", dark: "#161b3a", night: "#000000" };
   var themeTransitionTimer = null;
+
+  function setMobileBarColor(theme) {
+    /* Mobile browsers (Chrome on Android, Safari iOS 15+) tint the address
+       bar with <meta name="theme-color">. Override all media-scoped tags so
+       the user's explicit theme wins over OS prefers-color-scheme. */
+    var color = THEME_COLORS[theme] || THEME_COLORS.dark;
+    var existing = document.querySelectorAll('meta[name="theme-color"]');
+    for (var i = 0; i < existing.length; i++) {
+      existing[i].parentNode.removeChild(existing[i]);
+    }
+    var meta = document.createElement("meta");
+    meta.name = "theme-color";
+    meta.content = color;
+    document.head.appendChild(meta);
+  }
+
   function setTheme(theme) {
     var root = document.documentElement;
     root.classList.add("theme-transition");
@@ -221,6 +230,7 @@
     for (var i = 0; i < themeButtons.length; i++) {
       themeButtons[i].classList.toggle("active", themeButtons[i].dataset.themeBtn === theme);
     }
+    setMobileBarColor(theme);
     if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
     themeTransitionTimer = setTimeout(function () {
       root.classList.remove("theme-transition");
@@ -262,7 +272,11 @@
         ? applyTransform(item.label, item.transform)
         : item.label;
       var tip = item.kind === "unicode" ? t.ttUnicode : t.ttUniversal;
-      html += '<button type="button" data-idx="' + i + '" title="' + tip + '">' + display + '</button>';
+      var flag = item.kind === "unicode" ? "🇬🇧" : "🇷🇺🇬🇧";
+      html += '<button type="button" data-idx="' + i +
+              '" data-kind="' + item.kind +
+              '" data-flag="' + flag +
+              '" title="' + tip + '">' + display + '</button>';
     }
     fontsEl.innerHTML = html;
     var btns = fontsEl.querySelectorAll("button");
