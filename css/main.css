@@ -435,6 +435,233 @@
   --nf-code-gradient: linear-gradient(180deg, #00c2cb 0%, #80f0ff 100%);
 }
 
+/* ──────── Cyberpunk (v5.20.0) — magenta + cyan on near-black ──────── */
+[data-theme="cyberpunk"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(ellipse at 15% 20%, rgba(255, 20, 200, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, rgba(0, 220, 255, 0.18) 0%, transparent 50%),
+    linear-gradient(160deg, #0a0014 0%, #14002a 100%);
+  --text: #f0d8ff;
+  --text-dim: rgba(240, 216, 255, 0.5);
+  --text-soft: rgba(240, 216, 255, 0.9);
+  --text-shadow: 0 2px 14px rgba(255, 20, 200, 0.3);
+  --glass-bg: rgba(0, 220, 255, 0.06);
+  --glass-bg-hover: rgba(0, 220, 255, 0.13);
+  --glass-border: rgba(255, 20, 200, 0.5);
+  --glass-border-soft: rgba(255, 20, 200, 0.28);
+  --glass-inset: rgba(0, 220, 255, 0.35);
+  --glass-inset-soft: rgba(0, 220, 255, 0.14);
+  --output-bg: rgba(10, 0, 25, 0.8);
+  --output-border: rgba(0, 220, 255, 0.35);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #ff14c8;
+  --accent-bg: rgba(255, 20, 200, 0.88);
+  --accent-border: rgba(0, 220, 255, 0.9);   /* cyan border on magenta = hallmark cyberpunk */
+  --accent-glow: rgba(255, 20, 200, 0.6);
+  --copy-bg: rgba(255, 20, 200, 0.85);
+  --copy-bg-hover: rgba(255, 60, 220, 0.95);
+  --copy-border: rgba(0, 220, 255, 0.9);
+  --copy-border-hover: rgba(120, 240, 255, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #00dcff;
+  --shadow-card: 0 12px 40px rgba(255, 20, 200, 0.25);
+  --nf-bg: linear-gradient(160deg, #0a0014 0%, #14002a 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ff14c8 0%, #00dcff 100%);
+}
+
+/* ──────── Coffee (v5.20.0) — warm browns + cream, espresso-bar vibe ──────── */
+[data-theme="coffee"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(ellipse at 30% 15%, rgba(255, 215, 165, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 90%, rgba(180, 110, 50, 0.1) 0%, transparent 55%),
+    linear-gradient(160deg, #2a1810 0%, #1a0e08 55%, #0e0604 100%);
+  --text: #f0d9b8;
+  --text-dim: rgba(240, 217, 184, 0.5);
+  --text-soft: rgba(240, 217, 184, 0.86);
+  --text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(200, 153, 104, 0.07);
+  --glass-bg-hover: rgba(200, 153, 104, 0.14);
+  --glass-border: rgba(200, 153, 104, 0.4);
+  --glass-border-soft: rgba(200, 153, 104, 0.22);
+  --glass-inset: rgba(240, 217, 184, 0.25);
+  --glass-inset-soft: rgba(240, 217, 184, 0.1);
+  --output-bg: rgba(20, 12, 8, 0.85);
+  --output-border: rgba(200, 153, 104, 0.32);
+  --output-inset-bottom: rgba(0, 0, 0, 0.5);
+  --accent: #c89968;
+  --accent-bg: rgba(200, 153, 104, 0.92);
+  --accent-border: rgba(220, 175, 130, 1);
+  --accent-glow: rgba(200, 153, 104, 0.45);
+  --copy-bg: rgba(200, 153, 104, 0.88);
+  --copy-bg-hover: rgba(220, 175, 130, 0.96);
+  --copy-border: rgba(220, 175, 130, 1);
+  --copy-border-hover: rgba(240, 200, 160, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+  --link: #d4a373;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --nf-bg: linear-gradient(160deg, #2a1810 0%, #1a0e08 100%);
+  --nf-code-gradient: linear-gradient(180deg, #c89968 0%, #f0d9b8 100%);
+}
+
+/* ──────── Terminal (v5.20.0) — pure black + phosphor green CRT vibe.
+            Minimal — no gradients on bg, no glow blobs. Just pure black. ──────── */
+[data-theme="terminal"] {
+  color-scheme: dark;
+  --bg-gradient: #000000;
+  --text: #00ff66;
+  --text-dim: rgba(0, 255, 102, 0.45);
+  --text-soft: rgba(0, 255, 102, 0.8);
+  --text-shadow: 0 0 8px rgba(0, 255, 102, 0.35);   /* phosphor glow */
+  --glass-bg: rgba(0, 255, 102, 0.04);
+  --glass-bg-hover: rgba(0, 255, 102, 0.1);
+  --glass-border: rgba(0, 255, 102, 0.4);
+  --glass-border-soft: rgba(0, 255, 102, 0.22);
+  --glass-inset: rgba(0, 255, 102, 0.18);
+  --glass-inset-soft: rgba(0, 255, 102, 0.08);
+  --output-bg: rgba(0, 8, 4, 0.92);
+  --output-border: rgba(0, 255, 102, 0.4);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #00ff66;
+  --accent-bg: rgba(0, 255, 102, 0.85);
+  --accent-border: rgba(0, 255, 102, 1);
+  --accent-glow: rgba(0, 255, 102, 0.6);
+  --copy-bg: rgba(0, 255, 102, 0.78);
+  --copy-bg-hover: rgba(60, 255, 130, 0.92);
+  --copy-border: rgba(0, 255, 102, 1);
+  --copy-border-hover: rgba(120, 255, 170, 1);
+  --copied-bg: rgba(180, 255, 60, 0.75);
+  --copied-border: rgba(200, 255, 100, 0.95);
+  --copied-glow: rgba(180, 255, 60, 0.5);
+  --link: #00ff66;
+  --shadow-card: 0 0 24px rgba(0, 255, 102, 0.18);   /* glow not drop-shadow */
+  --nf-bg: #000000;
+  --nf-code-gradient: linear-gradient(180deg, #00ff66 0%, #b0ffaa 100%);
+}
+
+/* ──────── Aurora (v5.20.0 / v5.21.1 toned-down) — muted northern-lights.
+            Previous palette was at 100% saturation (eye-burning neons);
+            now uses real-aurora-like dusty greens/teals/violets on a
+            deep midnight base — still distinctly Aurora, much calmer. ──────── */
+[data-theme="aurora"] {
+  color-scheme: dark;
+  --bg-gradient: linear-gradient(135deg,
+    #0a1830   0%,    /* deep night sky      */
+    #2d5e5b  25%,    /* muted teal-green    */
+    #1f5a7a  50%,    /* muted dusty blue    */
+    #4a3865  75%,    /* muted violet        */
+    #0a1830 100%);
+  --text: #dce8e2;
+  --text-dim: rgba(220, 232, 226, 0.55);
+  --text-soft: rgba(220, 232, 226, 0.9);
+  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(180, 220, 200, 0.32);
+  --glass-border-soft: rgba(180, 220, 200, 0.18);
+  --glass-inset: rgba(255, 255, 255, 0.3);
+  --glass-inset-soft: rgba(255, 255, 255, 0.1);
+  --output-bg: rgba(8, 20, 36, 0.7);
+  --output-border: rgba(180, 220, 200, 0.25);
+  --output-inset-bottom: rgba(0, 0, 0, 0.4);
+  --accent: #7fc6a8;          /* muted sage green */
+  --accent-bg: rgba(127, 198, 168, 0.88);
+  --accent-border: rgba(160, 220, 195, 1);
+  --accent-glow: rgba(127, 198, 168, 0.4);
+  --copy-bg: rgba(127, 198, 168, 0.85);
+  --copy-bg-hover: rgba(160, 220, 195, 0.95);
+  --copy-border: rgba(160, 220, 195, 1);
+  --copy-border-hover: rgba(190, 235, 215, 1);
+  --copied-bg: rgba(80, 200, 130, 0.65);
+  --copied-border: rgba(120, 220, 160, 0.85);
+  --copied-glow: rgba(80, 200, 130, 0.4);
+  --link: #7fc6a8;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --nf-bg: linear-gradient(135deg, #0a1830 0%, #2d5e5b 50%, #4a3865 100%);
+  --nf-code-gradient: linear-gradient(180deg, #7fc6a8 0%, #dce8e2 100%);
+}
+
+/* ──────── Soviet Lift (v5.21.0) — gray-green painted metal, scuffed.
+            Faded enamel paint over concrete-and-steel cabin. ──────── */
+[data-theme="soviet-lift"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 50% 0%, rgba(180, 200, 190, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 90%, rgba(40, 50, 45, 0.4) 0%, transparent 60%),
+    linear-gradient(180deg, #4a5a55 0%, #3a4845 45%, #2a3835 100%);
+  --text: #e8eae0;
+  --text-dim: rgba(232, 234, 224, 0.5);
+  --text-soft: rgba(232, 234, 224, 0.85);
+  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  --glass-bg: rgba(60, 75, 70, 0.45);
+  --glass-bg-hover: rgba(80, 95, 88, 0.55);
+  --glass-border: rgba(150, 165, 155, 0.4);
+  --glass-border-soft: rgba(150, 165, 155, 0.22);
+  --glass-inset: rgba(220, 220, 200, 0.25);
+  --glass-inset-soft: rgba(220, 220, 200, 0.1);
+  --output-bg: rgba(30, 40, 38, 0.85);
+  --output-border: rgba(150, 165, 155, 0.35);
+  --output-inset-bottom: rgba(0, 0, 0, 0.6);
+  --accent: #d4b85a;            /* faded yellow — like the lift floor indicator */
+  --accent-bg: rgba(212, 184, 90, 0.88);
+  --accent-border: rgba(230, 200, 110, 1);
+  --accent-glow: rgba(212, 184, 90, 0.45);
+  --copy-bg: rgba(212, 184, 90, 0.85);
+  --copy-bg-hover: rgba(230, 200, 110, 0.95);
+  --copy-border: rgba(230, 200, 110, 1);
+  --copy-border-hover: rgba(245, 220, 140, 1);
+  --copied-bg: rgba(80, 180, 100, 0.65);
+  --copied-border: rgba(120, 210, 140, 0.85);
+  --copied-glow: rgba(80, 180, 100, 0.4);
+  --link: #d4b85a;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.65);
+  --nf-bg: linear-gradient(180deg, #4a5a55 0%, #2a3835 100%);
+  --nf-code-gradient: linear-gradient(180deg, #d4b85a 0%, #f0d878 100%);
+}
+
+/* ──────── Soviet Podyezd (v5.21.0) — dim entrance hall, single yellow
+            bulb on a high ceiling, brown-greenish walls, smell of cabbage. ──────── */
+[data-theme="soviet-podyezd"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(ellipse at 50% 8%, rgba(255, 215, 100, 0.22) 0%, transparent 38%),  /* the bulb */
+    radial-gradient(ellipse at 50% 12%, rgba(255, 200, 80, 0.1) 0%, transparent 55%),   /* halo  */
+    linear-gradient(180deg, #4a3820 0%, #3d2f1c 50%, #1f1810 100%);
+  --text: #e8d4a0;
+  --text-dim: rgba(232, 212, 160, 0.45);
+  --text-soft: rgba(232, 212, 160, 0.82);
+  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  --glass-bg: rgba(120, 95, 60, 0.18);
+  --glass-bg-hover: rgba(140, 110, 70, 0.28);
+  --glass-border: rgba(200, 165, 100, 0.35);
+  --glass-border-soft: rgba(200, 165, 100, 0.2);
+  --glass-inset: rgba(232, 212, 160, 0.25);
+  --glass-inset-soft: rgba(232, 212, 160, 0.1);
+  --output-bg: rgba(30, 22, 12, 0.88);
+  --output-border: rgba(200, 165, 100, 0.3);
+  --output-inset-bottom: rgba(0, 0, 0, 0.65);
+  --accent: #e8c468;            /* dim warm yellow — single lightbulb */
+  --accent-bg: rgba(232, 196, 104, 0.88);
+  --accent-border: rgba(245, 215, 130, 1);
+  --accent-glow: rgba(232, 196, 104, 0.5);
+  --copy-bg: rgba(232, 196, 104, 0.85);
+  --copy-bg-hover: rgba(245, 215, 130, 0.95);
+  --copy-border: rgba(245, 215, 130, 1);
+  --copy-border-hover: rgba(255, 230, 160, 1);
+  --copied-bg: rgba(140, 180, 80, 0.65);
+  --copied-border: rgba(170, 210, 110, 0.85);
+  --copied-glow: rgba(140, 180, 80, 0.4);
+  --link: #e8c468;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.75);
+  --nf-bg: linear-gradient(180deg, #4a3820 0%, #1f1810 100%);
+  --nf-code-gradient: linear-gradient(180deg, #e8c468 0%, #f5dca0 100%);
+}
+
 /* ──────── Sunset (v5.19.0) — purple → pink → orange ──────── */
 [data-theme="sunset"] {
   color-scheme: dark;
@@ -2690,6 +2917,74 @@ footer a:hover {
   [data-theme="sunset"] .theme-switch button:not(.active) {
     background: rgba(80, 30, 90, 0.9);
   }
+  /* ── v5.20.0: mobile fallbacks for new themes ── */
+  [data-theme="cyberpunk"] .app,
+  [data-theme="cyberpunk"] textarea,
+  [data-theme="cyberpunk"] .not-found-card {
+    background: rgba(15, 5, 25, 0.95);
+  }
+  [data-theme="cyberpunk"] .output { background: rgba(8, 0, 18, 0.95); }
+  [data-theme="cyberpunk"] .fonts button:not(.active),
+  [data-theme="cyberpunk"] .lang-switch button:not(.active),
+  [data-theme="cyberpunk"] .theme-switch button:not(.active) {
+    background: rgba(35, 10, 60, 0.9);
+  }
+  [data-theme="coffee"] .app,
+  [data-theme="coffee"] textarea,
+  [data-theme="coffee"] .not-found-card {
+    background: rgba(35, 22, 14, 0.96);
+  }
+  [data-theme="coffee"] .output { background: rgba(20, 12, 8, 0.95); }
+  [data-theme="coffee"] .fonts button:not(.active),
+  [data-theme="coffee"] .lang-switch button:not(.active),
+  [data-theme="coffee"] .theme-switch button:not(.active) {
+    background: rgba(60, 38, 22, 0.92);
+  }
+  [data-theme="terminal"] .app,
+  [data-theme="terminal"] textarea,
+  [data-theme="terminal"] .not-found-card {
+    background: rgba(0, 8, 4, 0.97);
+  }
+  [data-theme="terminal"] .output { background: #000000; }
+  [data-theme="terminal"] .fonts button:not(.active),
+  [data-theme="terminal"] .lang-switch button:not(.active),
+  [data-theme="terminal"] .theme-switch button:not(.active) {
+    background: rgba(0, 30, 12, 0.92);
+  }
+  [data-theme="aurora"] .app,
+  [data-theme="aurora"] textarea,
+  [data-theme="aurora"] .not-found-card {
+    background: rgba(0, 30, 50, 0.9);
+  }
+  [data-theme="aurora"] .output { background: rgba(0, 15, 30, 0.85); }
+  [data-theme="aurora"] .fonts button:not(.active),
+  [data-theme="aurora"] .lang-switch button:not(.active),
+  [data-theme="aurora"] .theme-switch button:not(.active) {
+    background: rgba(20, 60, 90, 0.9);
+  }
+  /* ── v5.21.0 Soviet themes fallbacks ── */
+  [data-theme="soviet-lift"] .app,
+  [data-theme="soviet-lift"] textarea,
+  [data-theme="soviet-lift"] .not-found-card {
+    background: rgba(50, 65, 60, 0.96);
+  }
+  [data-theme="soviet-lift"] .output { background: rgba(30, 42, 38, 0.95); }
+  [data-theme="soviet-lift"] .fonts button:not(.active),
+  [data-theme="soviet-lift"] .lang-switch button:not(.active),
+  [data-theme="soviet-lift"] .theme-switch button:not(.active) {
+    background: rgba(70, 88, 80, 0.93);
+  }
+  [data-theme="soviet-podyezd"] .app,
+  [data-theme="soviet-podyezd"] textarea,
+  [data-theme="soviet-podyezd"] .not-found-card {
+    background: rgba(50, 38, 22, 0.96);
+  }
+  [data-theme="soviet-podyezd"] .output { background: rgba(30, 22, 12, 0.95); }
+  [data-theme="soviet-podyezd"] .fonts button:not(.active),
+  [data-theme="soviet-podyezd"] .lang-switch button:not(.active),
+  [data-theme="soviet-podyezd"] .theme-switch button:not(.active) {
+    background: rgba(80, 62, 38, 0.92);
+  }
 }
 
 /* ──────── Flowing colors animation ──────── */
@@ -2702,6 +2997,13 @@ footer a:hover {
   animation: rainbowFlow 10s linear infinite;
 }
 
+/* Aurora (v5.20.0) — reuses the rainbowFlow keyframe but slower (16s) for
+   a meditative northern-lights feel rather than psychedelic disco. */
+[data-theme="aurora"] body {
+  background-size: 300% 300%;
+  animation: rainbowFlow 16s linear infinite;
+}
+
 @keyframes rainbowFlow {
   0%   { background-position:   0% 50%; }
   50%  { background-position: 100% 50%; }
@@ -2712,9 +3014,10 @@ footer a:hover {
    actual school site uses solid navy/gold, not motion. The schoolFlow
    keyframe was removed; only rainbow flows now. */
 
-/* Honor user preference — don't animate rainbow if reduced motion is set */
+/* Honor user preference — don't animate rainbow/aurora if reduced motion is set */
 @media (prefers-reduced-motion: reduce) {
-  [data-theme="rainbow"] body {
+  [data-theme="rainbow"] body,
+  [data-theme="aurora"] body {
     animation: none;
   }
   .theme-switch button[data-theme-btn="rainbow"]::before {
@@ -2864,4 +3167,47 @@ footer a:hover {
     width: 48px;
     height: 48px;
   }
+}
+
+/* --- Reset / danger-zone section (v5.20.0) --- */
+.settings-danger-zone {
+  border: 1.5px solid rgba(255, 90, 90, 0.4);
+  background: rgba(255, 90, 90, 0.04);
+}
+.settings-danger-zone h3 {
+  color: #ff7a85;
+}
+.settings-danger-zone h3::before {
+  background: #ff7a85;
+}
+.settings-warning-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(255, 90, 90, 0.1);
+  border: 1px solid rgba(255, 90, 90, 0.4);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  /* v5.21.1: text MUST stay red regardless of theme — use an explicit
+     red instead of var(--text-soft) which adapts to the theme. */
+  color: #ff7a85;
+  font-weight: 500;
+}
+.settings-warning-box:empty { display: none; }
+.settings-btn-danger {
+  background: rgba(255, 90, 90, 0.18);
+  border-color: rgba(255, 90, 90, 0.55);
+  color: #ff9da3;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.settings-btn-danger:hover {
+  background: rgba(255, 90, 90, 0.3);
+  border-color: rgba(255, 110, 110, 0.85);
+}
+.settings-btn-danger:active {
+  transform: scale(0.98);
 }

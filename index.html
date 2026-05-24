@@ -38,7 +38,9 @@
       var root = document.documentElement;
       var VALID = ["light", "dark", "night", "rainbow", "school",
                    "black-orange", "neon-green", "neon-violet",
-                   "pastel", "ocean", "sunset"];
+                   "pastel", "ocean", "sunset",
+                   "cyberpunk", "coffee", "terminal", "aurora",
+                   "soviet-lift", "soviet-podyezd"];
       try {
         var s = localStorage.getItem("bananafont:theme");
         if (s && VALID.indexOf(s) !== -1) {
@@ -75,12 +77,16 @@
         <button type="button" data-theme-btn="light" aria-label="Light theme"></button>
         <button type="button" data-theme-btn="dark" aria-label="Dark theme"></button>
         <button type="button" data-theme-btn="night" aria-label="Night theme"></button>
-        <button type="button" data-theme-btn="rainbow" aria-label="Rainbow theme"></button>
         <button type="button" data-theme-btn="black-orange" aria-label="Black-Orange theme"></button>
-        <!-- Other extra themes (neon-green, neon-violet, pastel, ocean, sunset)
-             are unlocked from Settings → Additional themes (v5.19.0).
-             School stays unlocked only via secret code LIBERATEDSCHOOL.
-             All themes are persisted in localStorage once chosen. -->
+        <!-- v5.21.0: Iridescent (formerly "Rainbow") moved to LAST position
+             per user request — and must stay last as new themes are added.
+             data-theme-btn keeps "rainbow" for backward compat (localStorage,
+             CSS selectors, animation keyframes). The LABEL is renamed. -->
+        <button type="button" data-theme-btn="rainbow" aria-label="Iridescent theme"></button>
+        <!-- Other extra themes (neon-green, neon-violet, pastel, ocean, sunset,
+             cyberpunk, coffee, terminal, aurora, soviet-lift, soviet-podyezd)
+             live in Settings → Additional themes.
+             School stays unlocked only via secret code LIBERATEDSCHOOL. -->
       </div>
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang="ru">RU</button>
@@ -371,9 +377,11 @@
         <div id="settings-size-sample" class="settings-size-sample">Hello 123 · Привет</div>
       </div>
 
-      <div class="settings-section">
+      <div class="settings-section settings-danger-zone">
         <h3 id="settings-reset-label"></h3>
-        <button type="button" id="reset-btn" class="settings-btn"></button>
+        <!-- v5.20.0: visible warning explaining what will be lost. -->
+        <div class="settings-warning-box" id="settings-reset-warning"></div>
+        <button type="button" id="reset-btn" class="settings-btn settings-btn-danger"></button>
         <div class="settings-hint" id="settings-reset-hint"></div>
       </div>
 

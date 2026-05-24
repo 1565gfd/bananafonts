@@ -22,7 +22,7 @@
       themeLight: "Светлая",
       themeDark: "Тёмная",
       themeNight: "Ночная",
-      themeRainbow: "Радужная",
+      themeRainbow: "Переливающаяся",
       themeSchool: "Школа",
       themeBlackOrange: "Чёрно-оранж.",
       themeNeonGreen: "Неон зелёный",
@@ -30,8 +30,15 @@
       themePastel: "Пастель",
       themeOcean: "Океан",
       themeSunset: "Закат",
+      themeCyberpunk: "Киберпанк",
+      themeCoffee: "Кофе",
+      themeTerminal: "Терминал",
+      themeAurora: "Сияние",
+      themeSovietLift: "Советский лифт",
+      themeSovietPodyezd: "Советский подъезд",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
+      settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
       ttUniversal: "🇷🇺 🇬🇧 Поддерживает кириллицу и латиницу",
       ttUnicode: "🇬🇧 Только латиница и цифры. В Telegram Desktop Windows может не работать (нормализация Unicode)",
       ttCombining: "🇷🇺 🇬🇧 Подчёркнутый/зачёркнутый — работает везде, включая Telegram Desktop Windows и кириллицу",
@@ -164,7 +171,7 @@
       themeLight: "Light",
       themeDark: "Dark",
       themeNight: "Night",
-      themeRainbow: "Rainbow",
+      themeRainbow: "Iridescent",
       themeSchool: "School",
       themeBlackOrange: "Black-Orange",
       themeNeonGreen: "Neon Green",
@@ -172,8 +179,15 @@
       themePastel: "Pastel",
       themeOcean: "Ocean",
       themeSunset: "Sunset",
+      themeCyberpunk: "Cyberpunk",
+      themeCoffee: "Coffee",
+      themeTerminal: "Terminal",
+      themeAurora: "Aurora",
+      themeSovietLift: "Soviet Lift",
+      themeSovietPodyezd: "Soviet Hallway",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
+      settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
       ttUniversal: "🇷🇺 🇬🇧 Supports Cyrillic and Latin",
       ttUnicode: "🇬🇧 Latin and digits only. May not work in Telegram Desktop Windows (Unicode normalization)",
       ttCombining: "🇷🇺 🇬🇧 Underline/strikethrough — works everywhere including Telegram Desktop Windows and Cyrillic",
@@ -374,7 +388,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.19.1";
+  var VERSION = "v5.21.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -429,6 +443,8 @@
   var settingsExtraThemesLabelEl = document.getElementById("settings-extra-themes-label");
   var settingsExtraThemesHintEl  = document.getElementById("settings-extra-themes-hint");
   var extraThemesGridEl          = document.getElementById("extra-themes-grid");
+  /* Reset warning (v5.20.0) */
+  var settingsResetWarningEl     = document.getElementById("settings-reset-warning");
   var tabBtnFonts       = document.getElementById("tab-btn-fonts");
   var tabBtnSettings    = document.getElementById("tab-btn-settings");
   var tabBtnCalc        = document.getElementById("tab-btn-calc");
@@ -518,8 +534,10 @@
   var currentLang = "en";
   var VALID_THEMES = [
     "light", "dark", "night", "rainbow", "school",
-    "black-orange",                                 /* v5.19.0: 5th main-bar button */
-    "neon-green", "neon-violet", "pastel", "ocean", "sunset" /* extras: Settings */
+    "black-orange",                                              /* v5.19.0: 5th main-bar button */
+    "neon-green", "neon-violet", "pastel", "ocean", "sunset",   /* v5.19.0 extras */
+    "cyberpunk", "coffee", "terminal", "aurora",                 /* v5.20.0 extras */
+    "soviet-lift", "soviet-podyezd"                              /* v5.21.0 extras */
   ];
   var currentTheme = document.documentElement.dataset.theme || "dark";
   if (VALID_THEMES.indexOf(currentTheme) === -1) currentTheme = "dark";
@@ -574,7 +592,13 @@
       "neon-violet":  "themeNeonViolet",
       pastel: "themePastel",
       ocean:  "themeOcean",
-      sunset: "themeSunset"
+      sunset: "themeSunset",
+      cyberpunk: "themeCyberpunk",
+      coffee:    "themeCoffee",
+      terminal:  "themeTerminal",
+      aurora:    "themeAurora",
+      "soviet-lift":    "themeSovietLift",
+      "soviet-podyezd": "themeSovietPodyezd"
     };
     for (var j = 0; j < themeButtons.length; j++) {
       var btn = themeButtons[j];
@@ -665,6 +689,7 @@
     settingsResetLab.textContent  = t.settingsResetLabel;
     resetBtn.textContent          = t.settingsResetBtn;
     settingsResetHint.textContent = t.settingsResetHint;
+    settingsResetWarningEl.textContent = t.settingsResetWarning;
     settingsAboutLab.textContent  = t.settingsAboutLabel;
     settingsAboutText.textContent = t.settingsAboutText;
     settingsVersionEl.textContent = VERSION;
@@ -724,7 +749,13 @@
     "neon-violet":  "#0a0010",
     pastel:         "#fce8ee",
     ocean:          "#003a5c",
-    sunset:         "#2a0a3f"
+    sunset:         "#2a0a3f",
+    cyberpunk:      "#0a0014",   /* v5.20.0 new extras */
+    coffee:         "#1a0e08",
+    terminal:       "#000000",
+    aurora:         "#001a2e",
+    "soviet-lift":     "#3a4845", /* v5.21.0 — gray-green metal */
+    "soviet-podyezd":  "#3d2f1c"  /* v5.21.0 — dim yellow-brown */
   };
   var themeTransitionTimer = null;
 
@@ -756,7 +787,21 @@
     { id: "ocean",       ruLabel: "Океан",        enLabel: "Ocean",
       swatch: "linear-gradient(160deg, #003a5c 0%, #007a9e 60%, #00c2cb 100%)" },
     { id: "sunset",      ruLabel: "Закат",        enLabel: "Sunset",
-      swatch: "linear-gradient(135deg, #2a0a3f 0%, #c43a85 50%, #ff8b3d 100%)" }
+      swatch: "linear-gradient(135deg, #2a0a3f 0%, #c43a85 50%, #ff8b3d 100%)" },
+    /* v5.20.0 — 4 new unique extras */
+    { id: "cyberpunk",   ruLabel: "Киберпанк",    enLabel: "Cyberpunk",
+      swatch: "radial-gradient(circle at 30% 30%, #ff14c8 0%, transparent 55%), radial-gradient(circle at 70% 70%, #00dcff 0%, transparent 55%), #0a0014" },
+    { id: "coffee",      ruLabel: "Кофе",         enLabel: "Coffee",
+      swatch: "radial-gradient(ellipse at 30% 30%, #d4a373 0%, #6b3410 60%, #2a1810 100%)" },
+    { id: "terminal",    ruLabel: "Терминал",     enLabel: "Terminal",
+      swatch: "radial-gradient(circle at 30% 30%, #00ff66 0%, transparent 50%), #000000" },
+    { id: "aurora",      ruLabel: "Сияние",       enLabel: "Aurora",
+      swatch: "linear-gradient(135deg, #0a1830 0%, #2d5e5b 35%, #1f5a7a 65%, #4a3865 100%)" },
+    /* v5.21.0 — Soviet themes */
+    { id: "soviet-lift",    ruLabel: "Советский лифт",    enLabel: "Soviet Lift",
+      swatch: "linear-gradient(180deg, #5a6a64 0%, #3a4845 50%, #2a3835 100%)" },
+    { id: "soviet-podyezd", ruLabel: "Советский подъезд", enLabel: "Soviet Hallway",
+      swatch: "radial-gradient(circle at 50% 30%, #e8c468 0%, #5a4530 50%, #2a1f10 100%)" }
   ];
 
   function rebuildExtraThemesGrid() {
@@ -2208,15 +2253,19 @@
   timerMinEl.addEventListener("input", timerInputsChanged);
   timerSecEl.addEventListener("input", timerInputsChanged);
   timerMsEl.addEventListener("input",  timerInputsChanged);
-  /* Quick-add buttons (v5.15.0) */
+  /* Quick add/subtract buttons (v5.15.0 / v5.18.0 / v5.21.0).
+     Defensive read: dataset first, getAttribute fallback. Accepts any
+     non-zero integer; timerAddSeconds handles underflow per state. */
   for (var addI = 0; addI < timerAddBtns.length; addI++) {
     (function (btn) {
-      btn.addEventListener("click", function () {
-        var sec = parseInt(btn.dataset.addSec, 10);
-        /* v5.19.1: was `sec > 0`, which silently rejected ALL negative
-           buttons (the −30s/−1m/−5m row never fired anything). Accept
-           any non-zero integer; timerAddSeconds handles underflow. */
-        if (!isNaN(sec) && sec !== 0) timerAddSeconds(sec);
+      btn.addEventListener("click", function (e) {
+        var raw = btn.dataset.addSec;
+        if (raw === undefined || raw === null || raw === "") {
+          raw = btn.getAttribute("data-add-sec");
+        }
+        var sec = parseInt(raw, 10);
+        if (isNaN(sec) || sec === 0) return;
+        timerAddSeconds(sec);
       });
     })(timerAddBtns[addI]);
   }
