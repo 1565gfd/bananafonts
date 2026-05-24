@@ -103,6 +103,7 @@
       timerPaused: "На паузе.",
       timerMsToggle: "Показывать миллисекунды",
       timerAddedToast: "Добавлено: ",
+      timerRemovedToast: "Убрано: ",
       alarmLabel: "Будильник",
       alarmHint: "Сначала выберите свой часовой пояс, потом установите время будильника. Будильник сработает, когда время в выбранной зоне совпадёт с указанным.",
       alarmTzLabel: "Часовой пояс",
@@ -236,6 +237,7 @@
       timerPaused: "Paused.",
       timerMsToggle: "Show milliseconds",
       timerAddedToast: "Added: ",
+      timerRemovedToast: "Removed: ",
       alarmLabel: "Alarm clock",
       alarmHint: "First pick your timezone, then set the alarm time. The alarm will fire when the time in the chosen zone matches.",
       alarmTzLabel: "Timezone",
@@ -356,7 +358,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.17.0";
+  var VERSION = "v5.18.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -2003,23 +2005,32 @@
     setTimerFeedback("", false);
     refreshTimerButtonLabels();
   }
-  /* ── Add time to the timer (v5.15.0) ──
-     Works in any state:
-       - idle: bumps the input fields (and display)
-       - running: extends the current endAt by N seconds
-       - paused: extends the saved remaining
-       - done: re-arms with N seconds and starts running */
+  /* ── Add/subtract time to/from the timer (v5.15.0 / v5.18.0) ──
+     addSec may be positive (add) or negative (subtract). Works in
+     any state. Underflow handling:
+       - running:  subtracting past zero → finish immediately
+       - paused:   subtracting past zero → clamp to 0 (user can Reset)
+       - idle:     subtracting past zero → clamp to 0
+       - done:     negative adds are ignored (already at 0) */
   function timerAddSeconds(addSec) {
     var addMs = addSec * 1000;
+    var isAdd = addSec > 0;
     if (tmState === "running") {
       tmEndAt += addMs;
-      tmRemainingMs = Math.max(0, tmEndAt - performance.now());
+      var newRemain = tmEndAt - performance.now();
+      if (newRemain <= 0) {
+        /* Subtracted past zero — fire the timer right away */
+        timerFinish();
+        return;
+      }
+      tmRemainingMs = newRemain;
       timerDisplayEl.textContent = formatTimer(tmRemainingMs);
     } else if (tmState === "paused") {
-      tmRemainingMs += addMs;
+      tmRemainingMs = Math.max(0, tmRemainingMs + addMs);
       timerDisplayEl.textContent = formatTimer(tmRemainingMs);
     } else if (tmState === "done") {
-      /* re-arm fresh */
+      if (addMs <= 0) return; /* nothing to subtract from a finished timer */
+      /* re-arm fresh with the added duration */
       tmRemainingMs = addMs;
       tmEndAt = performance.now() + addMs;
       tmState = "running";
@@ -2029,19 +2040,23 @@
       refreshTimerButtonLabels();
       setTimerFeedback(TEXT[currentLang].timerRunning, false);
     } else {
-      /* idle — bump the input fields, keep display in sync */
+      /* idle — bump the input fields, keep display in sync. Clamp to 0. */
       var curMs = readTimerInputs() || 0;
-      var newMs = curMs + addMs;
+      var newMs = Math.max(0, curMs + addMs);
       var totalSec = Math.floor(newMs / 1000);
       timerMinEl.value = Math.floor(totalSec / 60);
       timerSecEl.value = totalSec % 60;
+      if (timerShowMs) timerMsEl.value = newMs % 1000;
       timerDisplayEl.textContent = formatTimer(newMs);
     }
-    /* Brief toast in the feedback row */
-    var toastMins = Math.floor(addSec / 60);
-    var toastSecs = addSec % 60;
+    /* Brief toast in the feedback row — uses "Added: +1m" or "Removed: -30s" */
+    var absSec = Math.abs(addSec);
+    var toastMins = Math.floor(absSec / 60);
+    var toastSecs = absSec % 60;
     var human = (toastMins > 0 ? toastMins + "m " : "") + (toastSecs > 0 ? toastSecs + "s" : "");
-    setTimerFeedback(TEXT[currentLang].timerAddedToast + "+" + human.trim(), false);
+    var prefix = isAdd ? TEXT[currentLang].timerAddedToast : TEXT[currentLang].timerRemovedToast;
+    var sign   = isAdd ? "+" : "−";
+    setTimerFeedback(prefix + sign + human.trim(), false);
     /* If running, restore the running-message after a moment */
     if (tmState === "running") {
       setTimeout(function () {

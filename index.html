@@ -289,11 +289,17 @@
           <button type="button" id="timer-start" class="tool-btn"></button>
           <button type="button" id="timer-reset" class="tool-btn"></button>
         </div>
-        <!-- Quick add-time buttons (v5.15.0): work whether idle / running / paused -->
+        <!-- Quick add/subtract-time buttons (v5.15.0 / v5.18.0):
+             work whether idle / running / paused / done -->
         <div class="time-controls timer-add-row">
           <button type="button" class="tool-btn timer-add-btn" data-add-sec="30">+30s</button>
           <button type="button" class="tool-btn timer-add-btn" data-add-sec="60">+1m</button>
           <button type="button" class="tool-btn timer-add-btn" data-add-sec="300">+5m</button>
+        </div>
+        <div class="time-controls timer-add-row">
+          <button type="button" class="tool-btn timer-add-btn timer-sub-btn" data-add-sec="-30">−30s</button>
+          <button type="button" class="tool-btn timer-add-btn timer-sub-btn" data-add-sec="-60">−1m</button>
+          <button type="button" class="tool-btn timer-add-btn timer-sub-btn" data-add-sec="-300">−5m</button>
         </div>
         <!-- Millisecond precision toggle (v5.15.0) -->
         <label class="timer-ms-toggle">

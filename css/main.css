@@ -1635,13 +1635,21 @@ html:not(.page-noir) {
   opacity: 0.85;
 }
 
-/* Timer quick-add buttons (v5.15.0) */
+/* Timer quick-add buttons (v5.15.0) + subtract buttons (v5.18.0) */
 .timer-add-row {
   margin-top: 8px;
 }
 .timer-add-btn {
   min-width: 70px;
   font-variant-numeric: tabular-nums;
+}
+/* Visual hint: subtract buttons tinted slightly red so user can tell
+   them apart from the (additive) green/neutral row. */
+.timer-sub-btn {
+  border-color: rgba(255, 120, 130, 0.45);
+}
+.timer-sub-btn:hover {
+  border-color: rgba(255, 140, 150, 0.7);
 }
 
 /* Timer ms toggle (v5.15.0) — checkbox + label, centered */
