@@ -87,6 +87,8 @@
       soundVolumeLabel: "Громкость",
       tabTools: "Инструменты",
       toolsTitle: "Полезные инструменты",
+      tabCustom: "Кастом",
+      customTabTitle: "🎚 Кастомизация",
       loremLimit: "1–50 абзацев",
       passgenLabel: "Генератор паролей",
       passgenLenText: "Длина:",
@@ -305,6 +307,8 @@
       soundVolumeLabel: "Volume",
       tabTools: "Tools",
       toolsTitle: "Handy tools",
+      tabCustom: "Custom",
+      customTabTitle: "🎚 Customization",
       loremLimit: "1–50 paragraphs",
       passgenLabel: "Password generator",
       passgenLenText: "Length:",
@@ -526,7 +530,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.32.2";
+  var VERSION = "v5.36.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -619,6 +623,62 @@
   var adminExportBtn     = document.getElementById("admin-export");
   var adminImportBtn     = document.getElementById("admin-import");
   var adminImportFileEl  = document.getElementById("admin-import-file");
+  /* v5.33.0: Customization knobs */
+  var uiScaleEl    = document.getElementById("ui-scale");
+  var uiScaleVal   = document.getElementById("ui-scale-val");
+  var uiBlurEl     = document.getElementById("ui-blur");
+  var uiBlurVal    = document.getElementById("ui-blur-val");
+  var uiRadiusEl   = document.getElementById("ui-radius");
+  var uiRadiusVal  = document.getElementById("ui-radius-val");
+  var uiAnimEl     = document.getElementById("ui-anim");
+  var uiAnimVal    = document.getElementById("ui-anim-val");
+  var uiSaturateEl = document.getElementById("ui-saturate");
+  var uiSaturateVal= document.getElementById("ui-saturate-val");
+  var uiCompactEl  = document.getElementById("ui-compact");
+  var resetKnobsBtn= document.getElementById("custom-reset-knobs");
+  /* v5.34.0: +5 knobs */
+  var uiWeightEl     = document.getElementById("ui-weight");
+  var uiWeightVal    = document.getElementById("ui-weight-val");
+  var uiSpacingEl    = document.getElementById("ui-spacing");
+  var uiSpacingVal   = document.getElementById("ui-spacing-val");
+  var uiLineheightEl = document.getElementById("ui-lineheight");
+  var uiLineheightVal= document.getElementById("ui-lineheight-val");
+  var uiBrightEl     = document.getElementById("ui-bright");
+  var uiBrightVal    = document.getElementById("ui-bright-val");
+  var uiHueEl        = document.getElementById("ui-hue");
+  var uiHueVal       = document.getElementById("ui-hue-val");
+  /* v5.33.0: Utility tools */
+  var utilIoEl      = document.getElementById("util-io");
+  var utilUuidBtn   = document.getElementById("util-uuid");
+  var utilTimeBtn   = document.getElementById("util-timestamp");
+  var utilReverseBtn= document.getElementById("util-reverse");
+  var utilB64EncBtn = document.getElementById("util-base64-enc");
+  var utilB64DecBtn = document.getElementById("util-base64-dec");
+  var utilUrlEncBtn = document.getElementById("util-url-enc");
+  var utilUrlDecBtn = document.getElementById("util-url-dec");
+  var utilRot13Btn  = document.getElementById("util-rot13");
+  var utilBinBtn    = document.getElementById("util-binary");
+  var utilMorseBtn  = document.getElementById("util-morse");
+  var utilCopyBtn   = document.getElementById("util-copy");
+  var utilClearBtn  = document.getElementById("util-clear");
+  /* v5.34.0: +15 utility buttons */
+  var utilHexEncBtn    = document.getElementById("util-hex-enc");
+  var utilHexDecBtn    = document.getElementById("util-hex-dec");
+  var utilUpperBtn     = document.getElementById("util-uppercase");
+  var utilLowerBtn     = document.getElementById("util-lowercase");
+  var utilTitleBtn     = document.getElementById("util-titlecase");
+  var utilSlugBtn      = document.getElementById("util-slugify");
+  var utilCamelBtn     = document.getElementById("util-camelcase");
+  var utilSnakeBtn     = document.getElementById("util-snakecase");
+  var utilKebabBtn     = document.getElementById("util-kebabcase");
+  var utilStripWsBtn   = document.getElementById("util-strip-ws");
+  var utilStripHtmlBtn = document.getElementById("util-strip-html");
+  var utilSpongebobBtn = document.getElementById("util-spongebob");
+  var utilJsonBtn      = document.getElementById("util-json");
+  var utilSortBtn      = document.getElementById("util-sort");
+  var utilUniqueBtn    = document.getElementById("util-unique");
+  /* v5.33.0: Pomodoro preset buttons */
+  var pomodoroBtns  = document.querySelectorAll(".pomodoro-btn");
   /* Sound toggle + volume (v5.22.0 / v5.24.0) */
   var settingsSoundLabelEl       = document.getElementById("settings-sound-label");
   var settingsSoundHintEl        = document.getElementById("settings-sound-hint");
@@ -630,6 +690,9 @@
   var tabBtnTools                = document.getElementById("tab-btn-tools");
   var toolsTitleEl               = document.getElementById("tools-title");
   var loremLimitHintEl           = document.getElementById("lorem-limit-hint");
+  /* v5.35.0: Customization tab */
+  var tabBtnCustom               = document.getElementById("tab-btn-custom");
+  var customTabTitleEl           = document.getElementById("custom-tab-title");
   /* Password generator */
   var passgenLabelEl   = document.getElementById("passgen-label");
   var passgenLenTextEl = document.getElementById("passgen-len-text");
@@ -837,8 +900,11 @@
     tabBtnCalc.textContent        = t.tabCalc;
     tabBtnTime.textContent        = t.tabTime;
     tabBtnTools.textContent       = t.tabTools;
+    tabBtnCustom.textContent      = t.tabCustom;
     tabBtnSecret.textContent      = t.tabSecret;
     tabBtnSettings.textContent    = t.tabSettings;
+    /* Custom tab (v5.35.0) */
+    customTabTitleEl.textContent  = t.customTabTitle;
     /* Tools tab labels (v5.25.0 — restored from Settings) */
     toolsTitleEl.textContent      = t.toolsTitle;
     loremLimitHintEl.textContent  = "(" + t.loremLimit + ")";
@@ -1173,32 +1239,54 @@
     for (var i = 0; i < btns.length; i++) {
       btns[i].classList.toggle("active", parseInt(btns[i].dataset.idx, 10) === idx);
     }
+    /* v5.36.0: update hero badge ("Aa" in current font) + name label */
+    var item = FONTS[idx];
+    var badge = document.getElementById("fonts-current-badge");
+    var nameEl = document.getElementById("fonts-current-name");
+    if (item && badge && nameEl) {
+      if (item.kind === "unicode")        badge.textContent = applyTransform("Aa", item.transform);
+      else if (item.kind === "combining") badge.textContent = applyCombining("Aa", item.combiner);
+      else                                badge.textContent = "Aa";
+      nameEl.textContent = item.label;
+    }
     renderOutput();
   }
 
   function renderFonts() {
+    /* v5.36.0 — card structure: <span class="font-card-preview">Aa</span>
+       <span class="font-card-name">label</span> <span class="font-card-flag">🇷🇺 🇬🇧</span>.
+       Preview shows "Aa" rendered in the style of the actual transform so user
+       can recognize each style at a glance. */
     var t = TEXT[currentLang];
     var html = "";
+    var SAMPLE = "Aa";   /* preview chars shown in each card */
     for (var i = 0; i < FONTS.length; i++) {
       var item = FONTS[i];
-      var display, tip, flag;
+      var preview, tip, flag, cat;
       if (item.kind === "unicode") {
-        display = applyTransform(item.label, item.transform);
+        preview = applyTransform(SAMPLE, item.transform);
         tip = t.ttUnicode;
         flag = "🇬🇧";
+        cat = "unicode";
       } else if (item.kind === "combining") {
-        display = applyCombining(item.label, item.combiner);
+        preview = applyCombining(SAMPLE, item.combiner);
         tip = t.ttCombining;
         flag = "🇷🇺 🇬🇧";
+        cat = "combining";
       } else {
-        display = item.label;
+        preview = SAMPLE;
         tip = t.ttUniversal;
         flag = "🇷🇺 🇬🇧";
+        cat = "universal";
       }
       html += '<button type="button" data-idx="' + i +
               '" data-kind="' + item.kind +
-              '" data-flag="' + flag +
-              '" title="' + tip + '">' + display + '</button>';
+              '" data-cat="' + cat +
+              '" title="' + tip + '">' +
+              '<span class="font-card-preview">' + preview + '</span>' +
+              '<span class="font-card-name">' + item.label + '</span>' +
+              '<span class="font-card-flag">' + flag + '</span>' +
+              '</button>';
     }
     fontsEl.innerHTML = html;
     var btns = fontsEl.querySelectorAll("button");
@@ -1209,6 +1297,37 @@
         });
       })(btns[k]);
     }
+    /* Reapply current search/category filter if any */
+    if (typeof applyFontsFilter === "function") applyFontsFilter();
+  }
+
+  /* v5.36.0 — Search + category filter for fonts grid */
+  var fontsSearchEl = document.getElementById("fonts-search");
+  var fontsCatPills = document.querySelectorAll(".fonts-cat-pill");
+  var fontsCurrentCat = "all";
+  function applyFontsFilter() {
+    var query = (fontsSearchEl && fontsSearchEl.value || "").trim().toLowerCase();
+    var btns = fontsEl.querySelectorAll("button");
+    for (var i = 0; i < btns.length; i++) {
+      var btn = btns[i];
+      var name = (btn.querySelector(".font-card-name") || {}).textContent || "";
+      var cat = btn.dataset.cat || "universal";
+      var catMatch = (fontsCurrentCat === "all") || (cat === fontsCurrentCat);
+      var qMatch = !query || name.toLowerCase().indexOf(query) !== -1;
+      btn.classList.toggle("hidden-by-filter", !(catMatch && qMatch));
+    }
+  }
+  if (fontsSearchEl) fontsSearchEl.addEventListener("input", applyFontsFilter);
+  for (var fp = 0; fp < fontsCatPills.length; fp++) {
+    (function (pill) {
+      pill.addEventListener("click", function () {
+        fontsCurrentCat = pill.dataset.cat;
+        for (var k = 0; k < fontsCatPills.length; k++) {
+          fontsCatPills[k].classList.toggle("active", fontsCatPills[k] === pill);
+        }
+        applyFontsFilter();
+      });
+    })(fontsCatPills[fp]);
   }
 
   /* --------- copy --------- */
@@ -2832,7 +2951,12 @@
     });
 
     /* ── v5.30.0: Sound tester ── */
-    var SOUND_NAMES = ["click","tab","tick","select","success","error","pop","whoosh","fail","confirm","unlock","page"];
+    var SOUND_NAMES = [
+      "click","tab","tick","select","success","error","pop","whoosh","fail","confirm","unlock","page",
+      /* v5.35.0 — 20 new sound types */
+      "bell","chord","bubble","drip","laser","rocket","drum","snare","hihat","wow",
+      "siren","typewriter","dial","boop","bird","fanfare","gong","harp","glitch","xylophone"
+    ];
     adminSoundsGridEl.innerHTML = "";
     SOUND_NAMES.forEach(function (name) {
       var btn = document.createElement("button");
@@ -3381,8 +3505,156 @@
             setTimeout(function () { playTone(ctx, f, 0.055, 0.18); }, idx * 60);
           });
           break;
+        /* ── v5.35.0: 20 new sound types ── */
+        case "bell":      playBell(ctx); break;
+        case "chord":     playChord(ctx); break;
+        case "bubble":    playSweep(ctx, "sine", 400, 900, 0.05, 0.13); break;
+        case "drip":      playSweep(ctx, "sine", 1200, 350, 0.06, 0.12); break;
+        case "laser":     playSweep(ctx, "sawtooth", 3000, 200, 0.05, 0.22); break;
+        case "rocket":    playSweep(ctx, "sawtooth", 200, 1800, 0.04, 0.45); break;
+        case "drum":      playSweep(ctx, "sine", 120, 40, 0.18, 0.18); break;
+        case "snare":     playNoiseBurst(ctx, 0.07, 0.09); break;
+        case "hihat":     playNoiseBurst(ctx, 0.035, 0.04); break;
+        case "wow":       playWow(ctx); break;
+        case "siren":     playSiren(ctx); break;
+        case "typewriter":
+          playTone(ctx, 2400, 0.04, 0.02);
+          setTimeout(function () { playTone(ctx, 1800, 0.025, 0.025); }, 35);
+          break;
+        case "dial":      playTone(ctx, 350, 0.045, 0.22); break;
+        case "boop":
+          playTone(ctx, 520, 0.045, 0.07);
+          setTimeout(function () { playTone(ctx, 360, 0.045, 0.1); }, 80);
+          break;
+        case "bird":
+          playSweep(ctx, "sine", 2200, 3100, 0.04, 0.07);
+          setTimeout(function () { playSweep(ctx, "sine", 3000, 2400, 0.04, 0.06); }, 100);
+          break;
+        case "fanfare":   playFanfare(ctx); break;
+        case "gong":      playGong(ctx); break;
+        case "harp":      playHarp(ctx); break;
+        case "glitch":    playGlitch(ctx); break;
+        case "xylophone":
+          playBellNote(ctx, 1568, 0.07, 0.45);
+          setTimeout(function () { playBellNote(ctx, 2093, 0.06, 0.4); }, 90);
+          break;
       }
     } catch (e) {}
+  }
+
+  /* ── v5.35.0 sound helpers ── */
+  function playBell(ctx) { playBellNote(ctx, 880, 0.09, 0.9); }
+  function playBellNote(ctx, freq, peakGain, dur) {
+    var g0 = peakGain * soundVolume;
+    if (g0 < 0.0001) g0 = 0.0001;
+    var oA = ctx.createOscillator(), oB = ctx.createOscillator(), g = ctx.createGain();
+    oA.type = "sine";     oA.frequency.value = freq;
+    oB.type = "triangle"; oB.frequency.value = freq * 2;
+    var t0 = ctx.currentTime;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    oA.connect(g); oB.connect(g); g.connect(ctx.destination);
+    oA.start(t0); oB.start(t0);
+    oA.stop(t0 + dur + 0.05); oB.stop(t0 + dur + 0.05);
+  }
+  function playChord(ctx) {
+    [523.25, 659.25, 783.99].forEach(function (f) { playBellNote(ctx, f, 0.05, 0.7); });
+  }
+  function playSweep(ctx, waveType, fromHz, toHz, peakGain, dur) {
+    var g0 = peakGain * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    var osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = waveType;
+    var t0 = ctx.currentTime;
+    osc.frequency.setValueAtTime(fromHz, t0);
+    osc.frequency.exponentialRampToValueAtTime(toHz, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + dur + 0.02);
+  }
+  function playNoiseBurst(ctx, peakGain, dur) {
+    var g0 = peakGain * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    var samples = Math.floor(ctx.sampleRate * dur);
+    var buf = ctx.createBuffer(1, samples, ctx.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i = 0; i < samples; i++) data[i] = Math.random() * 2 - 1;
+    var src = ctx.createBufferSource();
+    src.buffer = buf;
+    var g = ctx.createGain();
+    var t0 = ctx.currentTime;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(g).connect(ctx.destination);
+    src.start(t0); src.stop(t0 + dur + 0.02);
+  }
+  function playWow(ctx) {
+    var g0 = 0.05 * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    var osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = "sine";
+    var t0 = ctx.currentTime;
+    osc.frequency.setValueAtTime(500, t0);
+    osc.frequency.exponentialRampToValueAtTime(1200, t0 + 0.15);
+    osc.frequency.exponentialRampToValueAtTime(500, t0 + 0.3);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + 0.35);
+  }
+  function playSiren(ctx) {
+    var g0 = 0.04 * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    var osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = "square";
+    var t0 = ctx.currentTime;
+    for (var i = 0; i < 4; i++) {
+      osc.frequency.setValueAtTime(700, t0 + i * 0.15);
+      osc.frequency.setValueAtTime(900, t0 + i * 0.15 + 0.075);
+    }
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.6);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + 0.62);
+  }
+  function playFanfare(ctx) {
+    [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) {
+      setTimeout(function () { playBellNote(ctx, f, 0.07, 0.35); }, i * 110);
+    });
+  }
+  function playGong(ctx) {
+    [110, 173, 247, 311].forEach(function (f, i) {
+      var g0 = (i === 0 ? 0.1 : 0.04) * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+      var osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.type = "sine"; osc.frequency.value = f;
+      var t0 = ctx.currentTime;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(g0, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 2.5);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(t0); osc.stop(t0 + 2.6);
+    });
+  }
+  function playHarp(ctx) {
+    [392, 494, 587, 740, 880].forEach(function (f, i) {
+      setTimeout(function () { playBellNote(ctx, f, 0.05, 0.55); }, i * 80);
+    });
+  }
+  function playGlitch(ctx) {
+    var g0 = 0.04 * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    var osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = "square";
+    var t0 = ctx.currentTime;
+    for (var i = 0; i < 14; i++) {
+      osc.frequency.setValueAtTime(200 + Math.random() * 2000, t0 + i * 0.02);
+    }
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + 0.35);
   }
   /* ── pop ── short popcorn-style downward square-wave chirp.
      Quick to play, distinctive — good for visual effects (emoji rain). */
@@ -3509,6 +3781,271 @@
     refreshSoundButtonLabel();
     if (soundEnabled) playUiSound("click"); /* audible confirmation */
   });
+  /* ============================================================
+     v5.33.0 — CUSTOMIZATION KNOBS + UTILITIES + POMODORO
+     ============================================================ */
+
+  /* Live-tunable CSS vars: scale, blur, radius, anim speed, saturation. */
+  var KNOB_DEFAULTS = {
+    scale: 100, blur: 36, radius: 22, anim: 100, saturate: 200, compact: false,
+    /* v5.34.0 — 5 new knobs */
+    weight: 500, spacing: 0, lineheight: 140, bright: 100, hue: 0
+  };
+  var knobState = Object.assign({}, KNOB_DEFAULTS);
+  try {
+    var saved = localStorage.getItem("bananafont:knobs");
+    if (saved) {
+      var p = JSON.parse(saved);
+      if (p && typeof p === "object") {
+        ["scale","blur","radius","anim","saturate","weight","spacing","lineheight","bright","hue"].forEach(function (k) {
+          if (typeof p[k] === "number") knobState[k] = p[k];
+        });
+        if (typeof p.compact === "boolean") knobState.compact = p.compact;
+      }
+    }
+  } catch (e) {}
+
+  function applyKnobs() {
+    var root = document.documentElement;
+    /* UI scale via font-size on root — affects rem-based sizing if any.
+       Also set transform-origin so things scale from center. We use
+       transform: scale on body for the whole UI shrink/zoom feel. */
+    document.body.style.transform = (knobState.scale !== 100)
+      ? "scale(" + (knobState.scale / 100) + ")"
+      : "";
+    document.body.style.transformOrigin = "top center";
+    /* Glass blur for cards + sections */
+    root.style.setProperty("--lg-blur-card", knobState.blur + "px");
+    root.style.setProperty("--lg-blur-section", Math.max(10, knobState.blur - 8) + "px");
+    root.style.setProperty("--lg-blur-btn", Math.max(8, knobState.blur - 12) + "px");
+    /* Border radius — affects all glass containers via --lg-radius. We
+       don't have it yet wired into rules — let it cascade. */
+    root.style.setProperty("--lg-radius", knobState.radius + "px");
+    /* Animation speed: 100% = normal, 200% = 2x faster, 0% = effectively off */
+    var animFactor = knobState.anim === 0 ? 0.001 : (100 / Math.max(20, knobState.anim));
+    root.style.setProperty("--anim-factor", animFactor.toFixed(3));
+    /* Saturation */
+    root.style.setProperty("--lg-saturate", knobState.saturate + "%");
+    /* Compact body class */
+    if (knobState.compact) document.body.classList.add("compact-mode");
+    else                    document.body.classList.remove("compact-mode");
+    /* v5.34.0: 5 new knob applications */
+    document.body.style.fontWeight = String(knobState.weight);
+    document.body.style.letterSpacing = knobState.spacing + "px";
+    document.body.style.lineHeight = (knobState.lineheight / 100).toFixed(2);
+    /* brightness + hue-rotate via filter on html (combined) */
+    var bf = (knobState.bright !== 100) ? ("brightness(" + (knobState.bright / 100) + ")") : "";
+    var hf = (knobState.hue !== 0) ? ("hue-rotate(" + knobState.hue + "deg)") : "";
+    root.style.filter = (bf + " " + hf).trim();
+    /* Sync displays */
+    uiScaleEl.value     = knobState.scale;     uiScaleVal.textContent = knobState.scale + "%";
+    uiBlurEl.value      = knobState.blur;      uiBlurVal.textContent  = knobState.blur + "px";
+    uiRadiusEl.value    = knobState.radius;    uiRadiusVal.textContent= knobState.radius + "px";
+    uiAnimEl.value      = knobState.anim;      uiAnimVal.textContent  = knobState.anim + "%";
+    uiSaturateEl.value  = knobState.saturate;  uiSaturateVal.textContent = knobState.saturate + "%";
+    uiCompactEl.checked = !!knobState.compact;
+    uiWeightEl.value      = knobState.weight;     uiWeightVal.textContent    = knobState.weight;
+    uiSpacingEl.value     = knobState.spacing;    uiSpacingVal.textContent   = knobState.spacing + "px";
+    uiLineheightEl.value  = knobState.lineheight; uiLineheightVal.textContent= (knobState.lineheight / 100).toFixed(2);
+    uiBrightEl.value      = knobState.bright;     uiBrightVal.textContent    = knobState.bright + "%";
+    uiHueEl.value         = knobState.hue;        uiHueVal.textContent       = knobState.hue + "°";
+  }
+  function saveKnobs() {
+    try { localStorage.setItem("bananafont:knobs", JSON.stringify(knobState)); } catch (e) {}
+  }
+  /* v5.35.0: Physically move the customization block from Settings into
+     tab-custom. Done once on init; IDs stay unique. */
+  (function moveCustomBlockToOwnTab() {
+    var block = document.getElementById("custom-block");
+    var tabCustomEl = document.getElementById("tab-custom");
+    if (block && tabCustomEl) tabCustomEl.appendChild(block);
+  })();
+  applyKnobs();
+
+  uiScaleEl.addEventListener("input", function () { knobState.scale    = parseInt(uiScaleEl.value, 10);    applyKnobs(); saveKnobs(); });
+  uiBlurEl.addEventListener("input", function ()  { knobState.blur     = parseInt(uiBlurEl.value, 10);     applyKnobs(); saveKnobs(); });
+  uiRadiusEl.addEventListener("input", function (){ knobState.radius   = parseInt(uiRadiusEl.value, 10);   applyKnobs(); saveKnobs(); });
+  uiAnimEl.addEventListener("input", function ()  { knobState.anim     = parseInt(uiAnimEl.value, 10);     applyKnobs(); saveKnobs(); });
+  uiSaturateEl.addEventListener("input", function(){ knobState.saturate= parseInt(uiSaturateEl.value, 10); applyKnobs(); saveKnobs(); });
+  uiCompactEl.addEventListener("change", function (){ knobState.compact = uiCompactEl.checked;             applyKnobs(); saveKnobs(); });
+  /* v5.34.0 — 5 new knob listeners */
+  uiWeightEl.addEventListener("input", function ()    { knobState.weight     = parseInt(uiWeightEl.value, 10);     applyKnobs(); saveKnobs(); });
+  uiSpacingEl.addEventListener("input", function ()   { knobState.spacing    = parseFloat(uiSpacingEl.value);      applyKnobs(); saveKnobs(); });
+  uiLineheightEl.addEventListener("input", function() { knobState.lineheight = parseInt(uiLineheightEl.value, 10); applyKnobs(); saveKnobs(); });
+  uiBrightEl.addEventListener("input", function ()    { knobState.bright     = parseInt(uiBrightEl.value, 10);     applyKnobs(); saveKnobs(); });
+  uiHueEl.addEventListener("input", function ()       { knobState.hue        = parseInt(uiHueEl.value, 10);        applyKnobs(); saveKnobs(); });
+  resetKnobsBtn.addEventListener("click", function () {
+    knobState = Object.assign({}, KNOB_DEFAULTS);
+    applyKnobs();
+    saveKnobs();
+    playUiSound("confirm");
+  });
+
+  /* ── Utility tools ── */
+  function utilOut(s) { utilIoEl.value = s; playUiSound("success"); }
+  function utilIn() { return utilIoEl.value || ""; }
+
+  function generateUUIDv4() {
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    /* Manual fallback */
+    var hex = "0123456789abcdef";
+    var out = "";
+    for (var i = 0; i < 36; i++) {
+      if (i === 8 || i === 13 || i === 18 || i === 23) { out += "-"; continue; }
+      if (i === 14) { out += "4"; continue; }
+      if (i === 19) { out += hex[(Math.random() * 4) | 0 + 8]; continue; }
+      out += hex[(Math.random() * 16) | 0];
+    }
+    return out;
+  }
+  utilUuidBtn.addEventListener("click",   function () { utilOut(generateUUIDv4()); });
+  utilTimeBtn.addEventListener("click",   function () { utilOut(String(Date.now()) + "\nISO: " + new Date().toISOString()); });
+  utilReverseBtn.addEventListener("click",function () { utilOut(Array.from(utilIn()).reverse().join("")); });
+  utilB64EncBtn.addEventListener("click", function () {
+    try { utilOut(btoa(unescape(encodeURIComponent(utilIn())))); }
+    catch (e) { playUiSound("fail"); }
+  });
+  utilB64DecBtn.addEventListener("click", function () {
+    try { utilOut(decodeURIComponent(escape(atob(utilIn().trim())))); }
+    catch (e) { playUiSound("fail"); }
+  });
+  utilUrlEncBtn.addEventListener("click", function () { utilOut(encodeURIComponent(utilIn())); });
+  utilUrlDecBtn.addEventListener("click", function () {
+    try { utilOut(decodeURIComponent(utilIn())); } catch (e) { playUiSound("fail"); }
+  });
+  utilRot13Btn.addEventListener("click", function () {
+    utilOut(utilIn().replace(/[a-zA-Z]/g, function (c) {
+      var base = c <= "Z" ? 65 : 97;
+      return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+    }));
+  });
+  utilBinBtn.addEventListener("click", function () {
+    utilOut(Array.from(utilIn()).map(function (ch) {
+      return ch.charCodeAt(0).toString(2).padStart(8, "0");
+    }).join(" "));
+  });
+  var MORSE = {
+    A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",I:"..",J:".---",
+    K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",
+    U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",Z:"--..",
+    "0":"-----","1":".----","2":"..---","3":"...--","4":"....-","5":".....",
+    "6":"-....","7":"--...","8":"---..","9":"----.",
+    ".":".-.-.-",",":"--..--","?":"..--..","!":"-.-.--","-":"-....-","/":"-..-.",
+    "@":".--.-.","(":"-.--.",")":"-.--.-"
+  };
+  utilMorseBtn.addEventListener("click", function () {
+    utilOut(utilIn().toUpperCase().split("").map(function (ch) {
+      if (ch === " ") return "/";
+      return MORSE[ch] || ch;
+    }).join(" "));
+  });
+  utilCopyBtn.addEventListener("click", function () {
+    try {
+      navigator.clipboard.writeText(utilIn());
+      playUiSound("success");
+    } catch (e) { utilIoEl.select(); document.execCommand("copy"); }
+  });
+  utilClearBtn.addEventListener("click", function () { utilIoEl.value = ""; playUiSound("click"); });
+
+  /* ── v5.34.0: 15 more text utilities ── */
+  utilHexEncBtn.addEventListener("click", function () {
+    utilOut(Array.from(utilIn()).map(function (ch) {
+      return ch.charCodeAt(0).toString(16).padStart(2, "0");
+    }).join(" "));
+  });
+  utilHexDecBtn.addEventListener("click", function () {
+    try {
+      var parts = utilIn().trim().split(/\s+/).filter(Boolean);
+      utilOut(parts.map(function (h) { return String.fromCharCode(parseInt(h, 16)); }).join(""));
+    } catch (e) { playUiSound("fail"); }
+  });
+  utilUpperBtn.addEventListener("click", function () { utilOut(utilIn().toUpperCase()); });
+  utilLowerBtn.addEventListener("click", function () { utilOut(utilIn().toLowerCase()); });
+  utilTitleBtn.addEventListener("click", function () {
+    utilOut(utilIn().replace(/\S+/g, function (w) {
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }));
+  });
+  utilSlugBtn.addEventListener("click", function () {
+    /* URL-safe slug: lower, strip diacritics, non-alnum → '-', collapse dashes */
+    var s = utilIn().toLowerCase()
+      .normalize("NFKD").replace(/[̀-ͯ]/g, "")  /* strip accents */
+      .replace(/[^a-z0-9а-яё]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-+/g, "-");
+    utilOut(s);
+  });
+  utilCamelBtn.addEventListener("click", function () {
+    var words = utilIn().toLowerCase().split(/[^a-zA-Zа-яёА-ЯЁ0-9]+/).filter(Boolean);
+    if (!words.length) { utilOut(""); return; }
+    utilOut(words[0] + words.slice(1).map(function (w) {
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    }).join(""));
+  });
+  utilSnakeBtn.addEventListener("click", function () {
+    utilOut(utilIn().toLowerCase().split(/[^a-zA-Zа-яёА-ЯЁ0-9]+/).filter(Boolean).join("_"));
+  });
+  utilKebabBtn.addEventListener("click", function () {
+    utilOut(utilIn().toLowerCase().split(/[^a-zA-Zа-яёА-ЯЁ0-9]+/).filter(Boolean).join("-"));
+  });
+  utilStripWsBtn.addEventListener("click", function () {
+    /* Collapse all whitespace runs to single space, trim ends */
+    utilOut(utilIn().replace(/\s+/g, " ").trim());
+  });
+  utilStripHtmlBtn.addEventListener("click", function () {
+    /* Strip HTML tags safely — use a temp div, then read textContent */
+    var tmp = document.createElement("div");
+    tmp.innerHTML = utilIn();
+    utilOut(tmp.textContent || tmp.innerText || "");
+  });
+  utilSpongebobBtn.addEventListener("click", function () {
+    var i = 0;
+    utilOut(Array.from(utilIn()).map(function (ch) {
+      if (!/\p{L}/u.test(ch)) return ch;
+      i++;
+      return (i % 2) ? ch.toLowerCase() : ch.toUpperCase();
+    }).join(""));
+  });
+  utilJsonBtn.addEventListener("click", function () {
+    try {
+      var obj = JSON.parse(utilIn());
+      utilOut(JSON.stringify(obj, null, 2));
+    } catch (e) {
+      playUiSound("fail");
+      /* show the parse error in the textarea — handy for debugging */
+      utilIoEl.value = "/* parse error: " + (e.message || "unknown") + " */\n" + utilIn();
+    }
+  });
+  utilSortBtn.addEventListener("click", function () {
+    utilOut(utilIn().split(/\r?\n/).sort(function (a, b) {
+      return a.localeCompare(b, currentLang === "ru" ? "ru" : "en");
+    }).join("\n"));
+  });
+  utilUniqueBtn.addEventListener("click", function () {
+    var seen = Object.create(null);
+    utilOut(utilIn().split(/\r?\n/).filter(function (line) {
+      if (seen[line]) return false;
+      seen[line] = true;
+      return true;
+    }).join("\n"));
+  });
+
+  /* ── Pomodoro presets — fill the timer with preset value, optionally start. ── */
+  for (var pi = 0; pi < pomodoroBtns.length; pi++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        var m = parseInt(btn.dataset.pomoMin, 10);
+        var s = parseInt(btn.dataset.pomoSec, 10);
+        if (!isNaN(m)) timerMinEl.value = m;
+        if (!isNaN(s)) timerSecEl.value = s;
+        if (timerShowMs) timerMsEl.value = 0;
+        /* repaint display via the existing input handler */
+        if (typeof timerInputsChanged === "function") timerInputsChanged();
+        playUiSound("confirm");
+      });
+    })(pomodoroBtns[pi]);
+  }
+
   /* Volume slider — initial sync from loaded soundVolume + live updates */
   soundVolumeEl.value = Math.round(soundVolume * 100);
   soundVolumeValueEl.textContent = Math.round(soundVolume * 100) + "%";

@@ -123,6 +123,7 @@
       <button type="button" class="tab-btn" data-tab="calc" role="tab" aria-selected="false" id="tab-btn-calc"></button>
       <button type="button" class="tab-btn" data-tab="time" role="tab" aria-selected="false" id="tab-btn-time"></button>
       <button type="button" class="tab-btn" data-tab="tools" role="tab" aria-selected="false" id="tab-btn-tools"></button>
+      <button type="button" class="tab-btn" data-tab="custom" role="tab" aria-selected="false" id="tab-btn-custom"></button>
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
       <!-- Secret tab is always kept LAST. Do not reorder. -->
       <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
@@ -176,11 +177,33 @@
     </section>
 
     <section id="tab-fonts" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-fonts" hidden>
-      <h1 id="title"></h1>
-      <textarea id="input"></textarea>
+      <!-- v5.36.0: full Fonts redesign. Hero preview card на самом верху —
+           ввод и результат рядом, копирование одним кликом. Ниже — поиск +
+           категории-пилюли. Грид карточек каждый показывает preview "Aa"
+           в реальном шрифте + название + флаг + чекмарк когда активен. -->
+      <div class="fonts-hero">
+        <div class="fonts-hero-row">
+          <span class="fonts-hero-badge" id="fonts-current-badge">Aa</span>
+          <span class="fonts-hero-name" id="fonts-current-name">—</span>
+        </div>
+        <input type="text" id="input" class="fonts-hero-input" autocomplete="off" spellcheck="false" />
+        <div id="output" class="fonts-hero-preview"></div>
+        <div class="fonts-hero-actions">
+          <button type="button" id="copy-btn" class="fonts-copy-btn silent-btn" disabled></button>
+        </div>
+      </div>
+
+      <div class="fonts-filter-bar">
+        <input type="search" id="fonts-search" class="fonts-search" placeholder="🔍" autocomplete="off" />
+        <div class="fonts-cat-pills">
+          <button type="button" class="fonts-cat-pill active silent-btn" data-cat="all">Все</button>
+          <button type="button" class="fonts-cat-pill silent-btn" data-cat="universal">A·Я</button>
+          <button type="button" class="fonts-cat-pill silent-btn" data-cat="unicode">Unicode</button>
+          <button type="button" class="fonts-cat-pill silent-btn" data-cat="combining">Combine</button>
+        </div>
+      </div>
+
       <div class="fonts" id="fonts"></div>
-      <div id="output" class="output"></div>
-      <button type="button" id="copy-btn" class="copy-btn" disabled></button>
     </section>
 
     <section id="tab-calc" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-calc" hidden>
@@ -340,6 +363,14 @@
           <span id="timer-ms-label"></span>
         </label>
         <div class="timer-feedback" id="timer-feedback"></div>
+        <!-- v5.33.0: Pomodoro preset buttons -->
+        <div class="time-controls pomodoro-row">
+          <button type="button" class="tool-btn pomodoro-btn" data-pomo-min="25" data-pomo-sec="0">🍅 25/5</button>
+          <button type="button" class="tool-btn pomodoro-btn" data-pomo-min="50" data-pomo-sec="0">🍅 50/10</button>
+          <button type="button" class="tool-btn pomodoro-btn" data-pomo-min="90" data-pomo-sec="0">🍅 90/20</button>
+          <button type="button" class="tool-btn pomodoro-btn" data-pomo-min="5"  data-pomo-sec="0">☕ 5</button>
+          <button type="button" class="tool-btn pomodoro-btn" data-pomo-min="10" data-pomo-sec="0">☕ 10</button>
+        </div>
       </div>
 
       <!-- Alarm clock: user must pick a timezone FIRST, only then can they
@@ -468,6 +499,12 @@
       </div>
     </section>
 
+    <!-- Customization tab (v5.35.0) — empty container; #custom-block is
+         moved here by JS on init from inside Settings. -->
+    <section id="tab-custom" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-custom" hidden>
+      <h1 id="custom-tab-title"></h1>
+    </section>
+
     <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
       <h1 id="settings-title"></h1>
 
@@ -501,6 +538,110 @@
           <input type="range" id="sound-volume" class="settings-slider" min="0" max="100" value="80" />
           <span id="sound-volume-value">80%</span>
         </div>
+      </div>
+
+      <!-- v5.35.0: Customization block — marked with id="custom-block",
+           moved into <section id="tab-custom"> at runtime by JS so IDs
+           stay unique and bindings keep working. -->
+      <div class="settings-section" id="custom-block">
+        <h3 id="custom-title">🎚 Кастомизация UI</h3>
+        <p class="settings-hint" id="custom-hint">Подкрути под себя — всё сохраняется в localStorage.</p>
+        <div class="custom-row">
+          <label for="ui-scale"><span id="ui-scale-label">Масштаб</span></label>
+          <input type="range" id="ui-scale" class="settings-slider" min="80" max="140" step="5" value="100" />
+          <span class="custom-val" id="ui-scale-val">100%</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-blur"><span id="ui-blur-label">Glass blur</span></label>
+          <input type="range" id="ui-blur" class="settings-slider" min="0" max="60" step="2" value="36" />
+          <span class="custom-val" id="ui-blur-val">36px</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-radius"><span id="ui-radius-label">Скругление</span></label>
+          <input type="range" id="ui-radius" class="settings-slider" min="0" max="36" step="2" value="22" />
+          <span class="custom-val" id="ui-radius-val">22px</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-anim"><span id="ui-anim-label">Скорость анимаций</span></label>
+          <input type="range" id="ui-anim" class="settings-slider" min="0" max="200" step="10" value="100" />
+          <span class="custom-val" id="ui-anim-val">100%</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-saturate"><span id="ui-saturate-label">Glass saturation</span></label>
+          <input type="range" id="ui-saturate" class="settings-slider" min="100" max="300" step="10" value="200" />
+          <span class="custom-val" id="ui-saturate-val">200%</span>
+        </div>
+        <!-- v5.34.0: +5 knobs -->
+        <div class="custom-row">
+          <label for="ui-weight"><span id="ui-weight-label">Жирность шрифта</span></label>
+          <input type="range" id="ui-weight" class="settings-slider" min="300" max="900" step="100" value="500" />
+          <span class="custom-val" id="ui-weight-val">500</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-spacing"><span id="ui-spacing-label">Letter-spacing</span></label>
+          <input type="range" id="ui-spacing" class="settings-slider" min="-1" max="4" step="0.1" value="0" />
+          <span class="custom-val" id="ui-spacing-val">0px</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-lineheight"><span id="ui-lineheight-label">Line-height</span></label>
+          <input type="range" id="ui-lineheight" class="settings-slider" min="100" max="200" step="5" value="140" />
+          <span class="custom-val" id="ui-lineheight-val">1.40</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-bright"><span id="ui-bright-label">Яркость страницы</span></label>
+          <input type="range" id="ui-bright" class="settings-slider" min="50" max="150" step="5" value="100" />
+          <span class="custom-val" id="ui-bright-val">100%</span>
+        </div>
+        <div class="custom-row">
+          <label for="ui-hue"><span id="ui-hue-label">Сдвиг оттенка</span></label>
+          <input type="range" id="ui-hue" class="settings-slider" min="-180" max="180" step="5" value="0" />
+          <span class="custom-val" id="ui-hue-val">0°</span>
+        </div>
+        <div class="custom-buttons">
+          <button type="button" id="custom-reset-knobs" class="settings-btn silent-btn">↺ Сбросить крутилки</button>
+          <label class="passgen-check" style="margin-left:auto;">
+            <span class="toggle-switch"><input type="checkbox" id="ui-compact" /><span class="toggle-slider"></span></span>
+            <span id="ui-compact-label">Компактный режим</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- v5.33.0: Quick utilities (UUID / Base64 / URL encode / Reverse) -->
+      <div class="settings-section">
+        <h3 id="utils-title">⚙️ Утилиты</h3>
+        <p class="settings-hint" id="utils-hint">Положи текст ниже, потом нажми кнопку — результат заменит текст.</p>
+        <div class="utils-row">
+          <button type="button" id="util-uuid" class="settings-btn silent-btn">UUID v4</button>
+          <button type="button" id="util-timestamp" class="settings-btn silent-btn">Timestamp</button>
+          <button type="button" id="util-reverse" class="settings-btn silent-btn">↩ Реверс</button>
+          <button type="button" id="util-base64-enc" class="settings-btn silent-btn">→ Base64</button>
+          <button type="button" id="util-base64-dec" class="settings-btn silent-btn">← Base64</button>
+          <button type="button" id="util-url-enc" class="settings-btn silent-btn">→ URL</button>
+          <button type="button" id="util-url-dec" class="settings-btn silent-btn">← URL</button>
+          <button type="button" id="util-rot13" class="settings-btn silent-btn">ROT13</button>
+          <button type="button" id="util-binary" class="settings-btn silent-btn">→ Binary</button>
+          <button type="button" id="util-morse" class="settings-btn silent-btn">→ Morse</button>
+          <!-- v5.34.0: +15 utility buttons -->
+          <button type="button" id="util-hex-enc"   class="settings-btn silent-btn">→ HEX</button>
+          <button type="button" id="util-hex-dec"   class="settings-btn silent-btn">← HEX</button>
+          <button type="button" id="util-uppercase" class="settings-btn silent-btn">ABC</button>
+          <button type="button" id="util-lowercase" class="settings-btn silent-btn">abc</button>
+          <button type="button" id="util-titlecase" class="settings-btn silent-btn">Abc</button>
+          <button type="button" id="util-slugify"   class="settings-btn silent-btn">slug-ify</button>
+          <button type="button" id="util-camelcase" class="settings-btn silent-btn">camelCase</button>
+          <button type="button" id="util-snakecase" class="settings-btn silent-btn">snake_case</button>
+          <button type="button" id="util-kebabcase" class="settings-btn silent-btn">kebab-case</button>
+          <button type="button" id="util-strip-ws"  class="settings-btn silent-btn">Strip ws</button>
+          <button type="button" id="util-strip-html" class="settings-btn silent-btn">Strip HTML</button>
+          <button type="button" id="util-spongebob" class="settings-btn silent-btn">sPoNgEbOb</button>
+          <button type="button" id="util-json"      class="settings-btn silent-btn">Pretty JSON</button>
+          <button type="button" id="util-sort"      class="settings-btn silent-btn">Sort lines</button>
+          <button type="button" id="util-unique"    class="settings-btn silent-btn">Unique lines</button>
+          <button type="button" id="util-copy" class="settings-btn silent-btn">📋 Копировать</button>
+          <button type="button" id="util-clear" class="settings-btn silent-btn">✕ Очистить</button>
+        </div>
+        <textarea id="util-io" class="home-input" placeholder="Введи или вставь текст, потом нажми любую кнопку"></textarea>
+        <div class="utils-status" id="utils-status"></div>
       </div>
 
       <div class="settings-section settings-danger-zone">

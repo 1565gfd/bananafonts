@@ -3043,121 +3043,333 @@ textarea:focus {
    Font grid
    ============================================================ */
 
-.fonts {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.fonts button {
-  position: relative;
-  min-height: 46px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--glass-border-soft);
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  color: var(--text);
-  font-size: 30px;
-  cursor: pointer;
-  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s, color 0.25s;
-}
-
-.fonts button::after {
-  content: attr(data-flag);
-  position: absolute;
-  top: 3px;
-  right: 6px;
-  font-size: 10px;
-  opacity: 0.75;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-  line-height: 1;
-}
-
-.fonts button:hover {
-  background: var(--glass-bg-hover);
-  border-color: var(--glass-border);
-  transform: translateY(-1px);
-}
-
-.fonts button:active {
-  transform: scale(0.97);
-}
-
-.theme-switch button:active,
-.lang-switch button:active,
-.copy-btn:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.fonts button.active {
-  background: var(--accent-bg);
-  border-color: var(--accent-border);
-  color: #ffffff;
-  box-shadow: 0 0 24px var(--accent-glow), inset 0 1px 0 var(--glass-inset);
-}
-
 /* ============================================================
-   Output + copy
+   v5.36.0 — FONTS TAB FULL REDESIGN
    ============================================================ */
 
-.output {
-  min-height: 78px;
-  border-radius: 16px;
-  padding: 14px 16px;
-  font-size: 30px;
-  word-break: break-word;
-  margin-bottom: 12px;
+/* Hero card — title + input + big preview + copy button */
+.fonts-hero {
+  position: relative;
+  padding: 22px 22px 18px;
+  border-radius: 28px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-card)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-card)) saturate(var(--lg-saturate));
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0.8px var(--lg-highlight-top),
+    inset 0 -2px 3px var(--lg-shadow-bottom);
+  margin-bottom: 16px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.fonts-hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 35%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.fonts-hero > * { position: relative; z-index: 1; }
+.fonts-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.fonts-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0 14px;
+  border-radius: 22px;
+  background: var(--accent-bg);
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  box-shadow:
+    0 4px 14px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  letter-spacing: 0;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.fonts-hero-name {
+  font-size: 17px;
+  font-weight: 600;
   color: var(--text);
+  flex: 1;
+  word-break: break-word;
+}
+.fonts-hero-input {
+  width: 100%;
+  height: 50px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
   background: var(--output-bg);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--output-border);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  color: var(--text);
+  font-size: 17px;
+  outline: none;
+  caret-color: var(--accent);
+  margin-bottom: 14px;
+  font-family: inherit;
   box-shadow:
     inset 0 1px 0 var(--glass-inset-soft),
-    inset 0 -1px 0 var(--output-inset-bottom);
-  transition: background 0.25s, border-color 0.25s, color 0.25s;
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  transition: border-color 0.18s, box-shadow 0.2s;
 }
-
-.copy-btn {
-  display: block;
-  margin: 0 auto 14px;
-  min-height: 44px;
-  padding: 8px 34px;
-  border-radius: 14px;
+.fonts-hero-input:focus {
+  border-color: var(--accent-border);
+  box-shadow:
+    0 0 0 3px var(--accent-glow),
+    inset 0 1px 0 var(--glass-inset);
+}
+.fonts-hero-preview {
+  min-height: 96px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%),
+    var(--output-bg);
+  border: 1px solid var(--output-border);
+  color: var(--text);
+  font-size: 38px;
+  font-weight: 500;
+  word-break: break-word;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  box-shadow:
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -2px 3px var(--output-inset-bottom);
+  transition: background 0.25s, color 0.25s, border-color 0.2s;
+}
+.fonts-hero-actions {
+  display: flex;
+  justify-content: center;
+}
+.fonts-copy-btn {
+  position: relative;
+  min-height: 46px;
+  padding: 10px 38px;
+  border-radius: 100px;
   border: 1px solid var(--copy-border);
   background: var(--copy-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  backdrop-filter: blur(20px) saturate(200%);
   color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
   cursor: pointer;
-  box-shadow: 0 6px 22px var(--accent-glow), inset 0 1px 0 var(--glass-inset);
-  transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+  box-shadow:
+    0 8px 22px var(--accent-glow),
+    inset 0 1.5px 0.8px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.18);
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.2s;
+  overflow: hidden;
+  isolation: isolate;
 }
-
-.copy-btn:hover:not(:disabled) {
+.fonts-copy-btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 14%; right: 14%; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+.fonts-copy-btn > * { position: relative; z-index: 1; }
+.fonts-copy-btn:hover:not(:disabled) {
   background: var(--copy-bg-hover);
   border-color: var(--copy-border-hover);
   transform: translateY(-1px);
 }
-
-.copy-btn:disabled {
+.fonts-copy-btn:active:not(:disabled) { transform: scale(0.96); }
+.fonts-copy-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   box-shadow: none;
 }
-
-.copy-btn.copied {
+.fonts-copy-btn.copied {
   background: var(--copied-bg);
   border-color: var(--copied-border);
-  box-shadow: 0 6px 22px var(--copied-glow), inset 0 1px 0 var(--glass-inset);
+  box-shadow: 0 8px 22px var(--copied-glow);
 }
+
+/* Filter bar: search + category pills */
+.fonts-filter-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.fonts-search {
+  flex: 1;
+  min-width: 140px;
+  height: 38px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  transition: border-color 0.18s, box-shadow 0.2s;
+}
+.fonts-search:focus {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.fonts-cat-pills {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 100px;
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+.fonts-cat-pill {
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 100px;
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.2s;
+}
+.fonts-cat-pill:hover:not(.active) { background: var(--glass-bg-hover); }
+.fonts-cat-pill.active {
+  background: var(--accent-bg);
+  color: #ffffff;
+}
+
+/* Fonts grid — cards with Aa preview + name + flag */
+.fonts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+.fonts button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 96px;
+  padding: 12px 8px 10px;
+  border-radius: 18px;
+  border: 1px solid;
+  border-color: var(--lg-edge-tl) var(--lg-edge-tr) var(--lg-edge-br) var(--lg-edge-bl);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur-btn)) saturate(var(--lg-saturate));
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+  word-break: break-word;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.2s;
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 var(--glass-inset-soft),
+    inset 0 -1.5px 2px var(--lg-shadow-bottom);
+}
+.fonts button::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%; height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+.fonts button > * { position: relative; z-index: 1; }
+/* Hide existing data-flag ::after — replaced by .font-card-flag span */
+.fonts button::after { content: none; }
+.font-card-preview {
+  font-size: 30px;
+  line-height: 1;
+  display: block;
+  pointer-events: none;
+}
+.font-card-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  pointer-events: none;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1;
+}
+.font-card-flag {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 10px;
+  opacity: 0.7;
+  pointer-events: none;
+  line-height: 1;
+  z-index: 2;
+}
+.fonts button:hover { transform: translateY(-2px); background: var(--glass-bg-hover); }
+.fonts button:active { transform: scale(0.96); }
+.fonts button.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: #ffffff;
+  box-shadow:
+    0 0 28px var(--accent-glow),
+    inset 0 1.5px 0.8px rgba(255, 255, 255, 0.4),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.18);
+}
+.fonts button.active .font-card-name { color: rgba(255, 255, 255, 0.85); }
+.fonts button.active::after {
+  content: "✓";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  z-index: 2;
+  line-height: 1;
+}
+.fonts button.hidden-by-filter { display: none; }
+
+/* Old .output / .copy-btn rules kept as no-ops for backward compat
+   (nothing references them visibly after redesign). */
+.output { display: none; }
+.copy-btn { display: none; }
 
 /* ============================================================
    Footer
@@ -4181,6 +4393,90 @@ footer a:hover {
   background: rgba(120, 120, 130, 0.18);
   border-color: rgba(160, 160, 170, 0.4);
   color: var(--text-soft);
+}
+
+/* v5.33.0: Customization knobs + utility buttons + Pomodoro presets */
+.custom-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.custom-row > label {
+  min-width: 130px;
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 500;
+}
+.custom-row > input[type="range"] {
+  flex: 1;
+  min-width: 100px;
+}
+.custom-val {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 54px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.custom-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Utility tools row */
+.utils-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.utils-row > .settings-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 70px;
+}
+#util-io {
+  min-height: 110px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Pomodoro preset buttons row */
+.pomodoro-row {
+  margin-top: 8px;
+  gap: 6px;
+}
+.pomodoro-btn {
+  font-size: 13px;
+  padding: 8px 14px;
+  letter-spacing: 0.3px;
+  min-width: auto;
+}
+
+/* Compact mode (toggle in customization) */
+body.compact-mode .tool-section,
+body.compact-mode .settings-section,
+body.compact-mode .time-section {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+body.compact-mode .tool-btn,
+body.compact-mode .settings-btn,
+body.compact-mode .calc-btn {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+body.compact-mode h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
 }
 
 /* --- Volume slider row (v5.24.0) --- */
