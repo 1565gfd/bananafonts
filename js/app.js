@@ -246,7 +246,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.8.0";
+  var VERSION = "v5.9.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -482,8 +482,8 @@
     light:   "#eef2ff",
     dark:    "#161b3a",
     night:   "#000000",
-    rainbow: "#6a5cff",
-    school:  "#ff006e"
+    rainbow: "#ff006e",   /* v5.9.0: rainbow now psychedelic (hot pink first stop) */
+    school:  "#0f2c4a"    /* v5.9.0: school restored to navy/gold */
   };
   var themeTransitionTimer = null;
 

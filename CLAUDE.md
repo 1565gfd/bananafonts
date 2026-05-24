@@ -140,8 +140,9 @@ v5.3.0 → v5.3.1 PATCH").
 
 | Версия | Что |
 |--------|-----|
-| v5.8.x | **Rainbow redesign**: чистый ROYGBIV base (red→orange→yellow→green→cyan→blue→violet) + prismatic shimmer overlay (60deg) который скроллится в **противоположную** сторону от base (135deg). Двухслойная animation `rainbowFlow` (12s, 2 background-size, парные positions). School не трогали — у него теперь **отдельный** keyframe `schoolFlow`. |
-| v5.7.x | **Psychedelic** School theme (v5.7.1 redesign из navy/gold); анимированный flowing gradient (10s, быстрее rainbow). Логотип школы добавлен в v5.7.1 и удалён в v5.7.2 — больше не пытайся его рисовать. |
+| v5.9.x | **Темы swap**: rainbow получил psychedelic палитру «Виталий лучший» (hot pink → orange → yellow → violet → blue → magenta, 10s flowing); school возвращён в navy/gold реального сайта школы (#0f2c4a → #061528 base + gold accent #ffd54a) и снова **статичен** (без анимации). Conic-swatch на rainbow-кнопке теперь тоже psychedelic. Keyframe `schoolFlow` удалён. |
+| v5.8.x | Rainbow redesign в чистый ROYGBIV (отменён в v5.9.0 при swap'е). |
+| v5.7.x | School psychedelic experiment (v5.7.1 из navy/gold; v5.7.2 удалили логотип; **в v5.9.0 откатили палитру обратно к navy/gold**). |
 | v5.6.x | Rainbow theme (анимированная, 14s flowing gradient, 8 hue-stops); first cut School темы (navy/gold) |
 | v5.5.x | Secret Codes tab + `ILOVELIBSCHOOL` → «Виталий лучший»; код `LIBERATEDSCHOOL` разблокирует school-тему; universal emoji rain; скрытые подсказки кода |
 | v5.4.x | Скрытые приколы (console banner, Konami code, banana rain, type "banana"); 404 → auto-teleport на главную |
@@ -200,25 +201,22 @@ Enter в input — то же что клик «Проверить». При на
 «Секретные коды». После активации сохраняется в localStorage; работает
 как полноценная тема. См. ниже раздел про SECRET_CODES.
 
-- **Rainbow** (v5.8.0 redesign) — **двухслойная** анимированная тема.
-  Base — чистый ROYGBIV linear-gradient 135deg (#ff1744 red → #ff7a00
-  orange → #ffe300 yellow → #00e676 green → #00b8ff cyan → #2962ff
-  blue → #aa00ff violet). Сверху — prismatic shimmer overlay 60deg
-  (5 hsla стопов на ~45% alpha). Keyframe `rainbowFlow` 12s linear —
-  два layer'а скроллятся в **противоположных** направлениях, что даёт
-  диагональный prism shimmer (читается как «радуга», а не как
-  «психоделика»). `background-size: 360% 360%, 300% 300%` (две пары —
-  по числу gradient-слоёв). Conic-swatch на кнопке крутится 6s linear.
+- **Rainbow** (v5.9.0 — swap со школой) — **psychedelic** анимированная
+  тема, **тот же визуальный язык что и reveal-эффект «Виталий лучший»**.
+  Фон — flowing linear-gradient 135deg через hot pink → orange → yellow →
+  violet → blue → magenta (7 stops с возвратом на #ff006e). Animation
+  `rainbowFlow` 10s linear infinite по `background-position`, `background-size: 300% 300%`.
+  Accent — pink `#ff006e`. Text белый. Glass яркий (rgba(255,255,255,0.18)).
+  Conic-swatch на кнопке тоже psychedelic (те же 7 stops, крутится 6s linear),
+  чтобы кнопка визуально соответствовала результату клика.
   Уважает `prefers-reduced-motion: reduce` — обе анимации выключаются.
-- **School** — **psychedelic** тема (v5.7.1 redesign): тот же
-  визуальный язык что и reveal-эффект «Виталий лучший». Фон —
-  flowing linear-gradient через hot pink → orange → yellow → violet →
-  blue → magenta (7 stops с возвратом на #ff006e). С v5.8.0 у школы
-  **собственный keyframe `schoolFlow`** (10s linear, single-layer
-  horizontal scroll), отдельный от rainbow — это чтобы редизайн
-  rainbow не задел школу. Accent — pink `#ff006e`. Text белый.
-  Glass более яркий (rgba(255,255,255,0.18)). НЕТ кнопки в
-  навигации — только через секретный код `LIBERATEDSCHOOL`.
+- **School** (v5.9.0 — restored) — **navy/gold** статичная тема в стиле
+  реального сайта школы. Фон — глубокий navy gradient `#0f2c4a → #061528`
+  (linear 160deg) + два мягких золотистых radial highlights. Accent — warm
+  gold `#ffd54a`. Text — кремовый `#f4ecd0`. Glass — золотистые полупрозрачные
+  стенки (`rgba(255, 220, 140, 0.08-0.14)`). **Анимации нет** — sober,
+  schoolish. Keyframe `schoolFlow` удалён. НЕТ кнопки в навигации —
+  только через секретный код `LIBERATEDSCHOOL`.
 
 **Логотип школы был удалён в v5.7.2** по просьбе пользователя
 («лого убери так уж и быть») после нескольких неудачных попыток

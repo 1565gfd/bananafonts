@@ -100,75 +100,11 @@
   --nf-code-gradient: linear-gradient(180deg, #6a5cff 0%, #b8b0ff 100%);
 }
 
-/* ──────── Rainbow theme — true ROYGBIV with prismatic shimmer overlay
-            (v5.8.0 redesign). Two stacked linear-gradients at near-opposite
-            angles. The top layer is a semi-transparent prism that scrolls
-            COUNTER to the base layer — produces a diagonal shimmer that
-            reads as "rainbow" (not "psychedelic"). The base is a clean
-            ROYGBIV: red→orange→yellow→green→cyan→blue→violet. ──────── */
+/* ──────── Rainbow theme — psychedelic "Виталий лучший" palette
+            (v5.9.0 — swapped with school per user request). Hot pink →
+            orange → yellow → violet → blue → magenta, continuously
+            flowing. This is the same vibe as the secret-code reveal. ──────── */
 [data-theme="rainbow"] {
-  color-scheme: dark;
-  --bg-gradient:
-    /* Top: prismatic shimmer overlay (counter-scrolls in animation) */
-    linear-gradient(60deg,
-      hsla(330, 100%, 70%, 0.45)  0%,
-      hsla( 30, 100%, 65%, 0.40) 25%,
-      hsla(120, 100%, 65%, 0.40) 50%,
-      hsla(210, 100%, 70%, 0.40) 75%,
-      hsla(300, 100%, 70%, 0.45) 100%),
-    /* Base: clean ROYGBIV rainbow */
-    linear-gradient(135deg,
-      #ff1744   0%,   /* red    */
-      #ff7a00  16%,   /* orange */
-      #ffe300  33%,   /* yellow */
-      #00e676  50%,   /* green  */
-      #00b8ff  66%,   /* cyan   */
-      #2962ff  83%,   /* blue   */
-      #aa00ff 100%);  /* violet */
-
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.6);
-  --text-soft: rgba(255, 255, 255, 0.92);
-  --text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
-
-  --glass-bg: rgba(255, 255, 255, 0.16);
-  --glass-bg-hover: rgba(255, 255, 255, 0.28);
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-border-soft: rgba(255, 255, 255, 0.3);
-  --glass-inset: rgba(255, 255, 255, 0.5);
-  --glass-inset-soft: rgba(255, 255, 255, 0.15);
-
-  --output-bg: rgba(0, 0, 0, 0.35);
-  --output-border: rgba(255, 255, 255, 0.25);
-  --output-inset-bottom: rgba(0, 0, 0, 0.25);
-
-  --accent: #ffffff;
-  --accent-bg: rgba(255, 255, 255, 0.5);
-  --accent-border: rgba(255, 255, 255, 0.85);
-  --accent-glow: rgba(255, 255, 255, 0.6);
-
-  --copy-bg: rgba(255, 255, 255, 0.4);
-  --copy-bg-hover: rgba(255, 255, 255, 0.55);
-  --copy-border: rgba(255, 255, 255, 0.7);
-  --copy-border-hover: rgba(255, 255, 255, 0.95);
-  --copied-bg: rgba(80, 220, 130, 0.6);
-  --copied-border: rgba(120, 240, 160, 0.85);
-  --copied-glow: rgba(80, 220, 130, 0.5);
-
-  --link: #ffffff;
-  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.4);
-
-  --nf-bg: linear-gradient(135deg,
-      hsl(0, 75%, 55%)   0%,
-      hsl(140, 60%, 45%) 50%,
-      hsl(245, 70%, 55%) 100%);
-  --nf-code-gradient: linear-gradient(180deg, #ffffff 0%, #ffe680 100%);
-}
-
-/* ──────── School theme — psychedelic flowing colors (unlocked via
-            secret code LIBERATEDSCHOOL). Same vibe as the "Виталий
-            лучший" reveal: hot pink → orange → violet → magenta. ──────── */
-[data-theme="school"] {
   color-scheme: dark;
   --bg-gradient: linear-gradient(135deg,
     #ff006e   0%,
@@ -214,6 +150,53 @@
   --nf-bg: linear-gradient(135deg,
     #ff006e 0%, #8338ec 50%, #3a86ff 100%);
   --nf-code-gradient: linear-gradient(180deg, #ffffff 0%, #ffe680 100%);
+}
+
+/* ──────── School theme — restored to navy/gold of the actual school
+            site (v5.9.0 — reverted from v5.7.1 psychedelic experiment).
+            Static, sober, schoolish: deep navy background with a warm
+            gold accent. Unlocked via secret code LIBERATEDSCHOOL. ──────── */
+[data-theme="school"] {
+  color-scheme: dark;
+  --bg-gradient:
+    radial-gradient(circle at 80% 12%, rgba(255, 200, 80, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 18% 88%, rgba(255, 200, 80, 0.05) 0%, transparent 60%),
+    linear-gradient(160deg, #0f2c4a 0%, #061528 100%);
+
+  --text: #f4ecd0;
+  --text-dim: rgba(244, 236, 208, 0.55);
+  --text-soft: rgba(244, 236, 208, 0.9);
+  --text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+
+  --glass-bg: rgba(255, 220, 140, 0.08);
+  --glass-bg-hover: rgba(255, 220, 140, 0.14);
+  --glass-border: rgba(255, 200, 80, 0.35);
+  --glass-border-soft: rgba(255, 200, 80, 0.22);
+  --glass-inset: rgba(255, 220, 140, 0.22);
+  --glass-inset-soft: rgba(255, 220, 140, 0.1);
+
+  --output-bg: rgba(8, 22, 42, 0.7);
+  --output-border: rgba(255, 200, 80, 0.3);
+  --output-inset-bottom: rgba(0, 0, 0, 0.4);
+
+  --accent: #ffd54a;                          /* warm gold */
+  --accent-bg: rgba(255, 200, 60, 0.92);
+  --accent-border: rgba(255, 220, 120, 1);
+  --accent-glow: rgba(255, 200, 60, 0.55);
+
+  --copy-bg: rgba(255, 200, 60, 0.88);
+  --copy-bg-hover: rgba(255, 220, 100, 0.96);
+  --copy-border: rgba(255, 220, 120, 1);
+  --copy-border-hover: rgba(255, 235, 160, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
+
+  --link: #ffd54a;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+  --nf-bg: linear-gradient(160deg, #0f2c4a 0%, #061528 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffd54a 0%, #ff9933 100%);
 }
 
 [data-theme="night"] {
@@ -471,8 +454,11 @@ html.theme-transition *::after {
 }
 
 .theme-switch button[data-theme-btn="rainbow"]::before {
+  /* v5.9.0: swatch now reflects the psychedelic palette (hot pink →
+     orange → yellow → violet → blue → magenta) so the button visually
+     previews what you actually get when you click it. */
   background: conic-gradient(from 0deg,
-    #ff3b3b, #ff9933, #ffe53b, #58d24a, #34c9ff, #5a4ddc, #c85cff, #ff3b3b);
+    #ff006e, #ff5e00, #ffbe0b, #8338ec, #3a86ff, #c200fb, #ff006e);
   border-color: rgba(255, 255, 255, 0.6);
   animation: swatchSpin 6s linear infinite;
 }
@@ -482,8 +468,9 @@ html.theme-transition *::after {
 }
 
 /* School theme has NO button — unlocked via secret code LIBERATEDSCHOOL.
-   No swatch needed; the psychedelic animated background itself is the
-   visual indicator that the theme is active (no logo as of v5.7.2). */
+   No swatch needed; the navy/gold background itself is the visual
+   indicator that the theme is active (no logo as of v5.7.2, palette
+   reverted from psychedelic back to navy/gold in v5.9.0). */
 
 .theme-switch button:hover,
 .lang-switch button:hover {
@@ -1836,42 +1823,29 @@ footer a:hover {
   }
 }
 
-/* ──────── Flowing colors animations ──────── */
+/* ──────── Flowing colors animation ──────── */
 
-/* Rainbow: TWO layers (overlay + base) scroll in OPPOSITE directions for
-   a diagonal prismatic shimmer. Background-size has two values to match
-   the two gradient layers; positions in the keyframe are paired the same
-   way (overlay-pos, base-pos). Slightly faster than v5.7 (12s) so the
-   shimmer reads as "rainbow flowing", not stale. */
+/* Rainbow — single-layer psychedelic flow (v5.9.0: swapped from
+   ROYGBIV-prism to "Виталий лучший" palette). 10s linear infinite
+   matches the secret-code reveal pace. */
 [data-theme="rainbow"] body {
-  background-size: 360% 360%, 300% 300%;
-  animation: rainbowFlow 12s linear infinite;
+  background-size: 300% 300%;
+  animation: rainbowFlow 10s linear infinite;
 }
 
 @keyframes rainbowFlow {
-  0%   { background-position: 100%   0%,   0% 100%; }
-  50%  { background-position:   0% 100%, 100%   0%; }
-  100% { background-position: 100%   0%,   0% 100%; }
-}
-
-/* School: single-layer psychedelic flow — kept as it was in v5.7.1 (the
-   user explicitly asked to leave school alone in v5.8.0). Faster (10s)
-   for extra psychedelic vibe. */
-[data-theme="school"] body {
-  background-size: 300% 300%;
-  animation: schoolFlow 10s linear infinite;
-}
-
-@keyframes schoolFlow {
   0%   { background-position:   0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position:   0% 50%; }
 }
 
-/* Honor user preference — don't animate if reduced motion is set */
+/* School is intentionally STATIC (no animation) as of v5.9.0 — the
+   actual school site uses solid navy/gold, not motion. The schoolFlow
+   keyframe was removed; only rainbow flows now. */
+
+/* Honor user preference — don't animate rainbow if reduced motion is set */
 @media (prefers-reduced-motion: reduce) {
-  [data-theme="rainbow"] body,
-  [data-theme="school"] body {
+  [data-theme="rainbow"] body {
     animation: none;
   }
   .theme-switch button[data-theme-btn="rainbow"]::before {
@@ -1881,5 +1855,5 @@ footer a:hover {
 
 /* The school-theme logo was intentionally removed in v5.7.2 at user
    request ("лого убери так уж и быть") after multiple failed SVG
-   reproduction attempts. The psychedelic gradient background is the
+   reproduction attempts. As of v5.9.0 the navy/gold background is the
    only visual indicator that school theme is active. */
