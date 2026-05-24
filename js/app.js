@@ -43,6 +43,18 @@
       secret42: "Ответ на главный вопрос жизни, вселенной и всего такого 🌌",
       secretParty: "Время веселья! 🎉🎊",
       secretFlip: "Вверх тормашками 🙃",
+      secretHeart: "Любви тебе! ❤️",
+      secretSnow: "Зима близко! ❄️",
+      secretPizza: "Время пиццы! 🍕",
+      secretMeow: "Мяу! 🐈",
+      secretUnicorn: "Магия и единороги! 🦄✨",
+      secretShake: "Землетрясение! 🌍",
+      secretMoon: "Доброй ночи 🌙",
+      secretSun: "Доброе утро ☀️",
+      secretNoir: "Чёрно-белое кино 🎬",
+      secretMeta: "Ты нашёл мета-код! Всего кодов: ",
+      secretMetaSuffix: " 🔍",
+      secret67: "67 💙",
       tabSettings: "Настройки",
       homeTitle: "Banana",
       homeIntro: "Помогающий сайт: инструменты для текста, шрифты для Word, Unicode-стили для Telegram и Discord.",
@@ -68,6 +80,27 @@
       calcModeBasic: "Базовый",
       calcModeGeom: "Геометрия",
       calcModeUnits: "Единицы",
+      calcModeFraction: "Дроби",
+      fracIntro: "Складывайте, вычитайте, умножайте и делите простые дроби — результат сокращается автоматически.",
+      tabTime: "Время",
+      timeTitle: "Время",
+      clocksLabel: "Часы по городам",
+      clockMoscow: "Москва",
+      clockYerevan: "Ереван",
+      clockNewYork: "Нью-Йорк",
+      stopwatchLabel: "Секундомер",
+      stopwatchStart: "Старт",
+      stopwatchPause: "Пауза",
+      stopwatchReset: "Сброс",
+      stopwatchLap: "Круг",
+      timerLabel: "Таймер",
+      timerStart: "Старт",
+      timerPause: "Пауза",
+      timerReset: "Сброс",
+      timerDone: "Время вышло! ⏰",
+      timerInvalid: "Введите корректное время (минуты ≥ 0, секунды 0–59).",
+      timerRunning: "Идёт обратный отсчёт…",
+      timerPaused: "На паузе.",
       geomShapeLabel: "Фигура",
       shapeRectangle: "Прямоугольник",
       shapeSquare: "Квадрат",
@@ -126,6 +159,18 @@
       secret42: "The answer to life, the universe and everything 🌌",
       secretParty: "Party time! 🎉🎊",
       secretFlip: "Upside down 🙃",
+      secretHeart: "Spreading love ❤️",
+      secretSnow: "Winter is here ❄️",
+      secretPizza: "Pizza time! 🍕",
+      secretMeow: "Meow! 🐈",
+      secretUnicorn: "Magic and unicorns! 🦄✨",
+      secretShake: "Earthquake! 🌍",
+      secretMoon: "Good night 🌙",
+      secretSun: "Good morning ☀️",
+      secretNoir: "Film noir 🎬",
+      secretMeta: "You found a meta-code! Total codes: ",
+      secretMetaSuffix: " 🔍",
+      secret67: "67 💙",
       tabSettings: "Settings",
       homeTitle: "Banana",
       homeIntro: "A helper site: text tools, fonts for Word, Unicode styles for Telegram and Discord.",
@@ -151,6 +196,27 @@
       calcModeBasic: "Basic",
       calcModeGeom: "Geometry",
       calcModeUnits: "Units",
+      calcModeFraction: "Fractions",
+      fracIntro: "Add, subtract, multiply and divide simple fractions — the result is reduced automatically.",
+      tabTime: "Time",
+      timeTitle: "Time",
+      clocksLabel: "World clocks",
+      clockMoscow: "Moscow",
+      clockYerevan: "Yerevan",
+      clockNewYork: "New York",
+      stopwatchLabel: "Stopwatch",
+      stopwatchStart: "Start",
+      stopwatchPause: "Pause",
+      stopwatchReset: "Reset",
+      stopwatchLap: "Lap",
+      timerLabel: "Timer",
+      timerStart: "Start",
+      timerPause: "Pause",
+      timerReset: "Reset",
+      timerDone: "Time's up! ⏰",
+      timerInvalid: "Enter a valid time (minutes ≥ 0, seconds 0–59).",
+      timerRunning: "Counting down…",
+      timerPaused: "Paused.",
       geomShapeLabel: "Shape",
       shapeRectangle: "Rectangle",
       shapeSquare: "Square",
@@ -256,7 +322,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.10.0";
+  var VERSION = "v5.13.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -310,7 +376,43 @@
   var tabBtnFonts       = document.getElementById("tab-btn-fonts");
   var tabBtnSettings    = document.getElementById("tab-btn-settings");
   var tabBtnCalc        = document.getElementById("tab-btn-calc");
+  var tabBtnTime        = document.getElementById("tab-btn-time");
   var tabBtnSecret      = document.getElementById("tab-btn-secret");
+
+  /* Time tab refs — clocks, stopwatch, timer */
+  var timeTitleEl       = document.getElementById("time-title");
+  var clocksLabelEl     = document.getElementById("clocks-label");
+  var clockMoscowEl     = document.getElementById("clock-moscow");
+  var clockYerevanEl    = document.getElementById("clock-yerevan");
+  var clockNewYorkEl    = document.getElementById("clock-newyork");
+  var clockDateMoscowEl   = document.getElementById("clock-date-moscow");
+  var clockDateYerevanEl  = document.getElementById("clock-date-yerevan");
+  var clockDateNewYorkEl  = document.getElementById("clock-date-newyork");
+  var clockNameMoscowEl   = document.getElementById("clock-name-moscow");
+  var clockNameYerevanEl  = document.getElementById("clock-name-yerevan");
+  var clockNameNewYorkEl  = document.getElementById("clock-name-newyork");
+  var stopwatchLabelEl  = document.getElementById("stopwatch-label");
+  var stopwatchDisplay  = document.getElementById("stopwatch-display");
+  var stopwatchStartBtn = document.getElementById("stopwatch-start");
+  var stopwatchResetBtn = document.getElementById("stopwatch-reset");
+  var stopwatchLapBtn   = document.getElementById("stopwatch-lap");
+  var stopwatchLapsEl   = document.getElementById("stopwatch-laps");
+  var timerLabelEl      = document.getElementById("timer-label");
+  var timerMinEl        = document.getElementById("timer-min");
+  var timerSecEl        = document.getElementById("timer-sec");
+  var timerDisplayEl    = document.getElementById("timer-display");
+  var timerStartBtn     = document.getElementById("timer-start");
+  var timerResetBtn     = document.getElementById("timer-reset");
+  var timerFeedbackEl   = document.getElementById("timer-feedback");
+
+  /* Fraction calculator refs */
+  var fracIntroEl       = document.getElementById("frac-intro");
+  var fracANumEl        = document.getElementById("frac-a-num");
+  var fracADenEl        = document.getElementById("frac-a-den");
+  var fracBNumEl        = document.getElementById("frac-b-num");
+  var fracBDenEl        = document.getElementById("frac-b-den");
+  var fracOpBtns        = document.querySelectorAll(".frac-op-btn");
+  var fracResultEl      = document.getElementById("frac-result");
   /* Secret tab refs */
   var secretTitleEl     = document.getElementById("secret-title");
   var secretIntroEl     = document.getElementById("secret-intro");
@@ -398,6 +500,7 @@
     tabBtnHome.textContent        = t.tabHome;
     tabBtnFonts.textContent       = t.tabFonts;
     tabBtnCalc.textContent        = t.tabCalc;
+    tabBtnTime.textContent        = t.tabTime;
     tabBtnSecret.textContent      = t.tabSecret;
     tabBtnSettings.textContent    = t.tabSettings;
     /* Secret tab labels */
@@ -406,11 +509,25 @@
     secretLabelEl.textContent     = t.secretLabel;
     secretInputEl.placeholder     = t.secretPlaceholder;
     secretSubmitEl.textContent    = t.secretSubmit;
+    /* Time tab labels */
+    timeTitleEl.textContent       = t.timeTitle;
+    clocksLabelEl.textContent     = t.clocksLabel;
+    clockNameMoscowEl.textContent  = t.clockMoscow;
+    clockNameYerevanEl.textContent = t.clockYerevan;
+    clockNameNewYorkEl.textContent = t.clockNewYork;
+    stopwatchLabelEl.textContent  = t.stopwatchLabel;
+    timerLabelEl.textContent      = t.timerLabel;
+    /* Stopwatch & timer button labels — re-rendered here so they follow language;
+       state-dependent labels (Start↔Pause) are also refreshed by their handlers. */
+    refreshStopwatchButtonLabels();
+    refreshTimerButtonLabels();
     /* Calculator labels */
     calcTitleEl.textContent       = t.calcTitle;
     calcModeBtns[0].textContent   = t.calcModeBasic;
     calcModeBtns[1].textContent   = t.calcModeGeom;
     calcModeBtns[2].textContent   = t.calcModeUnits;
+    calcModeBtns[3].textContent   = t.calcModeFraction;
+    fracIntroEl.textContent       = t.fracIntro;
     geomShapeLabel.textContent    = t.geomShapeLabel + ":";
     unitsCatLabel.textContent     = t.unitsCatLabel + ":";
     rebuildGeomSelect();
@@ -1249,6 +1366,81 @@
     "FLIP": {
       message: function () { return TEXT[currentLang].secretFlip; },
       action:  function () { flipPage(); }
+    },
+
+    /* ── v5.11.0 mega-pack — 10 more codes for variety ── */
+
+    "HEART": {
+      message: function () { return TEXT[currentLang].secretHeart; },
+      action:  function () { emojiRain("❤️", 50); }
+    },
+
+    "SNOW": {
+      message: function () { return TEXT[currentLang].secretSnow; },
+      action:  function () { emojiRain("❄️", 50); }
+    },
+
+    "PIZZA": {
+      message: function () { return TEXT[currentLang].secretPizza; },
+      action:  function () { emojiRain("🍕", 40); }
+    },
+
+    "MEOW": {
+      message: function () { return TEXT[currentLang].secretMeow; },
+      action:  function () { emojiRain("🐈", 40); }
+    },
+
+    "UNICORN": {
+      /* Pure magic — unicorns + hue-rotate rainbow sweep */
+      message: function () { return TEXT[currentLang].secretUnicorn; },
+      action:  function () {
+        emojiRain("🦄", 30);
+        triggerRainbow();
+      }
+    },
+
+    "SHAKE": {
+      message: function () { return TEXT[currentLang].secretShake; },
+      action:  function () { shakePage(); }
+    },
+
+    "MOON": {
+      /* Switches to night theme and rains moons */
+      message: function () { return TEXT[currentLang].secretMoon; },
+      action:  function () {
+        setTheme("night");
+        emojiRain("🌙", 30);
+      }
+    },
+
+    "SUN": {
+      /* Switches to light theme and rains suns */
+      message: function () { return TEXT[currentLang].secretSun; },
+      action:  function () {
+        setTheme("light");
+        emojiRain("☀️", 30);
+      }
+    },
+
+    "NOIR": {
+      message: function () { return TEXT[currentLang].secretNoir; },
+      action:  function () { noirPage(); }
+    },
+
+    "SECRET": {
+      /* Meta-code: reveals the total number of secret codes at runtime,
+         so it stays accurate as more get added later. */
+      message: function () {
+        var t = TEXT[currentLang];
+        return t.secretMeta + Object.keys(SECRET_CODES).length + t.secretMetaSuffix;
+      },
+      action: function () { emojiRain("🔍", 20); }
+    },
+
+    "67": {
+      /* Huge blue 67 takes over the screen for 3 seconds. */
+      message: function () { return TEXT[currentLang].secret67; },
+      action:  function () { showBigNumber(67, "#1e88ff"); }
     }
   };
 
@@ -1332,6 +1524,331 @@
       showSecretFeedback("", false);
     }
   });
+
+  /* ============================================================
+     TIME TAB (v5.12.0) — three live world clocks, stopwatch, timer.
+     ============================================================ */
+
+  /* ── World clocks ── use Intl.DateTimeFormat with explicit timeZone.
+     Three Intl instances are reused; cheap to tick once per second. */
+  var TZ_MOSCOW  = "Europe/Moscow";
+  var TZ_YEREVAN = "Asia/Yerevan";
+  var TZ_NEWYORK = "America/New_York";
+  function makeTimeFmt(tz) {
+    return new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hour12: false, timeZone: tz
+    });
+  }
+  function makeDateFmt(tz) {
+    return new Intl.DateTimeFormat("en-GB", {
+      weekday: "short", day: "2-digit", month: "short", timeZone: tz
+    });
+  }
+  var fmtMoscow   = makeTimeFmt(TZ_MOSCOW);
+  var fmtYerevan  = makeTimeFmt(TZ_YEREVAN);
+  var fmtNewYork  = makeTimeFmt(TZ_NEWYORK);
+  var dfmtMoscow  = makeDateFmt(TZ_MOSCOW);
+  var dfmtYerevan = makeDateFmt(TZ_YEREVAN);
+  var dfmtNewYork = makeDateFmt(TZ_NEWYORK);
+
+  function tickClocks() {
+    var now = new Date();
+    clockMoscowEl.textContent      = fmtMoscow.format(now);
+    clockYerevanEl.textContent     = fmtYerevan.format(now);
+    clockNewYorkEl.textContent     = fmtNewYork.format(now);
+    clockDateMoscowEl.textContent  = dfmtMoscow.format(now);
+    clockDateYerevanEl.textContent = dfmtYerevan.format(now);
+    clockDateNewYorkEl.textContent = dfmtNewYork.format(now);
+  }
+  tickClocks();
+  setInterval(tickClocks, 1000);
+
+  /* ── Stopwatch ── millisecond-precision via performance.now().
+     We don't sum elapsed deltas every tick (drift-prone); instead we
+     record start time and compute (now - start + previouslyAccumulated). */
+  var swState = "idle";       /* idle | running | paused */
+  var swStartedAt = 0;
+  var swAccumulated = 0;
+  var swRafId = null;
+
+  function formatStopwatch(ms) {
+    if (ms < 0) ms = 0;
+    var totalSec = Math.floor(ms / 1000);
+    var mm = Math.floor(totalSec / 60);
+    var ss = totalSec % 60;
+    var cs = Math.floor((ms % 1000) / 10); /* centiseconds, 0–99 */
+    return pad2(mm) + ":" + pad2(ss) + "." + pad2(cs);
+  }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function stopwatchElapsed() {
+    if (swState === "running") {
+      return swAccumulated + (performance.now() - swStartedAt);
+    }
+    return swAccumulated;
+  }
+  function stopwatchTick() {
+    stopwatchDisplay.textContent = formatStopwatch(stopwatchElapsed());
+    if (swState === "running") {
+      swRafId = requestAnimationFrame(stopwatchTick);
+    }
+  }
+  function refreshStopwatchButtonLabels() {
+    var t = TEXT[currentLang];
+    stopwatchStartBtn.textContent = (swState === "running") ? t.stopwatchPause : t.stopwatchStart;
+    stopwatchResetBtn.textContent = t.stopwatchReset;
+    stopwatchLapBtn.textContent   = t.stopwatchLap;
+    /* Lap button only useful while running */
+    stopwatchLapBtn.disabled = (swState !== "running");
+  }
+  function stopwatchToggle() {
+    if (swState === "running") {
+      /* pause */
+      swAccumulated += performance.now() - swStartedAt;
+      swState = "paused";
+      if (swRafId) cancelAnimationFrame(swRafId);
+      swRafId = null;
+    } else {
+      /* start or resume */
+      swStartedAt = performance.now();
+      swState = "running";
+      stopwatchTick();
+    }
+    refreshStopwatchButtonLabels();
+  }
+  function stopwatchReset() {
+    if (swRafId) cancelAnimationFrame(swRafId);
+    swRafId = null;
+    swState = "idle";
+    swStartedAt = 0;
+    swAccumulated = 0;
+    stopwatchDisplay.textContent = formatStopwatch(0);
+    stopwatchLapsEl.innerHTML = "";
+    refreshStopwatchButtonLabels();
+  }
+  function stopwatchLap() {
+    if (swState !== "running") return;
+    var li = document.createElement("li");
+    li.textContent = formatStopwatch(stopwatchElapsed());
+    stopwatchLapsEl.insertBefore(li, stopwatchLapsEl.firstChild);
+  }
+  stopwatchStartBtn.addEventListener("click", stopwatchToggle);
+  stopwatchResetBtn.addEventListener("click", stopwatchReset);
+  stopwatchLapBtn.addEventListener("click", stopwatchLap);
+
+  /* ── Timer ── countdown to zero. setInterval is fine here (we don't
+     need sub-second precision in the display). On finish we beep via
+     WebAudio (no external asset) and visually flash the display. */
+  var tmState = "idle";       /* idle | running | paused | done */
+  var tmRemainingMs = 0;
+  var tmEndAt = 0;             /* performance.now() target for finish */
+  var tmIntervalId = null;
+  var audioCtx = null;
+
+  function readTimerInputs() {
+    var m = parseInt(timerMinEl.value, 10);
+    var s = parseInt(timerSecEl.value, 10);
+    if (isNaN(m) || m < 0)   return null;
+    if (isNaN(s) || s < 0 || s > 59) return null;
+    return (m * 60 + s) * 1000;
+  }
+  function formatTimer(ms) {
+    if (ms < 0) ms = 0;
+    var totalSec = Math.ceil(ms / 1000);
+    var mm = Math.floor(totalSec / 60);
+    var ss = totalSec % 60;
+    return pad2(mm) + ":" + pad2(ss);
+  }
+  function refreshTimerButtonLabels() {
+    var t = TEXT[currentLang];
+    timerStartBtn.textContent = (tmState === "running") ? t.timerPause : t.timerStart;
+    timerResetBtn.textContent = t.timerReset;
+  }
+  function setTimerFeedback(text, isError) {
+    timerFeedbackEl.textContent = text || "";
+    timerFeedbackEl.style.color = isError ? "#ff6b7a" : "";
+  }
+  function beepDone() {
+    /* Three short beeps via WebAudio API — no asset needed. */
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var ctx = audioCtx;
+      [0, 0.25, 0.5].forEach(function (delay) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.18);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + 0.2);
+      });
+    } catch (e) { /* WebAudio unavailable — fail silently */ }
+  }
+  function timerFinish() {
+    tmState = "done";
+    tmRemainingMs = 0;
+    if (tmIntervalId) clearInterval(tmIntervalId);
+    tmIntervalId = null;
+    timerDisplayEl.textContent = "00:00";
+    timerDisplayEl.classList.add("timer-done");
+    setTimerFeedback(TEXT[currentLang].timerDone, false);
+    refreshTimerButtonLabels();
+    beepDone();
+    /* Remove blink after the 5 iterations (0.6s × 5 = 3s) */
+    setTimeout(function () { timerDisplayEl.classList.remove("timer-done"); }, 3500);
+  }
+  function timerTick() {
+    var remain = tmEndAt - performance.now();
+    if (remain <= 0) {
+      timerFinish();
+      return;
+    }
+    tmRemainingMs = remain;
+    timerDisplayEl.textContent = formatTimer(remain);
+  }
+  function timerToggle() {
+    if (tmState === "running") {
+      /* pause */
+      tmRemainingMs = Math.max(0, tmEndAt - performance.now());
+      tmState = "paused";
+      if (tmIntervalId) clearInterval(tmIntervalId);
+      tmIntervalId = null;
+      setTimerFeedback(TEXT[currentLang].timerPaused, false);
+    } else if (tmState === "paused") {
+      /* resume */
+      tmEndAt = performance.now() + tmRemainingMs;
+      tmState = "running";
+      tmIntervalId = setInterval(timerTick, 250);
+      setTimerFeedback(TEXT[currentLang].timerRunning, false);
+    } else {
+      /* start fresh from inputs */
+      var ms = readTimerInputs();
+      if (ms === null || ms === 0) {
+        setTimerFeedback(TEXT[currentLang].timerInvalid, true);
+        return;
+      }
+      tmRemainingMs = ms;
+      tmEndAt = performance.now() + ms;
+      tmState = "running";
+      timerDisplayEl.classList.remove("timer-done");
+      timerDisplayEl.textContent = formatTimer(ms);
+      tmIntervalId = setInterval(timerTick, 250);
+      setTimerFeedback(TEXT[currentLang].timerRunning, false);
+    }
+    refreshTimerButtonLabels();
+  }
+  function timerReset() {
+    if (tmIntervalId) clearInterval(tmIntervalId);
+    tmIntervalId = null;
+    tmState = "idle";
+    tmRemainingMs = 0;
+    var ms = readTimerInputs();
+    timerDisplayEl.textContent = formatTimer(ms === null ? 0 : ms);
+    timerDisplayEl.classList.remove("timer-done");
+    setTimerFeedback("", false);
+    refreshTimerButtonLabels();
+  }
+  /* Keep the display in sync with the input fields while idle */
+  function timerInputsChanged() {
+    if (tmState === "idle") {
+      var ms = readTimerInputs();
+      timerDisplayEl.textContent = formatTimer(ms === null ? 0 : ms);
+    }
+  }
+  timerStartBtn.addEventListener("click", timerToggle);
+  timerResetBtn.addEventListener("click", timerReset);
+  timerMinEl.addEventListener("input", timerInputsChanged);
+  timerSecEl.addEventListener("input", timerInputsChanged);
+  /* Initial paint */
+  refreshStopwatchButtonLabels();
+  refreshTimerButtonLabels();
+  stopwatchDisplay.textContent = formatStopwatch(0);
+  timerInputsChanged();
+
+  /* ============================================================
+     FRACTION CALCULATOR (v5.12.0) — add/sub/mul/div simple fractions
+     ============================================================ */
+  var currentFracOp = "+";
+
+  function fracGcd(a, b) {
+    a = Math.abs(a); b = Math.abs(b);
+    while (b !== 0) { var tmp = b; b = a % b; a = tmp; }
+    return a || 1;
+  }
+  function fracReduce(num, den) {
+    if (den === 0) return null;
+    /* keep sign on numerator */
+    if (den < 0) { num = -num; den = -den; }
+    var g = fracGcd(num, den);
+    return { n: num / g, d: den / g };
+  }
+  function fracCompute(an, ad, bn, bd, op) {
+    if (ad === 0 || bd === 0) return null;
+    var n, d;
+    switch (op) {
+      case "+": n = an * bd + bn * ad; d = ad * bd; break;
+      case "-": n = an * bd - bn * ad; d = ad * bd; break;
+      case "*": n = an * bn;           d = ad * bd; break;
+      case "/":
+        if (bn === 0) return null;
+        n = an * bd; d = ad * bn;
+        break;
+      default: return null;
+    }
+    return fracReduce(n, d);
+  }
+  function renderFracResult(frac) {
+    if (!frac) {
+      fracResultEl.textContent = "—";
+      return;
+    }
+    /* Show whole number when denominator reduces to 1 */
+    if (frac.d === 1) {
+      fracResultEl.textContent = String(frac.n);
+      return;
+    }
+    /* Render as a stacked mini-fraction */
+    fracResultEl.innerHTML = "";
+    var wrap = document.createElement("span");
+    wrap.className = "frac-mini";
+    var top = document.createElement("span"); top.textContent = String(frac.n);
+    var bar = document.createElement("div"); bar.className = "frac-mini-bar";
+    var bot = document.createElement("span"); bot.textContent = String(frac.d);
+    wrap.appendChild(top);
+    wrap.appendChild(bar);
+    wrap.appendChild(bot);
+    fracResultEl.appendChild(wrap);
+  }
+  function recalcFraction() {
+    var an = parseInt(fracANumEl.value, 10);
+    var ad = parseInt(fracADenEl.value, 10);
+    var bn = parseInt(fracBNumEl.value, 10);
+    var bd = parseInt(fracBDenEl.value, 10);
+    if (isNaN(an) || isNaN(ad) || isNaN(bn) || isNaN(bd)) {
+      fracResultEl.textContent = "—";
+      return;
+    }
+    renderFracResult(fracCompute(an, ad, bn, bd, currentFracOp));
+  }
+  for (var fb = 0; fb < fracOpBtns.length; fb++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        currentFracOp = btn.dataset.fracOp;
+        for (var k = 0; k < fracOpBtns.length; k++) {
+          fracOpBtns[k].classList.toggle("active", fracOpBtns[k] === btn);
+        }
+        recalcFraction();
+      });
+    })(fracOpBtns[fb]);
+  }
+  [fracANumEl, fracADenEl, fracBNumEl, fracBDenEl].forEach(function (el) {
+    el.addEventListener("input", recalcFraction);
+  });
+  /* Initial paint */
+  recalcFraction();
 
   /* ============================================================
      EASTER EGGS — hidden features for the curious.
@@ -1436,6 +1953,49 @@
     }, 3000);
   }
 
+  /* ── Page shake ── earthquake-style horizontal shake for 1.5 seconds.
+     Implemented via CSS keyframes on html.page-shaking. No-op when
+     prefers-reduced-motion is set. */
+  function shakePage() {
+    if (prefersReducedMotion) return;
+    var html = document.documentElement;
+    if (html.classList.contains("page-shaking")) return;
+    html.classList.add("page-shaking");
+    setTimeout(function () {
+      html.classList.remove("page-shaking");
+    }, 1500);
+  }
+
+  /* ── Page noir ── desaturates everything to black-and-white for 3
+     seconds. Uses CSS filter via the .page-noir class. Smooth fade in/out
+     thanks to transition on filter. */
+  function noirPage() {
+    var html = document.documentElement;
+    if (html.classList.contains("page-noir")) return;
+    html.classList.add("page-noir");
+    setTimeout(function () {
+      html.classList.remove("page-noir");
+    }, 3000);
+  }
+
+  /* ── Big number overlay (v5.13.0) ── shows a huge centred number on
+     screen with a pop-in / pop-out CSS animation. Auto-removes after
+     ~3 seconds. Generic: takes any number and any CSS color. */
+  function showBigNumber(num, color) {
+    var overlay = document.createElement("div");
+    overlay.className = "big-number-overlay";
+    var n = document.createElement("div");
+    n.className = "big-number";
+    n.textContent = String(num);
+    if (color) n.style.color = color;
+    overlay.appendChild(n);
+    document.body.appendChild(overlay);
+    /* Match the CSS animation duration; small buffer to let opacity fade. */
+    setTimeout(function () {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 3300);
+  }
+
   /* 🎨 Console banner — greet developers who open DevTools */
   try {
     var bigStyle = "font-size: 36px; font-weight: 700; color: #ff9d44; " +
@@ -1450,17 +2010,22 @@
     console.log("%c  · Click on \"banana.team\" in the footer 5 times", hintStyle);
     console.log("%c  · Type \"banana\" anywhere in the Home tab textarea", hintStyle);
     console.log("%c  · bananaRain() / emojiRain(\"❤️\", 30) — try it!", hintStyle);
-    console.log("%c  · matrixRain() / flipPage() — visual easter eggs", hintStyle);
-    console.log("%c  · Secret-codes tab: 7 codes hidden in the site 🔎", hintStyle);
+    console.log("%c  · matrixRain() / flipPage() / shakePage() / noirPage()", hintStyle);
+    console.log("%c  · showBigNumber(67, \"#1e88ff\") — try a giant number", hintStyle);
+    console.log("%c  · Secret-codes tab: 18 codes hidden in the site 🔎", hintStyle);
     console.log("%c    (try View Source ⌘+U  or  Select-All ⌘+A then paste)", hintStyle);
+    console.log("%c  · Try the SECRET code itself — it counts for you 🤫", hintStyle);
   } catch (e) {}
 
   /* Expose helpers on window so devs can call them from console */
   try {
-    window.bananaRain = bananaRain;
-    window.emojiRain  = emojiRain;
-    window.matrixRain = matrixRain;
-    window.flipPage   = flipPage;
+    window.bananaRain    = bananaRain;
+    window.emojiRain     = emojiRain;
+    window.matrixRain    = matrixRain;
+    window.flipPage      = flipPage;
+    window.shakePage     = shakePage;
+    window.noirPage      = noirPage;
+    window.showBigNumber = showBigNumber;
   } catch (e) {}
 
   /* 🍌 Click footer 5 times → banana rain */

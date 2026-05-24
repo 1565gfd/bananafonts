@@ -90,6 +90,7 @@
       <button type="button" class="tab-btn active" data-tab="home" role="tab" aria-selected="true" id="tab-btn-home"></button>
       <button type="button" class="tab-btn" data-tab="fonts" role="tab" aria-selected="false" id="tab-btn-fonts"></button>
       <button type="button" class="tab-btn" data-tab="calc" role="tab" aria-selected="false" id="tab-btn-calc"></button>
+      <button type="button" class="tab-btn" data-tab="time" role="tab" aria-selected="false" id="tab-btn-time"></button>
       <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
       <!-- Secret tab is always kept LAST. Do not reorder. -->
       <button type="button" class="tab-btn" data-tab="secret" role="tab" aria-selected="false" id="tab-btn-secret"></button>
@@ -156,6 +157,7 @@
         <button type="button" class="calc-mode-btn active" data-mode="basic"></button>
         <button type="button" class="calc-mode-btn" data-mode="geom"></button>
         <button type="button" class="calc-mode-btn" data-mode="units"></button>
+        <button type="button" class="calc-mode-btn" data-mode="fraction"></button>
       </div>
 
       <div id="calc-panel-basic" class="calc-panel">
@@ -208,6 +210,83 @@
             <select id="units-to" class="calc-select"></select>
           </div>
         </div>
+      </div>
+
+      <!-- Fraction calculator: a/b op c/d → result (reduced). -->
+      <div id="calc-panel-fraction" class="calc-panel" hidden>
+        <p class="calc-frac-intro" id="frac-intro"></p>
+        <div class="frac-row">
+          <div class="frac-stack">
+            <input type="number" id="frac-a-num" class="calc-input frac-input" value="1" step="1" inputmode="numeric" aria-label="numerator A" />
+            <div class="frac-bar"></div>
+            <input type="number" id="frac-a-den" class="calc-input frac-input" value="2" step="1" inputmode="numeric" aria-label="denominator A" />
+          </div>
+          <div class="frac-op-group" role="group">
+            <button type="button" class="frac-op-btn active" data-frac-op="+">+</button>
+            <button type="button" class="frac-op-btn" data-frac-op="-">−</button>
+            <button type="button" class="frac-op-btn" data-frac-op="*">×</button>
+            <button type="button" class="frac-op-btn" data-frac-op="/">÷</button>
+          </div>
+          <div class="frac-stack">
+            <input type="number" id="frac-b-num" class="calc-input frac-input" value="1" step="1" inputmode="numeric" aria-label="numerator B" />
+            <div class="frac-bar"></div>
+            <input type="number" id="frac-b-den" class="calc-input frac-input" value="3" step="1" inputmode="numeric" aria-label="denominator B" />
+          </div>
+          <div class="frac-equals">=</div>
+          <div class="frac-result" id="frac-result">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Time tab: 3 live clocks + stopwatch + timer. -->
+    <section id="tab-time" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-time" hidden>
+      <h1 id="time-title"></h1>
+
+      <div class="time-section">
+        <h3 id="clocks-label"></h3>
+        <div class="clocks-grid">
+          <div class="clock-card">
+            <div class="clock-name" id="clock-name-moscow"></div>
+            <div class="clock-time" id="clock-moscow">—</div>
+            <div class="clock-date" id="clock-date-moscow"></div>
+          </div>
+          <div class="clock-card">
+            <div class="clock-name" id="clock-name-yerevan"></div>
+            <div class="clock-time" id="clock-yerevan">—</div>
+            <div class="clock-date" id="clock-date-yerevan"></div>
+          </div>
+          <div class="clock-card">
+            <div class="clock-name" id="clock-name-newyork"></div>
+            <div class="clock-time" id="clock-newyork">—</div>
+            <div class="clock-date" id="clock-date-newyork"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-section">
+        <h3 id="stopwatch-label"></h3>
+        <div class="stopwatch-display" id="stopwatch-display">00:00.00</div>
+        <div class="time-controls">
+          <button type="button" id="stopwatch-start" class="tool-btn"></button>
+          <button type="button" id="stopwatch-reset" class="tool-btn"></button>
+          <button type="button" id="stopwatch-lap" class="tool-btn"></button>
+        </div>
+        <ol id="stopwatch-laps" class="stopwatch-laps"></ol>
+      </div>
+
+      <div class="time-section">
+        <h3 id="timer-label"></h3>
+        <div class="timer-inputs">
+          <input type="number" id="timer-min" class="calc-input timer-input" value="5" min="0" max="999" step="1" inputmode="numeric" aria-label="minutes" />
+          <span class="timer-colon">:</span>
+          <input type="number" id="timer-sec" class="calc-input timer-input" value="0" min="0" max="59" step="1" inputmode="numeric" aria-label="seconds" />
+        </div>
+        <div class="timer-display" id="timer-display">05:00</div>
+        <div class="time-controls">
+          <button type="button" id="timer-start" class="tool-btn"></button>
+          <button type="button" id="timer-reset" class="tool-btn"></button>
+        </div>
+        <div class="timer-feedback" id="timer-feedback"></div>
       </div>
     </section>
 

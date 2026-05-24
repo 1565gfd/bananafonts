@@ -976,12 +976,99 @@ html:not(.page-flipped) {
   transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Page-shake effect (v5.11.0) — triggered by secret code SHAKE.
+   Earthquake-style horizontal shake for 1.5 seconds. Composed via
+   translate on <html>; combines cleanly with rotate transform from
+   page-flipped via separate selector specificity (don't trigger both
+   at once — flipPage/shakePage both early-return when stacked). */
+@keyframes pageShake {
+  0%, 100%      { transform: translate(0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-6px, 0); }
+  20%, 40%, 60%, 80%      { transform: translate(6px, 0); }
+}
+html.page-shaking {
+  animation: pageShake 0.4s cubic-bezier(.36,.07,.19,.97) 3.75 both;
+}
+
+/* Page-noir effect (v5.11.0) — triggered by secret code NOIR.
+   Desaturates the whole page to film-noir B&W for 3 seconds with a
+   small contrast bump for that cinema feel. Filter transitions are
+   well-supported and GPU-accelerated. */
+html.page-noir {
+  filter: grayscale(1) contrast(1.08);
+  transition: filter 0.45s ease;
+}
+html:not(.page-noir) {
+  transition: filter 0.45s ease;
+}
+
+/* Big-number overlay (v5.13.0) — triggered by secret code 67 (and
+   reusable for any future giant-number reveals via showBigNumber()).
+   Fullscreen fixed overlay with a slight backdrop dim/blur; the
+   number itself does a pop-in → settle → zoom-out animation. */
+.big-number-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: bigNumBackdrop 3.2s ease-out forwards;
+}
+.big-number {
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, system-ui, sans-serif;
+  font-size: clamp(220px, 55vw, 640px);
+  font-weight: 900;
+  line-height: 0.9;
+  color: #1e88ff;
+  text-shadow:
+    0 0 80px rgba(30, 136, 255, 0.85),
+    0 0 30px rgba(30, 136, 255, 0.65),
+    0 6px 24px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.02em;
+  -webkit-user-select: none;
+  user-select: none;
+  animation: bigNumPop 3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+@keyframes bigNumPop {
+  0%   { transform: scale(0)    rotate(-30deg); opacity: 0; }
+  15%  { transform: scale(1.18) rotate(8deg);   opacity: 1; }
+  30%  { transform: scale(1)    rotate(0deg);   opacity: 1; }
+  78%  { transform: scale(1)    rotate(0deg);   opacity: 1; }
+  100% { transform: scale(1.6)  rotate(0deg);   opacity: 0; }
+}
+@keyframes bigNumBackdrop {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .big-number-overlay,
+  .big-number {
+    animation: none;
+  }
+  /* Still show the number, just statically */
+  .big-number-overlay { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.rainbow-active {
     animation: none;
   }
   html.page-flipped,
   html:not(.page-flipped) {
+    transition: none;
+  }
+  html.page-shaking {
+    animation: none;
+  }
+  html.page-noir,
+  html:not(.page-noir) {
     transition: none;
   }
 }
@@ -1272,6 +1359,297 @@ html:not(.page-flipped) {
   opacity: 0.7;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* ──────── Fraction calculator (v5.12.0) ──────── */
+.calc-frac-intro {
+  color: var(--text-soft);
+  font-size: 14px;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.frac-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.frac-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 68px;
+}
+
+.frac-input {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  padding: 8px 6px;
+  -moz-appearance: textfield;
+}
+.frac-input::-webkit-outer-spin-button,
+.frac-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.frac-bar {
+  height: 2px;
+  background: var(--text-soft);
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+.frac-op-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.frac-op-btn {
+  background: var(--glass-bg);
+  color: var(--text);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  min-width: 36px;
+}
+.frac-op-btn:hover {
+  background: var(--glass-bg-hover);
+}
+.frac-op-btn.active {
+  background: var(--accent-bg);
+  color: #ffffff;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+.frac-op-btn:active {
+  transform: scale(0.94);
+}
+
+.frac-equals {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-soft);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.frac-result {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 90px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+}
+
+.frac-result .frac-mini {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  font-size: 18px;
+  line-height: 1;
+  margin: 0 2px;
+}
+.frac-result .frac-mini > span {
+  padding: 0 4px;
+}
+.frac-result .frac-mini > .frac-mini-bar {
+  height: 1.5px;
+  background: currentColor;
+  margin: 2px 2px;
+  opacity: 0.85;
+}
+
+/* ──────── Time tab (v5.12.0): clocks + stopwatch + timer ──────── */
+.time-section {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 14px;
+  padding: 18px 18px 20px;
+  margin: 0 0 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.time-section h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+.clocks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.clock-card {
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.clock-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+}
+
+.clock-name {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.clock-time {
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-date {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* Stopwatch */
+.stopwatch-display,
+.timer-display {
+  font-family: "Roboto Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 12px 0;
+  font-variant-numeric: tabular-nums;
+  background: var(--output-bg);
+  border: 1px solid var(--output-border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.time-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.time-controls .tool-btn {
+  min-width: 100px;
+}
+
+.stopwatch-laps {
+  list-style: decimal inside;
+  margin: 12px 0 0;
+  padding: 0 8px;
+  max-height: 140px;
+  overflow-y: auto;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+.stopwatch-laps:empty { display: none; }
+.stopwatch-laps li {
+  padding: 4px 6px;
+  border-bottom: 1px dashed var(--glass-border-soft);
+  font-variant-numeric: tabular-nums;
+}
+.stopwatch-laps li:last-child { border-bottom: none; }
+
+/* Timer */
+.timer-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.timer-input {
+  width: 90px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+.timer-input::-webkit-outer-spin-button,
+.timer-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.timer-colon {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-soft);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.timer-display.timer-done {
+  animation: timerBlink 0.6s ease-in-out 5;
+  color: #ff5e6c;
+}
+@keyframes timerBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.timer-feedback {
+  text-align: center;
+  margin-top: 8px;
+  min-height: 18px;
+  font-size: 13px;
+  color: var(--text-soft);
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .clocks-grid {
+    grid-template-columns: 1fr;
+  }
+  .stopwatch-display,
+  .timer-display {
+    font-size: 36px;
+    letter-spacing: 1px;
+  }
+  .frac-row {
+    gap: 8px;
+  }
+  .frac-input {
+    font-size: 18px;
+  }
+  .frac-result {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-display.timer-done {
+    animation: none;
+  }
 }
 
 @media (max-width: 480px) {
