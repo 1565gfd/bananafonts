@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.47.4";
+  var VERSION = "v5.47.6";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -7195,6 +7195,23 @@
     };
   }
 
+  /* v5.47.6 — link admin status ↔ admin-account login so the two states
+     stay in sync. Wraps both logout paths:
+       - logoutAdmin (admin panel button) → also clear admin account
+       - widget ⏻ button → if logging out of admin account, also drop admin */
+  if (typeof logoutAdmin === "function") {
+    var _origLogoutAdmin = logoutAdmin;
+    logoutAdmin = function () {
+      var cur = getCurrentAccount();
+      var wasAdminAccount = !!(cur && cur.username && cur.username.toLowerCase() === ADMIN_USERNAME);
+      _origLogoutAdmin();
+      if (wasAdminAccount) {
+        setCurrentAccountId(null);
+        refreshAccountWidget();
+      }
+    };
+  }
+
   /* ── Wire widget + tabs + close ── */
   accWidgetMain.addEventListener("click", function () { openAccountPanel(); });
   /* v5.44.1 — instant logout from widget. Confirm dialog prevents misclicks. */
@@ -7206,8 +7223,18 @@
       ? "Log out of " + cur.username + "?"
       : "Выйти из аккаунта " + cur.username + "?");
     if (!ok) return;
+    /* v5.47.6 — capture admin-account state BEFORE clearing so we know
+       whether to also drop admin status. */
+    var wasAdminAccount = cur.username.toLowerCase() === ADMIN_USERNAME;
     setCurrentAccountId(null);
     refreshAccountWidget();
+    /* If this was the admin account → also drop admin status (badge,
+       localStorage flag, close panel). Uses the un-wrapped version
+       to avoid re-entering the logoutAdmin wrap which would re-check
+       current account and short-circuit. */
+    if (wasAdminAccount && typeof _origLogoutAdmin === "function") {
+      _origLogoutAdmin();
+    }
     playUiSound("knock");
   });
   accClose.addEventListener("click", closeAccountPanel);
