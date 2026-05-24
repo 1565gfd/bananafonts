@@ -199,48 +199,53 @@
   --nf-code-gradient: linear-gradient(180deg, #ffd54a 0%, #ff9933 100%);
 }
 
+/* ──────── Night theme — v5.19.1 redesign: midnight indigo with warm
+            reading-lamp glow + cool moonlight highlight. Now clearly
+            distinct from the standard Dark theme (which was too similar
+            to it before). Evokes late-night reading vibe. ──────── */
 [data-theme="night"] {
   color-scheme: dark;
   --bg-gradient:
-    radial-gradient(circle at 50% 50%, rgba(255, 140, 60, 0.06) 0%, transparent 65%),
-    #000000;
+    radial-gradient(ellipse at 18% 90%, rgba(255, 175, 90, 0.16) 0%, transparent 52%),  /* lamp */
+    radial-gradient(ellipse at 82% 8%,  rgba(120, 160, 220, 0.1) 0%, transparent 55%),  /* moon */
+    linear-gradient(180deg, #050818 0%, #0a0a1f 45%, #060615 100%);
 
-  --text: #f5ead0;
-  --text-dim: rgba(245, 234, 208, 0.42);
-  --text-soft: rgba(245, 234, 208, 0.85);
-  --text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  --text: #f0e8d0;
+  --text-dim: rgba(240, 232, 208, 0.45);
+  --text-soft: rgba(240, 232, 208, 0.82);
+  --text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-bg-hover: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-soft: rgba(255, 255, 255, 0.06);
-  --glass-inset: rgba(255, 255, 255, 0.1);
-  --glass-inset-soft: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(140, 160, 220, 0.05);
+  --glass-bg-hover: rgba(140, 160, 220, 0.1);
+  --glass-border: rgba(255, 175, 90, 0.28);
+  --glass-border-soft: rgba(255, 175, 90, 0.16);
+  --glass-inset: rgba(255, 200, 120, 0.22);
+  --glass-inset-soft: rgba(255, 200, 120, 0.08);
 
-  --output-bg: rgba(0, 0, 0, 0.6);
-  --output-border: rgba(255, 157, 68, 0.12);
-  --output-inset-bottom: rgba(0, 0, 0, 0.4);
+  --output-bg: rgba(5, 8, 22, 0.85);
+  --output-border: rgba(255, 175, 90, 0.22);
+  --output-inset-bottom: rgba(0, 0, 0, 0.5);
 
-  --accent: #ff9d44;
-  --accent-bg: rgba(255, 157, 68, 0.3);
-  --accent-border: rgba(255, 157, 68, 0.6);
-  --accent-glow: rgba(255, 157, 68, 0.4);
+  --accent: #ffaa55;            /* warm reading lamp */
+  --accent-bg: rgba(255, 170, 80, 0.9);
+  --accent-border: rgba(255, 200, 120, 1);
+  --accent-glow: rgba(255, 170, 80, 0.5);
 
-  --copy-bg: rgba(255, 157, 68, 0.4);
-  --copy-bg-hover: rgba(255, 157, 68, 0.55);
-  --copy-border: rgba(255, 157, 68, 0.65);
-  --copy-border-hover: rgba(255, 180, 100, 0.8);
-  --copied-bg: rgba(120, 200, 100, 0.4);
-  --copied-border: rgba(150, 220, 130, 0.6);
-  --copied-glow: rgba(120, 200, 100, 0.3);
+  --copy-bg: rgba(255, 170, 80, 0.86);
+  --copy-bg-hover: rgba(255, 190, 110, 0.96);
+  --copy-border: rgba(255, 200, 120, 1);
+  --copy-border-hover: rgba(255, 220, 160, 1);
+  --copied-bg: rgba(80, 220, 130, 0.7);
+  --copied-border: rgba(120, 240, 160, 0.9);
+  --copied-glow: rgba(80, 220, 130, 0.5);
 
-  --link: #ffb56b;
-  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.8);
+  --link: #ffc380;
+  --shadow-card: 0 14px 44px rgba(0, 0, 0, 0.7);
 
   --nf-bg:
-    radial-gradient(circle at 50% 50%, rgba(255, 140, 60, 0.06) 0%, transparent 65%),
-    #000000;
-  --nf-code-gradient: linear-gradient(180deg, #ffb56b 0%, #ff7a1f 100%);
+    radial-gradient(ellipse at 30% 80%, rgba(255, 175, 90, 0.15) 0%, transparent 55%),
+    linear-gradient(180deg, #050818 0%, #0a0a1f 100%);
+  --nf-code-gradient: linear-gradient(180deg, #ffaa55 0%, #ffd9a0 100%);
 }
 
 /* ──────── Black-Orange theme (v5.19.0) — pure black + neon orange.
@@ -672,10 +677,13 @@ html.theme-transition *::after {
 }
 
 .theme-switch button[data-theme-btn="night"]::before {
+  /* v5.19.1: swatch updated to match the redesigned theme — midnight
+     indigo base with warm reading-lamp glow in the lower-left. */
   background:
-    radial-gradient(circle at 70% 70%, #ff9d44 0%, transparent 55%),
-    linear-gradient(135deg, #000000 0%, #1a0f00 100%);
-  border-color: rgba(255, 157, 68, 0.5);
+    radial-gradient(circle at 30% 75%, #ffaa55 0%, transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(120, 160, 220, 0.4) 0%, transparent 55%),
+    linear-gradient(135deg, #050818 0%, #0a0a1f 100%);
+  border-color: rgba(255, 170, 80, 0.5);
 }
 
 .theme-switch button[data-theme-btn="rainbow"]::before {
@@ -2454,15 +2462,16 @@ footer a:hover {
   [data-theme="light"] .output {
     background: rgba(255, 255, 255, 0.7);
   }
+  /* v5.19.1: Night fallback now midnight-indigo to match the new bg */
   [data-theme="night"] .fonts button,
   [data-theme="night"] .theme-switch button,
   [data-theme="night"] .lang-switch button,
   [data-theme="night"] textarea,
   [data-theme="night"] .settings-btn {
-    background: rgba(35, 25, 10, 0.7);
+    background: rgba(18, 22, 50, 0.75);
   }
   [data-theme="night"] .output {
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(3, 5, 18, 0.9);
   }
   /* Active button keeps its accent fill — no fallback needed.
      Theme-transition global rule still works for color/bg crossfade. */
@@ -2574,18 +2583,19 @@ footer a:hover {
   [data-theme="dark"] .theme-switch button:not(.active) {
     background: rgba(80, 85, 120, 0.85);
   }
+  /* v5.19.1: Night fallback now midnight-indigo (was warm-black) */
   [data-theme="night"] .app,
   [data-theme="night"] textarea,
   [data-theme="night"] .not-found-card {
-    background: rgba(20, 15, 5, 0.98);
+    background: rgba(8, 10, 30, 0.96);
   }
   [data-theme="night"] .output {
-    background: #000000;
+    background: rgba(3, 5, 18, 0.96);
   }
   [data-theme="night"] .fonts button:not(.active),
   [data-theme="night"] .lang-switch button:not(.active),
   [data-theme="night"] .theme-switch button:not(.active) {
-    background: rgba(40, 30, 15, 0.95);
+    background: rgba(22, 25, 55, 0.93);
   }
   [data-theme="rainbow"] .app,
   [data-theme="rainbow"] textarea,

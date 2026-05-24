@@ -374,7 +374,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.19.0";
+  var VERSION = "v5.19.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -716,7 +716,7 @@
   var THEME_COLORS = {
     light:          "#eef2ff",
     dark:           "#161b3a",
-    night:          "#000000",
+    night:          "#0a0a1f",   /* v5.19.1: midnight indigo (was pure black) */
     rainbow:        "#ff006e",
     school:         "#0f2c4a",
     "black-orange": "#000000",   /* v5.19.0 new themes */
@@ -2213,7 +2213,10 @@
     (function (btn) {
       btn.addEventListener("click", function () {
         var sec = parseInt(btn.dataset.addSec, 10);
-        if (!isNaN(sec) && sec > 0) timerAddSeconds(sec);
+        /* v5.19.1: was `sec > 0`, which silently rejected ALL negative
+           buttons (the −30s/−1m/−5m row never fired anything). Accept
+           any non-zero integer; timerAddSeconds handles underflow. */
+        if (!isNaN(sec) && sec !== 0) timerAddSeconds(sec);
       });
     })(timerAddBtns[addI]);
   }
