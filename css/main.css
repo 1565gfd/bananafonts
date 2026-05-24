@@ -373,6 +373,159 @@ html.theme-transition *::after {
 }
 
 /* ============================================================
+   Tabs
+   ============================================================ */
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 18px;
+  color: var(--text-soft);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s, opacity 0.18s ease;
+  border-radius: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  display: block;
+}
+
+.tab-content[hidden] {
+  display: none;
+}
+
+/* ============================================================
+   Settings tab
+   ============================================================ */
+
+.settings-section {
+  margin-bottom: 22px;
+}
+
+.settings-section h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.settings-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.settings-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+#settings-size-value {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.settings-hint {
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.settings-btn {
+  padding: 10px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+}
+
+.settings-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--accent-border);
+}
+
+.settings-btn:active {
+  transform: scale(0.97);
+}
+
+.settings-about {
+  margin: 0 0 8px;
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.settings-about a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.settings-about a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
    Header + input
    ============================================================ */
 
@@ -673,14 +826,70 @@ footer a:hover {
   .app {
     padding: 18px 12px 12px;
     border-radius: 22px;
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    backdrop-filter: blur(20px) saturate(160%);
   }
   .copy-btn {
     width: 100%;
     padding: 10px 20px;
     font-size: 17px;
   }
+}
+
+/* ============================================================
+   MOBILE / TOUCH PERFORMANCE
+   backdrop-filter is GPU-expensive — with 30+ blurred elements on
+   a small touch GPU the page lags badly on tap/scroll. On touch
+   devices keep blur ONLY on the main .app card (one large layer)
+   and drop it from buttons, inputs and the output box.
+   ============================================================ */
+@media (hover: none), (max-width: 700px) {
+  .app {
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+  }
+  .fonts button,
+  .theme-switch button,
+  .lang-switch button,
+  .copy-btn,
+  textarea,
+  .output,
+  .settings-btn {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Solid-ish fallbacks per theme so the glass look stays readable
+     even without backdrop blur. */
+  [data-theme="dark"] .fonts button,
+  [data-theme="dark"] .theme-switch button,
+  [data-theme="dark"] .lang-switch button,
+  [data-theme="dark"] textarea,
+  [data-theme="dark"] .settings-btn {
+    background: rgba(50, 55, 95, 0.5);
+  }
+  [data-theme="dark"] .output {
+    background: rgba(0, 0, 0, 0.45);
+  }
+  [data-theme="light"] .fonts button,
+  [data-theme="light"] .theme-switch button,
+  [data-theme="light"] .lang-switch button,
+  [data-theme="light"] textarea,
+  [data-theme="light"] .settings-btn {
+    background: rgba(255, 255, 255, 0.78);
+  }
+  [data-theme="light"] .output {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  [data-theme="night"] .fonts button,
+  [data-theme="night"] .theme-switch button,
+  [data-theme="night"] .lang-switch button,
+  [data-theme="night"] textarea,
+  [data-theme="night"] .settings-btn {
+    background: rgba(35, 25, 10, 0.7);
+  }
+  [data-theme="night"] .output {
+    background: rgba(0, 0, 0, 0.85);
+  }
+  /* Active button keeps its accent fill — no fallback needed.
+     Theme-transition global rule still works for color/bg crossfade. */
 }
 
 @media (max-width: 480px) {

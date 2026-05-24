@@ -23,7 +23,18 @@
       themeDark: "Тёмная",
       themeNight: "Ночная",
       ttUniversal: "🇷🇺🇬🇧 Поддерживает кириллицу и латиницу",
-      ttUnicode: "🇬🇧 Только латиница и цифры — для Telegram/Discord"
+      ttUnicode: "🇬🇧 Только латиница и цифры — для Telegram/Discord",
+      tabFonts: "Шрифты",
+      tabSettings: "Настройки",
+      settingsTitle: "Настройки",
+      settingsSizeLabel: "Размер превью",
+      settingsSizeHint: "От 16 до 72 пикселей",
+      settingsResetLabel: "Сбросить настройки",
+      settingsResetBtn: "Сбросить тему, язык и размер",
+      settingsResetHint: "Очистит сохранённые настройки и перезагрузит страницу.",
+      settingsResetConfirm: "Точно сбросить все настройки?",
+      settingsAboutLabel: "О сайте",
+      settingsAboutText: "Banana Font — инструмент превью шрифтов для Microsoft Word и Unicode-стилей для Telegram, Discord, WhatsApp."
     },
     en: {
       title: "Text Font Chooser only for Microsoft Word",
@@ -36,7 +47,18 @@
       themeDark: "Dark",
       themeNight: "Night",
       ttUniversal: "🇷🇺🇬🇧 Supports Cyrillic and Latin",
-      ttUnicode: "🇬🇧 Latin and digits only — for Telegram/Discord"
+      ttUnicode: "🇬🇧 Latin and digits only — for Telegram/Discord",
+      tabFonts: "Fonts",
+      tabSettings: "Settings",
+      settingsTitle: "Settings",
+      settingsSizeLabel: "Preview size",
+      settingsSizeHint: "From 16 to 72 pixels",
+      settingsResetLabel: "Reset settings",
+      settingsResetBtn: "Reset theme, language, and size",
+      settingsResetHint: "Clears saved settings and reloads the page.",
+      settingsResetConfirm: "Really reset all settings?",
+      settingsAboutLabel: "About",
+      settingsAboutText: "Banana Font — a font preview tool for Microsoft Word and Unicode styles for Telegram, Discord, WhatsApp."
     }
   };
 
@@ -97,7 +119,7 @@
     { label: "Mono",         kind: "unicode", transform: "mono" }
   ];
 
-  var VERSION = "v4.1.3";
+  var VERSION = "v4.2.2";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -108,6 +130,22 @@
   var copyBtn   = document.getElementById("copy-btn");
   var langButtons  = document.querySelectorAll(".lang-switch button");
   var themeButtons = document.querySelectorAll(".theme-switch button");
+  var tabButtons   = document.querySelectorAll(".tab-btn");
+  var tabContents  = document.querySelectorAll(".tab-content");
+  var sizeSlider   = document.getElementById("preview-size");
+  var sizeValueEl  = document.getElementById("settings-size-value");
+  var resetBtn     = document.getElementById("reset-btn");
+  /* Settings tab text targets — updated on language change */
+  var settingsTitleEl   = document.getElementById("settings-title");
+  var settingsSizeLabel = document.getElementById("settings-size-label");
+  var settingsSizeHint  = document.getElementById("settings-size-hint");
+  var settingsResetLab  = document.getElementById("settings-reset-label");
+  var settingsResetHint = document.getElementById("settings-reset-hint");
+  var settingsAboutLab  = document.getElementById("settings-about-label");
+  var settingsAboutText = document.getElementById("settings-about-text");
+  var settingsVersionEl = document.getElementById("settings-version-line");
+  var tabBtnFonts       = document.getElementById("tab-btn-fonts");
+  var tabBtnSettings    = document.getElementById("tab-btn-settings");
 
   /* --------- state --------- */
   var currentIdx = 0;
@@ -162,6 +200,18 @@
       btn.textContent = key === "light" ? t.themeLight :
                         key === "night" ? t.themeNight : t.themeDark;
     }
+    /* Tab labels and Settings panel content */
+    tabBtnFonts.textContent       = t.tabFonts;
+    tabBtnSettings.textContent    = t.tabSettings;
+    settingsTitleEl.textContent   = t.settingsTitle;
+    settingsSizeLabel.textContent = t.settingsSizeLabel;
+    settingsSizeHint.textContent  = t.settingsSizeHint;
+    settingsResetLab.textContent  = t.settingsResetLabel;
+    resetBtn.textContent          = t.settingsResetBtn;
+    settingsResetHint.textContent = t.settingsResetHint;
+    settingsAboutLab.textContent  = t.settingsAboutLabel;
+    settingsAboutText.textContent = t.settingsAboutText;
+    settingsVersionEl.textContent = VERSION;
     renderFonts();
     setFont(currentIdx);
   }
@@ -328,6 +378,61 @@
   }
   inputEl.addEventListener("input", renderOutput);
   copyBtn.addEventListener("click", handleCopy);
+
+  /* --------- tabs --------- */
+  function switchTab(name) {
+    for (var i = 0; i < tabButtons.length; i++) {
+      var isActive = tabButtons[i].dataset.tab === name;
+      tabButtons[i].classList.toggle("active", isActive);
+      tabButtons[i].setAttribute("aria-selected", isActive ? "true" : "false");
+    }
+    for (var j = 0; j < tabContents.length; j++) {
+      var match = tabContents[j].id === "tab-" + name;
+      tabContents[j].classList.toggle("active", match);
+      if (match) {
+        tabContents[j].removeAttribute("hidden");
+      } else {
+        tabContents[j].setAttribute("hidden", "");
+      }
+    }
+  }
+  for (var ti = 0; ti < tabButtons.length; ti++) {
+    (function (btn) {
+      btn.addEventListener("click", function () { switchTab(btn.dataset.tab); });
+    })(tabButtons[ti]);
+  }
+
+  /* --------- preview size slider --------- */
+  function applyPreviewSize(px) {
+    outputEl.style.fontSize = px + "px";
+    sizeValueEl.textContent = px + "px";
+  }
+  var savedSize = 30;
+  try {
+    var raw = localStorage.getItem("bananafont:size");
+    var parsed = raw === null ? NaN : parseInt(raw, 10);
+    if (!isNaN(parsed) && parsed >= 16 && parsed <= 72) savedSize = parsed;
+  } catch (e) {}
+  sizeSlider.value = String(savedSize);
+  applyPreviewSize(savedSize);
+  sizeSlider.addEventListener("input", function () {
+    var v = parseInt(sizeSlider.value, 10);
+    if (isNaN(v)) return;
+    applyPreviewSize(v);
+    try { localStorage.setItem("bananafont:size", String(v)); } catch (e) {}
+  });
+
+  /* --------- reset --------- */
+  resetBtn.addEventListener("click", function () {
+    var msg = TEXT[currentLang].settingsResetConfirm;
+    if (!window.confirm(msg)) return;
+    try {
+      localStorage.removeItem("bananafont:theme");
+      localStorage.removeItem("bananafont:lang");
+      localStorage.removeItem("bananafont:size");
+    } catch (e) {}
+    window.location.reload();
+  });
 
   /* --------- init --------- */
   renderFonts();

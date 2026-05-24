@@ -69,14 +69,56 @@
       </div>
     </div>
 
-    <h1 id="title"></h1>
-    <textarea id="input"></textarea>
-    <div class="fonts" id="fonts"></div>
-    <div id="output" class="output"></div>
-    <button type="button" id="copy-btn" class="copy-btn" disabled></button>
+    <nav class="tabs" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="fonts" role="tab" aria-selected="true" id="tab-btn-fonts"></button>
+      <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings"></button>
+    </nav>
+
+    <section id="tab-fonts" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-fonts">
+      <h1 id="title"></h1>
+      <textarea id="input"></textarea>
+      <div class="fonts" id="fonts"></div>
+      <div id="output" class="output"></div>
+      <button type="button" id="copy-btn" class="copy-btn" disabled></button>
+    </section>
+
+    <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
+      <h1 id="settings-title"></h1>
+
+      <div class="settings-section">
+        <h3 id="settings-size-label"></h3>
+        <input type="range" id="preview-size" class="settings-slider" min="16" max="72" value="30" />
+        <div class="settings-row">
+          <span id="settings-size-value">30px</span>
+          <span class="settings-hint" id="settings-size-hint"></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 id="settings-reset-label"></h3>
+        <button type="button" id="reset-btn" class="settings-btn"></button>
+        <div class="settings-hint" id="settings-reset-hint"></div>
+      </div>
+
+      <div class="settings-section">
+        <h3 id="settings-about-label"></h3>
+        <p class="settings-about" id="settings-about-text"></p>
+        <p class="settings-about">
+          <a href="https://github.com/1565gfd/bananafonts" target="_blank" rel="noopener noreferrer" id="settings-github-link">GitHub</a>
+          ·
+          <span id="settings-version-line">VERSION</span>
+        </p>
+      </div>
+    </section>
+
     <footer id="footer"></footer>
   </main>
 
   <script src="/js/app.js" defer></script>
+  <!-- Vercel Speed Insights (Real User Monitoring).
+       Served by Vercel CDN as a same-origin script when Speed Insights is
+       enabled in Vercel Dashboard → Project → Speed Insights → Enable.
+       Locally (file://, python http.server) returns 404 — that's expected. -->
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
