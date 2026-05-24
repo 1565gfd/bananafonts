@@ -22,8 +22,9 @@
       themeLight: "Светлая",
       themeDark: "Тёмная",
       themeNight: "Ночная",
-      ttUniversal: "🇷🇺🇬🇧 Поддерживает кириллицу и латиницу",
-      ttUnicode: "🇬🇧 Только латиница и цифры — для Telegram/Discord",
+      ttUniversal: "🇷🇺 🇬🇧 Поддерживает кириллицу и латиницу",
+      ttUnicode: "🇬🇧 Только латиница и цифры. В Telegram Desktop Windows может не работать (нормализация Unicode)",
+      ttCombining: "🇷🇺 🇬🇧 Подчёркнутый/зачёркнутый — работает везде, включая Telegram Desktop Windows и кириллицу",
       tabHome: "Главная",
       tabFonts: "Шрифты",
       tabSettings: "Настройки",
@@ -32,6 +33,7 @@
       homePlaceholder: "Введите или вставьте сюда текст...",
       toolTextLabel: "Текст для работы",
       toolCaseLabel: "Преобразование регистра",
+      toolLinesLabel: "Действия над строками",
       toolCleanLabel: "Операции с текстом",
       statChars: "символов",
       statWords: "слов",
@@ -41,6 +43,10 @@
       btnReverse: "Обратный порядок",
       btnCopyText: "Копировать",
       btnClear: "Очистить",
+      btnSortAsc: "Сортировка А→Я",
+      btnSortDesc: "Сортировка Я→А",
+      btnDedupe: "Уникальные строки",
+      btnRemoveEmpty: "Убрать пустые строки",
       tabCalc: "Калькулятор",
       calcTitle: "Калькулятор",
       calcModeBasic: "Базовый",
@@ -71,7 +77,7 @@
       settingsResetHint: "Очистит сохранённые настройки и перезагрузит страницу.",
       settingsResetConfirm: "Точно сбросить все настройки?",
       settingsAboutLabel: "О сайте",
-      settingsAboutText: "Banana — помогающий сайт. Внутри: счётчик и преобразование текста, шрифты для Microsoft Word, Unicode-стили для Telegram, Discord, WhatsApp."
+      settingsAboutText: "Banana — помогающий сайт.\n\n• Главная: счётчик символов/слов/строк, преобразование регистра, сортировка и очистка строк, реверс, копирование.\n\n• Шрифты: 20 стилей — системные для Word, Google Fonts, Unicode для Telegram/Discord, подчёркнутый/зачёркнутый.\n\n• Калькулятор: базовый с процентами, геометрия (4 фигуры), перевод единиц (длина/масса/температура)."
     },
     en: {
       title: "Fonts for Word and Telegram",
@@ -83,8 +89,9 @@
       themeLight: "Light",
       themeDark: "Dark",
       themeNight: "Night",
-      ttUniversal: "🇷🇺🇬🇧 Supports Cyrillic and Latin",
-      ttUnicode: "🇬🇧 Latin and digits only — for Telegram/Discord",
+      ttUniversal: "🇷🇺 🇬🇧 Supports Cyrillic and Latin",
+      ttUnicode: "🇬🇧 Latin and digits only. May not work in Telegram Desktop Windows (Unicode normalization)",
+      ttCombining: "🇷🇺 🇬🇧 Underline/strikethrough — works everywhere including Telegram Desktop Windows and Cyrillic",
       tabHome: "Home",
       tabFonts: "Fonts",
       tabSettings: "Settings",
@@ -93,6 +100,7 @@
       homePlaceholder: "Type or paste your text here...",
       toolTextLabel: "Text to work with",
       toolCaseLabel: "Case conversion",
+      toolLinesLabel: "Line operations",
       toolCleanLabel: "Text operations",
       statChars: "characters",
       statWords: "words",
@@ -102,6 +110,10 @@
       btnReverse: "Reverse",
       btnCopyText: "Copy",
       btnClear: "Clear",
+      btnSortAsc: "Sort A→Z",
+      btnSortDesc: "Sort Z→A",
+      btnDedupe: "Unique lines",
+      btnRemoveEmpty: "Remove empty lines",
       tabCalc: "Calculator",
       calcTitle: "Calculator",
       calcModeBasic: "Basic",
@@ -132,7 +144,7 @@
       settingsResetHint: "Clears saved settings and reloads the page.",
       settingsResetConfirm: "Really reset all settings?",
       settingsAboutLabel: "About",
-      settingsAboutText: "Banana — a helper site. Inside: text counter and case conversion, fonts for Microsoft Word, Unicode styles for Telegram, Discord, WhatsApp."
+      settingsAboutText: "Banana — a helper site.\n\n• Home: character/word/line counter, case conversion, line sort and cleanup, reverse, copy.\n\n• Fonts: 20 styles — Word-safe, Google Fonts, Unicode for Telegram/Discord, underline/strikethrough.\n\n• Calculator: basic with percentages, geometry (4 shapes), unit conversion (length/mass/temperature)."
     }
   };
 
@@ -171,6 +183,23 @@
     return out;
   }
 
+  /* Combining-character styles. These work in Telegram Desktop Windows
+     where Math Alphanumeric gets NFKC-normalized away. They also work
+     with Cyrillic, unlike Math Alphanumeric (Latin only).
+     The combiner is appended after every visible character. */
+  function applyCombining(text, combiner) {
+    if (!combiner) return text;
+    var out = "";
+    for (var c of text) {
+      out += c;
+      /* Skip combining for whitespace and existing combining chars */
+      if (c !== " " && c !== "\n" && c !== "\t" && c !== "\r") {
+        out += combiner;
+      }
+    }
+    return out;
+  }
+
   /* --------- font list --------- */
   var FONTS = [
     { label: "Arial",        kind: "css", family: "Arial" },
@@ -190,10 +219,12 @@
     { label: "Bold Italic",  kind: "unicode", transform: "bolditalic" },
     { label: "Sans Bold",    kind: "unicode", transform: "sansbold" },
     { label: "Sans Italic",  kind: "unicode", transform: "sansitalic" },
-    { label: "Mono",         kind: "unicode", transform: "mono" }
+    { label: "Mono",         kind: "unicode", transform: "mono" },
+    { label: "Underline",    kind: "combining", combiner: "̲" },
+    { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.1.2";
+  var VERSION = "v5.4.1";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -213,6 +244,7 @@
   var homeInputEl     = document.getElementById("home-input");
   var toolTextLabel   = document.getElementById("tool-text-label");
   var toolCaseLabel   = document.getElementById("tool-case-label");
+  var toolLinesLabel  = document.getElementById("tool-lines-label");
   var toolCleanLabel  = document.getElementById("tool-clean-label");
   var statCharsEl     = document.getElementById("stat-chars");
   var statWordsEl     = document.getElementById("stat-words");
@@ -226,6 +258,10 @@
   var btnReverse      = document.getElementById("btn-reverse");
   var btnHomeCopy     = document.getElementById("btn-home-copy");
   var btnClear        = document.getElementById("btn-clear");
+  var btnSortAsc      = document.getElementById("btn-sort-asc");
+  var btnSortDesc     = document.getElementById("btn-sort-desc");
+  var btnDedupe       = document.getElementById("btn-dedupe");
+  var btnRemoveEmpty  = document.getElementById("btn-remove-empty");
   var sizeSlider   = document.getElementById("preview-size");
   var sizeValueEl  = document.getElementById("settings-size-value");
   var sizeSampleEl = document.getElementById("settings-size-sample");
@@ -334,6 +370,7 @@
     homeInputEl.placeholder       = t.homePlaceholder;
     toolTextLabel.textContent     = t.toolTextLabel;
     toolCaseLabel.textContent     = t.toolCaseLabel;
+    toolLinesLabel.textContent    = t.toolLinesLabel;
     toolCleanLabel.textContent    = t.toolCleanLabel;
     statCharsLab.textContent      = t.statChars;
     statWordsLab.textContent      = t.statWords;
@@ -343,6 +380,10 @@
     btnReverse.textContent        = t.btnReverse;
     btnHomeCopy.textContent       = t.btnCopyText;
     btnClear.textContent          = t.btnClear;
+    btnSortAsc.textContent        = t.btnSortAsc;
+    btnSortDesc.textContent       = t.btnSortDesc;
+    btnDedupe.textContent         = t.btnDedupe;
+    btnRemoveEmpty.textContent    = t.btnRemoveEmpty;
     /* Settings panel content */
     settingsTitleEl.textContent   = t.settingsTitle;
     settingsSizeLabel.textContent = t.settingsSizeLabel;
@@ -414,7 +455,22 @@
 
   function setTheme(theme) {
     var root = document.documentElement;
+    /* If a previous theme-transition is still active (rapid clicks),
+       remove it first so the new transition starts from a clean state.
+       Without this, switching back can look "jumpy" because the browser
+       is still mid-way through the previous animation when var values
+       change again. */
+    if (themeTransitionTimer) {
+      clearTimeout(themeTransitionTimer);
+      root.classList.remove("theme-transition");
+      themeTransitionTimer = null;
+    }
+    /* Add transition class, then FORCE a synchronous reflow before
+       changing CSS variables. This guarantees the browser commits the
+       transition rule first, so the variable change actually animates
+       (both forwards AND backwards) instead of snapping. */
     root.classList.add("theme-transition");
+    void root.offsetHeight;
     currentTheme = theme;
     root.dataset.theme = theme;
     try { localStorage.setItem("bananafont:theme", theme); } catch (e) {}
@@ -422,11 +478,10 @@
       themeButtons[i].classList.toggle("active", themeButtons[i].dataset.themeBtn === theme);
     }
     setMobileBarColor(theme);
-    if (themeTransitionTimer) clearTimeout(themeTransitionTimer);
     themeTransitionTimer = setTimeout(function () {
       root.classList.remove("theme-transition");
       themeTransitionTimer = null;
-    }, 450);
+    }, 500);
   }
 
   /* --------- fonts --------- */
@@ -434,6 +489,9 @@
     var font = FONTS[currentIdx];
     if (font.kind === "unicode") {
       return applyTransform(inputEl.value, font.transform);
+    }
+    if (font.kind === "combining") {
+      return applyCombining(inputEl.value, font.combiner);
     }
     return inputEl.value;
   }
@@ -459,11 +517,20 @@
     var html = "";
     for (var i = 0; i < FONTS.length; i++) {
       var item = FONTS[i];
-      var display = item.kind === "unicode"
-        ? applyTransform(item.label, item.transform)
-        : item.label;
-      var tip = item.kind === "unicode" ? t.ttUnicode : t.ttUniversal;
-      var flag = item.kind === "unicode" ? "🇬🇧" : "🇷🇺🇬🇧";
+      var display, tip, flag;
+      if (item.kind === "unicode") {
+        display = applyTransform(item.label, item.transform);
+        tip = t.ttUnicode;
+        flag = "🇬🇧";
+      } else if (item.kind === "combining") {
+        display = applyCombining(item.label, item.combiner);
+        tip = t.ttCombining;
+        flag = "🇷🇺 🇬🇧";
+      } else {
+        display = item.label;
+        tip = t.ttUniversal;
+        flag = "🇷🇺 🇬🇧";
+      }
       html += '<button type="button" data-idx="' + i +
               '" data-kind="' + item.kind +
               '" data-flag="' + flag +
@@ -635,6 +702,38 @@
     homeInputEl.value = "";
     updateTextStats();
     homeInputEl.focus();
+  });
+  btnSortAsc.addEventListener("click", function () {
+    homeInputEl.value = homeInputEl.value.split("\n").sort(function (a, b) {
+      return a.localeCompare(b, currentLang, { numeric: true, sensitivity: "base" });
+    }).join("\n");
+    updateTextStats();
+  });
+  btnSortDesc.addEventListener("click", function () {
+    homeInputEl.value = homeInputEl.value.split("\n").sort(function (a, b) {
+      return b.localeCompare(a, currentLang, { numeric: true, sensitivity: "base" });
+    }).join("\n");
+    updateTextStats();
+  });
+  btnDedupe.addEventListener("click", function () {
+    var lines = homeInputEl.value.split("\n");
+    var seen = (typeof Set !== "undefined") ? new Set() : null;
+    var out = [];
+    for (var i = 0; i < lines.length; i++) {
+      if (seen) {
+        if (!seen.has(lines[i])) { seen.add(lines[i]); out.push(lines[i]); }
+      } else {
+        if (out.indexOf(lines[i]) === -1) out.push(lines[i]);
+      }
+    }
+    homeInputEl.value = out.join("\n");
+    updateTextStats();
+  });
+  btnRemoveEmpty.addEventListener("click", function () {
+    homeInputEl.value = homeInputEl.value.split("\n").filter(function (l) {
+      return l.trim() !== "";
+    }).join("\n");
+    updateTextStats();
   });
   btnHomeCopy.addEventListener("click", function () {
     var txt = homeInputEl.value;
@@ -1036,6 +1135,150 @@
   unitsFromSel.addEventListener("change", convertUnits);
   unitsToSel.addEventListener("change", convertUnits);
   unitsFromVal.addEventListener("input", convertUnits);
+
+  /* ============================================================
+     EASTER EGGS — hidden features for the curious.
+     Not mentioned in UI. Let the user discover them.
+     ============================================================ */
+
+  /* 🍌 Banana rain — drop emoji from the top with random spread + spin */
+  function bananaRain(count) {
+    var n = count || 25;
+    for (var i = 0; i < n; i++) {
+      (function (i) {
+        var b = document.createElement("div");
+        b.textContent = "🍌";
+        b.style.position = "fixed";
+        b.style.top = "-60px";
+        b.style.left = (Math.random() * 100) + "vw";
+        b.style.fontSize = (20 + Math.random() * 36) + "px";
+        b.style.pointerEvents = "none";
+        b.style.zIndex = "9999";
+        b.style.transition = "transform 3s linear, opacity 3s linear";
+        b.style.willChange = "transform, opacity";
+        document.body.appendChild(b);
+        var rot = (Math.random() * 1440 - 720);
+        setTimeout(function () {
+          b.style.transform = "translateY(110vh) rotate(" + rot + "deg)";
+          b.style.opacity = "0";
+        }, 10 + i * 30);
+        setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 4000 + i * 30);
+      })(i);
+    }
+  }
+
+  /* 🎨 Console banner — greet developers who open DevTools */
+  try {
+    var bigStyle = "font-size: 36px; font-weight: 700; color: #ff9d44; " +
+                   "background: linear-gradient(135deg, #222949, #1c1f3a); " +
+                   "padding: 16px 24px; border-radius: 12px; line-height: 1;";
+    var subStyle = "font-size: 13px; color: #b8b0ff; font-weight: 600;";
+    var hintStyle = "font-size: 11px; color: #888;";
+    console.log("%c🍌 Banana", bigStyle);
+    console.log("%cBanana — helper site · " + VERSION, subStyle);
+    console.log("%cHidden goodies (don't tell anyone 🤫):", hintStyle);
+    console.log("%c  · Konami code: ↑↑↓↓←→←→BA", hintStyle);
+    console.log("%c  · Click on \"banana.team\" in the footer 5 times", hintStyle);
+    console.log("%c  · Type \"banana\" anywhere in the Home tab textarea", hintStyle);
+    console.log("%c  · bananaRain() — try it!", hintStyle);
+  } catch (e) {}
+
+  /* Expose bananaRain on window so devs can call it from console */
+  try { window.bananaRain = bananaRain; } catch (e) {}
+
+  /* 🍌 Click footer 5 times → banana rain */
+  var footerClickCount = 0;
+  var footerClickTimer = null;
+  footerEl.addEventListener("click", function () {
+    footerClickCount++;
+    if (footerClickTimer) clearTimeout(footerClickTimer);
+    footerClickTimer = setTimeout(function () {
+      footerClickCount = 0;
+    }, 2000);
+    if (footerClickCount >= 5) {
+      footerClickCount = 0;
+      bananaRain(30);
+    }
+  });
+
+  /* 🕹 Konami code: ↑↑↓↓←→←→BA → rainbow hue-rotate + banana rain */
+  var KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+                "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+                "b", "a"];
+  var konamiPos = 0;
+  document.addEventListener("keydown", function (e) {
+    var k = e.key;
+    var expected = KONAMI[konamiPos];
+    /* Case-insensitive for letters */
+    var match = (expected === "b" || expected === "a")
+      ? k.toLowerCase() === expected
+      : k === expected;
+    if (match) {
+      konamiPos++;
+      if (konamiPos === KONAMI.length) {
+        konamiPos = 0;
+        activateKonami();
+      }
+    } else {
+      /* Allow restart from the first key */
+      konamiPos = (k === KONAMI[0]) ? 1 : 0;
+    }
+  });
+
+  function activateKonami() {
+    var html = document.documentElement;
+    html.style.transition = "filter 2s ease";
+    var hue = 0;
+    var iv = setInterval(function () {
+      hue = (hue + 30) % 360;
+      html.style.filter = "hue-rotate(" + hue + "deg) saturate(1.2)";
+    }, 80);
+    bananaRain(60);
+    setTimeout(function () {
+      clearInterval(iv);
+      html.style.filter = "";
+      setTimeout(function () { html.style.transition = ""; }, 2100);
+    }, 4000);
+    try {
+      console.log("%c🎉 KONAMI CODE ACTIVATED! 🍌",
+        "font-size: 24px; font-weight: 700; color: #ff9d44; padding: 8px;");
+    } catch (e) {}
+  }
+
+  /* 🍌 Type "banana" in Home input → big banana emoji pops up */
+  var bananaShown = false;
+  homeInputEl.addEventListener("input", function () {
+    if (bananaShown) return;
+    if (/banana/i.test(homeInputEl.value)) {
+      bananaShown = true;
+      showBigBanana();
+      setTimeout(function () { bananaShown = false; }, 6000);
+    }
+  });
+
+  function showBigBanana() {
+    var b = document.createElement("div");
+    b.textContent = "🍌";
+    b.style.position = "fixed";
+    b.style.left = "50%";
+    b.style.top = "50%";
+    b.style.transform = "translate(-50%, -50%) scale(0) rotate(0deg)";
+    b.style.fontSize = "min(40vw, 220px)";
+    b.style.pointerEvents = "none";
+    b.style.zIndex = "9999";
+    b.style.transition = "transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.4s ease";
+    b.style.opacity = "1";
+    b.style.filter = "drop-shadow(0 0 30px rgba(255, 200, 100, 0.6))";
+    document.body.appendChild(b);
+    requestAnimationFrame(function () {
+      b.style.transform = "translate(-50%, -50%) scale(1) rotate(720deg)";
+    });
+    setTimeout(function () {
+      b.style.opacity = "0";
+      b.style.transform = "translate(-50%, -50%) scale(0.3) rotate(720deg)";
+    }, 1800);
+    setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 2400);
+  }
 
   /* --------- init --------- */
   renderFonts();

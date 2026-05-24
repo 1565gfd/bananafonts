@@ -6,9 +6,24 @@
   <meta name="theme-color" content="#161b3a" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#eef2ff" media="(prefers-color-scheme: light)" />
   <meta name="color-scheme" content="light dark" />
-  <title>404 — Page Not Found · Banana</title>
+  <title>Banana — помощник</title>
   <meta name="copyright" content="© banana.team" />
   <meta name="robots" content="noindex" />
+
+  <!-- ============================================================
+       AUTO-TELEPORT TO HOME
+       If a user lands on a non-existent URL (typo, dead link, etc.),
+       teleport them home instantly instead of showing the 404 card.
+       Meta refresh is the no-JS fallback; the inline script fires
+       on JS-enabled browsers before paint.
+       The visible 404 card below is the last-resort fallback if both
+       meta refresh and JS are blocked.
+       ============================================================ -->
+  <meta http-equiv="refresh" content="0; url=/" />
+  <script>
+    /* Use replace() so the bad URL doesn't pollute browser back-button history */
+    try { window.location.replace("/"); } catch (e) { window.location.href = "/"; }
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='64' y2='64' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23222949'/><stop offset='1' stop-color='%231c1f3a'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='32' font-family='Arial, sans-serif' font-size='38' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='central'>B</text></svg>" />
   <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='g' x1='0' y1='0' x2='180' y2='180' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23222949'/><stop offset='1' stop-color='%231c1f3a'/></linearGradient></defs><rect width='180' height='180' rx='40' fill='url(%23g)'/><text x='90' y='90' font-family='Arial, sans-serif' font-size='108' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='central'>B</text></svg>" />
   <link rel="manifest" href="/manifest.json" />

@@ -78,8 +78,8 @@
   --output-inset-bottom: rgba(120, 130, 180, 0.08);
 
   --accent: #6a5cff;
-  --accent-bg: rgba(106, 92, 255, 0.6);
-  --accent-border: rgba(106, 92, 255, 0.75);
+  --accent-bg: rgba(106, 92, 255, 0.92);
+  --accent-border: rgba(106, 92, 255, 1);
   --accent-glow: rgba(106, 92, 255, 0.35);
 
   --copy-bg: rgba(106, 92, 255, 0.85);
@@ -244,15 +244,14 @@ html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
   transition:
-    background 0.4s ease,
-    background-color 0.4s ease,
-    color 0.4s ease,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease,
-    fill 0.4s ease,
-    text-shadow 0.4s ease,
-    opacity 0.4s ease,
-    caret-color 0.4s ease !important;
+    background-color 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    fill 0.45s ease,
+    text-shadow 0.45s ease,
+    opacity 0.45s ease,
+    caret-color 0.45s ease !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -564,15 +563,15 @@ html.theme-transition *::after {
     backdrop-filter: none;
   }
   [data-theme="dark"] .home-input,
-  [data-theme="dark"] .tool-btn {
+  [data-theme="dark"] .tool-btn:not(.active) {
     background: rgba(50, 55, 95, 0.5);
   }
   [data-theme="light"] .home-input,
-  [data-theme="light"] .tool-btn {
+  [data-theme="light"] .tool-btn:not(.active) {
     background: rgba(255, 255, 255, 0.78);
   }
   [data-theme="night"] .home-input,
-  [data-theme="night"] .tool-btn {
+  [data-theme="night"] .tool-btn:not(.active) {
     background: rgba(35, 25, 10, 0.7);
   }
 }
@@ -711,6 +710,7 @@ html.theme-transition *::after {
   color: var(--text-soft);
   font-size: 14px;
   line-height: 1.55;
+  white-space: pre-line;
 }
 
 .settings-about a {
@@ -1017,20 +1017,20 @@ html.theme-transition *::after {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  [data-theme="dark"] .calc-btn,
-  [data-theme="dark"] .calc-mode-btn,
+  [data-theme="dark"] .calc-btn:not(.calc-btn-op):not(.calc-btn-eq),
+  [data-theme="dark"] .calc-mode-btn:not(.active),
   [data-theme="dark"] .calc-select,
   [data-theme="dark"] .calc-input {
     background: rgba(50, 55, 95, 0.5);
   }
-  [data-theme="light"] .calc-btn,
-  [data-theme="light"] .calc-mode-btn,
+  [data-theme="light"] .calc-btn:not(.calc-btn-op):not(.calc-btn-eq),
+  [data-theme="light"] .calc-mode-btn:not(.active),
   [data-theme="light"] .calc-select,
   [data-theme="light"] .calc-input {
     background: rgba(255, 255, 255, 0.78);
   }
-  [data-theme="night"] .calc-btn,
-  [data-theme="night"] .calc-mode-btn,
+  [data-theme="night"] .calc-btn:not(.calc-btn-op):not(.calc-btn-eq),
+  [data-theme="night"] .calc-mode-btn:not(.active),
   [data-theme="night"] .calc-select,
   [data-theme="night"] .calc-input {
     background: rgba(35, 25, 10, 0.7);
@@ -1115,7 +1115,6 @@ textarea:focus {
   -webkit-user-select: none;
   user-select: none;
   line-height: 1;
-  letter-spacing: -1px;
 }
 
 .fonts button:hover {
@@ -1500,14 +1499,14 @@ footer a:hover {
   [data-theme="light"] .output {
     background: #f0f3fa;
   }
-  [data-theme="light"] .fonts button,
-  [data-theme="light"] .lang-switch button,
-  [data-theme="light"] .theme-switch button {
+  [data-theme="light"] .fonts button:not(.active),
+  [data-theme="light"] .lang-switch button:not(.active),
+  [data-theme="light"] .theme-switch button:not(.active) {
     background: #e6ebf5;
   }
-  [data-theme="dark"] .fonts button,
-  [data-theme="dark"] .lang-switch button,
-  [data-theme="dark"] .theme-switch button {
+  [data-theme="dark"] .fonts button:not(.active),
+  [data-theme="dark"] .lang-switch button:not(.active),
+  [data-theme="dark"] .theme-switch button:not(.active) {
     background: rgba(80, 85, 120, 0.85);
   }
   [data-theme="night"] .app,
@@ -1518,9 +1517,9 @@ footer a:hover {
   [data-theme="night"] .output {
     background: #000000;
   }
-  [data-theme="night"] .fonts button,
-  [data-theme="night"] .lang-switch button,
-  [data-theme="night"] .theme-switch button {
+  [data-theme="night"] .fonts button:not(.active),
+  [data-theme="night"] .lang-switch button:not(.active),
+  [data-theme="night"] .theme-switch button:not(.active) {
     background: rgba(40, 30, 15, 0.95);
   }
 }
