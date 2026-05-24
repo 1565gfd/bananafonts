@@ -38,6 +38,23 @@
       themeSovietPodyezd: "Советский подъезд",
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Тема владельца разблокирована 🍌👑",
+      adminTitle: "👑 Админ-панель",
+      adminGreeting: "Привет, 1565gfd. Здесь все темы, все коды и быстрые действия.",
+      adminStatsTitle: "Статистика",
+      adminStatsVersion: "Версия",
+      adminStatsTheme: "Тема",
+      adminStatsLang: "Язык",
+      adminStatsSound: "Звук",
+      adminStatsVolume: "Громкость",
+      adminStatsStorage: "Записей в localStorage",
+      adminThemesTitle: "Все темы",
+      adminThemesHint: "Применить любую тему одним кликом (включая секретные).",
+      adminCodesTitle: "Зарегистрированные коды",
+      adminCodesHint: "Список публичных секретных кодов (приватный код сюда не входит).",
+      adminClearStorage: "Очистить localStorage",
+      adminClearConfirm: "Удалить ВСЕ записи bananafont:* из localStorage?",
+      adminLogout: "Выйти из админа",
+      adminActivated: "👑 Админ-режим активирован",
       settingsExtraThemesLabel: "Дополнительные темы",
       settingsExtraThemesHint: "Эти темы спрятаны из главного выбора — нажми чтобы применить.",
       settingsResetWarning: "⚠️ Внимание: при сбросе будут удалены тема, язык, размер превью, выбранный шрифт, настройки таймера, состояние будильника и все разблокированные секретные темы.",
@@ -218,6 +235,23 @@
       themeSovietPodyezd: "Soviet Hallway",
       themeOwner: "1565gfd 👑",
       secretBananaKing: "Owner theme unlocked 🍌👑",
+      adminTitle: "👑 Admin panel",
+      adminGreeting: "Hi, 1565gfd. All themes, all codes, quick actions — right here.",
+      adminStatsTitle: "Stats",
+      adminStatsVersion: "Version",
+      adminStatsTheme: "Theme",
+      adminStatsLang: "Language",
+      adminStatsSound: "Sound",
+      adminStatsVolume: "Volume",
+      adminStatsStorage: "localStorage entries",
+      adminThemesTitle: "All themes",
+      adminThemesHint: "Apply any theme in one click (including secret ones).",
+      adminCodesTitle: "Registered codes",
+      adminCodesHint: "List of public secret codes (the privileged code is NOT included).",
+      adminClearStorage: "Clear localStorage",
+      adminClearConfirm: "Delete ALL bananafont:* entries from localStorage?",
+      adminLogout: "Exit admin",
+      adminActivated: "👑 Admin mode activated",
       settingsExtraThemesLabel: "Additional themes",
       settingsExtraThemesHint: "These themes are hidden from the main switch — click to apply.",
       settingsResetWarning: "⚠️ Warning: reset will clear your theme, language, preview size, selected font, timer settings, alarm state, and any unlocked secret themes.",
@@ -450,7 +484,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.28.0";
+  var VERSION = "v5.29.0";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -507,6 +541,23 @@
   var extraThemesGridEl          = document.getElementById("extra-themes-grid");
   /* Reset warning (v5.20.0) */
   var settingsResetWarningEl     = document.getElementById("settings-reset-warning");
+  /* Admin panel (v5.29.0) */
+  var adminBadgeEl       = document.getElementById("admin-badge");
+  var adminPanelEl       = document.getElementById("admin-panel");
+  var adminBackdropEl    = document.getElementById("admin-backdrop");
+  var adminCloseEl       = document.getElementById("admin-close");
+  var adminTitleEl       = document.getElementById("admin-title");
+  var adminGreetingEl    = document.getElementById("admin-greeting");
+  var adminStatsTitleEl  = document.getElementById("admin-stats-title");
+  var adminStatsEl       = document.getElementById("admin-stats");
+  var adminThemesTitleEl = document.getElementById("admin-themes-title");
+  var adminThemesHintEl  = document.getElementById("admin-themes-hint");
+  var adminThemesGridEl  = document.getElementById("admin-themes-grid");
+  var adminCodesTitleEl  = document.getElementById("admin-codes-title");
+  var adminCodesHintEl   = document.getElementById("admin-codes-hint");
+  var adminCodesListEl   = document.getElementById("admin-codes-list");
+  var adminClearStorageBtn = document.getElementById("admin-clear-storage");
+  var adminLogoutBtn     = document.getElementById("admin-logout");
   /* Sound toggle + volume (v5.22.0 / v5.24.0) */
   var settingsSoundLabelEl       = document.getElementById("settings-sound-label");
   var settingsSoundHintEl        = document.getElementById("settings-sound-hint");
@@ -752,6 +803,20 @@
     settingsSoundHintEl.textContent  = t.settingsSoundHint;
     soundVolumeLabelEl.textContent   = t.soundVolumeLabel;
     refreshSoundButtonLabel();
+    /* Admin panel labels (v5.29.0) */
+    adminTitleEl.textContent       = t.adminTitle;
+    adminGreetingEl.textContent    = t.adminGreeting;
+    adminStatsTitleEl.textContent  = t.adminStatsTitle;
+    adminThemesTitleEl.textContent = t.adminThemesTitle;
+    adminThemesHintEl.textContent  = t.adminThemesHint;
+    adminCodesTitleEl.textContent  = t.adminCodesTitle;
+    adminCodesHintEl.textContent   = t.adminCodesHint;
+    adminClearStorageBtn.textContent = t.adminClearStorage;
+    adminLogoutBtn.textContent     = t.adminLogout;
+    /* Re-render dynamic admin content if panel is open / unlocked */
+    if (adminUnlocked) {
+      renderAdminPanelContent();
+    }
     /* Secret tab labels */
     secretTitleEl.textContent     = t.secretTitle;
     secretIntroEl.textContent     = t.secretIntro;
@@ -1834,7 +1899,31 @@
       message: function () { return TEXT[currentLang].secretBananaKing; },
       action:  function () { setTheme("owner"); }
     }
+    /* NOTE: an additional gated entry-point exists but is NOT registered
+       here. It uses a separate check (see _ax/_ad/_isPrivilegedCode below)
+       so this dictionary remains "the public secret codes list" without
+       leaking the privileged trigger string. */
   };
+
+  /* ────────────────────────────────────────────────────────────────
+     Privileged gate — encoded bytes only. No plaintext anywhere in
+     this repo. Compares case-insensitive (UPPERCASE) against decoded
+     bytes. Decoding is intentionally cheap-but-non-obvious: XOR with
+     key 'BANANA' cycled over the byte array. The plaintext is
+     documented OFF-repo (only in the original chat session that
+     authored this feature). DO NOT add a comment with the plaintext.
+     ──────────────────────────────────────────────────────────────── */
+  var _ax = [115, 116, 120, 116, 9, 7, 6, 108, 22, 120, 5, 115, 18, 117, 3, 121, 20, 114, 19, 118, 28, 116];
+  function _ad(b) {
+    var k = "BANANA"; var s = "";
+    for (var i = 0; i < b.length; i++) {
+      s += String.fromCharCode(b[i] ^ k.charCodeAt(i % k.length));
+    }
+    return s;
+  }
+  function _isPrivilegedCode(rawUpper) {
+    return rawUpper === _ad(_ax);
+  }
 
   function showSecretFeedback(text, isError) {
     secretFeedbackEl.textContent = text;
@@ -1891,6 +1980,12 @@
       return;
     }
     var code = raw.toUpperCase();
+    /* Privileged gate first (not in SECRET_CODES — code stays off-repo) */
+    if (_isPrivilegedCode(code)) {
+      showSecretFeedback("", false);
+      activateAdmin();
+      return;
+    }
     if (Object.prototype.hasOwnProperty.call(SECRET_CODES, code)) {
       var entry = SECRET_CODES[code];
       var msg = (typeof entry.message === "function") ? entry.message() : entry.message;
@@ -2515,6 +2610,168 @@
   });
   /* Initial paint */
   recalcFraction();
+
+  /* ============================================================
+     ADMIN PANEL (v5.29.0) — gated by the privileged code (see _ax/_ad
+     above). Provides one-click theme apply (incl. secret), code list,
+     stats, clear-storage / logout. Persists across reload via
+     localStorage["bananafont:admin"] = "1". The privileged code itself
+     stays off-repo — only in the original chat that built this feature.
+     ============================================================ */
+  var adminUnlocked = false;
+  try {
+    if (localStorage.getItem("bananafont:admin") === "1") adminUnlocked = true;
+  } catch (e) {}
+
+  function activateAdmin() {
+    adminUnlocked = true;
+    try { localStorage.setItem("bananafont:admin", "1"); } catch (e) {}
+    adminBadgeEl.removeAttribute("hidden");
+    /* Show success message + open panel */
+    showSecretMessage(TEXT[currentLang].adminActivated);
+    playUiSound("unlock");
+    setTimeout(openAdminPanel, 350);
+  }
+  function logoutAdmin() {
+    adminUnlocked = false;
+    try { localStorage.removeItem("bananafont:admin"); } catch (e) {}
+    adminBadgeEl.setAttribute("hidden", "");
+    closeAdminPanel();
+  }
+  function openAdminPanel() {
+    renderAdminPanelContent();
+    adminPanelEl.removeAttribute("hidden");
+    document.body.style.overflow = "hidden";
+  }
+  function closeAdminPanel() {
+    adminPanelEl.setAttribute("hidden", "");
+    document.body.style.overflow = "";
+  }
+
+  function renderAdminPanelContent() {
+    var t = TEXT[currentLang];
+
+    /* Stats */
+    var storageCount = 0;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("bananafont:") === 0) storageCount++;
+      }
+    } catch (e) {}
+    var soundLabel = soundEnabled ? "ON" : "OFF";
+    var statsRows = [
+      [t.adminStatsVersion, VERSION],
+      [t.adminStatsTheme, currentTheme],
+      [t.adminStatsLang, currentLang.toUpperCase()],
+      [t.adminStatsSound, soundLabel],
+      [t.adminStatsVolume, Math.round(soundVolume * 100) + "%"],
+      [t.adminStatsStorage, String(storageCount)]
+    ];
+    adminStatsEl.innerHTML = "";
+    statsRows.forEach(function (row) {
+      var div = document.createElement("div");
+      div.className = "admin-stat-row";
+      var lbl = document.createElement("span");
+      lbl.className = "admin-stat-label";
+      lbl.textContent = row[0];
+      var val = document.createElement("span");
+      val.className = "admin-stat-value";
+      val.textContent = row[1];
+      div.appendChild(lbl);
+      div.appendChild(val);
+      adminStatsEl.appendChild(div);
+    });
+
+    /* All themes — one button per theme. Active one highlighted. */
+    adminThemesGridEl.innerHTML = "";
+    for (var ti = 0; ti < VALID_THEMES.length; ti++) {
+      (function (themeId) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-theme-btn silent-btn";
+        if (currentTheme === themeId) btn.classList.add("active");
+        var key = THEME_LABEL_KEY_MAP[themeId];
+        var label = (key && t[key]) ? t[key] : themeId;
+        btn.textContent = label;
+        btn.dataset.adminTheme = themeId;
+        btn.addEventListener("click", function () {
+          setTheme(themeId);
+          /* Refresh active highlight */
+          var all = adminThemesGridEl.querySelectorAll(".admin-theme-btn");
+          for (var j = 0; j < all.length; j++) {
+            all[j].classList.toggle("active", all[j].dataset.adminTheme === themeId);
+          }
+          playUiSound("select");
+        });
+        adminThemesGridEl.appendChild(btn);
+      })(VALID_THEMES[ti]);
+    }
+
+    /* Public codes list — pulled from SECRET_CODES keys. Privileged code
+       NOT here, by design. */
+    adminCodesListEl.innerHTML = "";
+    var codeKeys = Object.keys(SECRET_CODES);
+    codeKeys.forEach(function (codeName) {
+      var li = document.createElement("li");
+      var codeSpan = document.createElement("code");
+      codeSpan.className = "admin-code-key";
+      codeSpan.textContent = codeName;
+      li.appendChild(codeSpan);
+      /* Click to fill the secret-input with this code */
+      li.addEventListener("click", function () {
+        secretInputEl.value = codeName;
+        closeAdminPanel();
+        switchTab("secret");
+        playUiSound("click");
+      });
+      li.style.cursor = "pointer";
+      li.title = "Click to fill the secret-code input";
+      adminCodesListEl.appendChild(li);
+    });
+  }
+
+  /* THEME_LABEL_KEY_MAP — copy of the inner-applyLang map, accessible
+     from outside applyLang for renderAdminPanelContent. */
+  var THEME_LABEL_KEY_MAP = {
+    light: "themeLight", dark: "themeDark", night: "themeNight",
+    rainbow: "themeRainbow", school: "themeSchool",
+    "black-orange": "themeBlackOrange", "neon-green": "themeNeonGreen",
+    "neon-violet": "themeNeonViolet", pastel: "themePastel",
+    ocean: "themeOcean", sunset: "themeSunset",
+    cyberpunk: "themeCyberpunk", coffee: "themeCoffee",
+    terminal: "themeTerminal", aurora: "themeAurora",
+    "soviet-lift": "themeSovietLift", "soviet-podyezd": "themeSovietPodyezd",
+    "owner": "themeOwner"
+  };
+
+  /* Event wiring */
+  adminBadgeEl.addEventListener("click", openAdminPanel);
+  adminCloseEl.addEventListener("click", closeAdminPanel);
+  adminBackdropEl.addEventListener("click", closeAdminPanel);
+  adminLogoutBtn.addEventListener("click", logoutAdmin);
+  adminClearStorageBtn.addEventListener("click", function () {
+    if (!confirm(TEXT[currentLang].adminClearConfirm)) return;
+    try {
+      var keys = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("bananafont:") === 0) keys.push(k);
+      }
+      keys.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+    renderAdminPanelContent();
+    playUiSound("success");
+  });
+  /* Close on Escape */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !adminPanelEl.hasAttribute("hidden")) {
+      closeAdminPanel();
+    }
+  });
+
+  /* Restore admin badge on load if previously unlocked */
+  if (adminUnlocked) adminBadgeEl.removeAttribute("hidden");
 
   /* ============================================================
      ALARM CLOCK (v5.14.0) — user must pick a timezone first, then

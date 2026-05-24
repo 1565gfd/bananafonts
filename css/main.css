@@ -3298,6 +3298,210 @@ footer a:hover {
   }
 }
 
+/* ──────── Admin panel (v5.29.0) ──────── */
+.admin-badge {
+  margin-left: 8px;
+  background: linear-gradient(135deg, #ffe135 0%, #ffaa33 100%);
+  border: 1.5px solid rgba(255, 240, 100, 0.85);
+  color: #1a0e22;
+  font-size: 18px;
+  font-weight: 700;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(255, 225, 53, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.admin-badge:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(255, 225, 53, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.admin-badge:active { transform: scale(0.95); }
+
+.admin-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.admin-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.admin-modal {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--accent-border);
+  border-radius: 18px;
+  padding: 26px 26px 22px;
+  color: var(--text);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+/* Force a slightly darker bg on the modal so it's readable on any theme */
+.admin-modal {
+  background: rgba(20, 12, 28, 0.92);
+}
+.admin-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.admin-close:hover { background: rgba(255, 255, 255, 0.22); }
+
+.admin-modal h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #ffe135;
+}
+.admin-greeting {
+  margin: 0 0 18px;
+  font-size: 13px;
+  color: rgba(255, 244, 212, 0.7);
+}
+.admin-section {
+  margin-bottom: 18px;
+}
+.admin-section h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #ffe135;
+  font-weight: 600;
+}
+.admin-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  font-style: italic;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 6px 14px;
+}
+.admin-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.admin-stat-label { color: rgba(255, 255, 255, 0.65); }
+.admin-stat-value {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-weight: 600;
+  color: #ffe135;
+}
+
+.admin-themes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 6px;
+}
+.admin-theme-btn {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  text-align: center;
+}
+.admin-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 225, 53, 0.5);
+}
+.admin-theme-btn:active { transform: scale(0.97); }
+.admin-theme-btn.active {
+  background: rgba(255, 225, 53, 0.22);
+  border-color: #ffe135;
+  color: #ffe135;
+  font-weight: 700;
+}
+
+.admin-codes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 6px;
+}
+.admin-codes-list li {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.admin-codes-list li:hover {
+  background: rgba(255, 225, 53, 0.12);
+  border-color: rgba(255, 225, 53, 0.4);
+}
+.admin-code-key {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 13px;
+  color: #ffe135;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.admin-actions > .settings-btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+@media (max-width: 600px) {
+  .admin-modal {
+    padding: 20px 16px 16px;
+    max-height: 92vh;
+  }
+  .admin-modal h2 { font-size: 19px; }
+  .admin-themes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  .admin-codes-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* --- Sound toggle button (v5.22.0) --- */
 #sound-toggle-btn {
   font-size: 15px;

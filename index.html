@@ -92,6 +92,9 @@
         <button type="button" data-lang="ru">RU</button>
         <button type="button" data-lang="en">EN</button>
       </div>
+      <!-- Admin badge — visible only after the privileged code is entered.
+           Visibility flag persists in localStorage["bananafont:admin"]. -->
+      <button type="button" id="admin-badge" class="admin-badge silent-btn" hidden aria-label="Admin panel">👑</button>
     </div>
 
     <nav class="tabs" role="tablist">
@@ -533,6 +536,39 @@
     -->
     <span class="hidden-hint" aria-hidden="true">[ secret code hint: ILOVELIBSCHOOL ]</span>
   </main>
+
+  <!-- Admin panel modal — populated dynamically. Hidden by default;
+       shown only after privileged code entry. -->
+  <div id="admin-panel" class="admin-panel" hidden role="dialog" aria-modal="true" aria-labelledby="admin-title">
+    <div class="admin-backdrop" id="admin-backdrop"></div>
+    <div class="admin-modal">
+      <button type="button" id="admin-close" class="admin-close silent-btn" aria-label="Close">×</button>
+      <h2 id="admin-title">👑 Admin</h2>
+      <p id="admin-greeting" class="admin-greeting"></p>
+
+      <div class="admin-section">
+        <h3 id="admin-stats-title"></h3>
+        <div id="admin-stats" class="admin-stats"></div>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-themes-title"></h3>
+        <p class="admin-hint" id="admin-themes-hint"></p>
+        <div id="admin-themes-grid" class="admin-themes-grid"></div>
+      </div>
+
+      <div class="admin-section">
+        <h3 id="admin-codes-title"></h3>
+        <p class="admin-hint" id="admin-codes-hint"></p>
+        <ul id="admin-codes-list" class="admin-codes-list"></ul>
+      </div>
+
+      <div class="admin-actions">
+        <button type="button" id="admin-clear-storage" class="settings-btn settings-btn-danger silent-btn"></button>
+        <button type="button" id="admin-logout" class="settings-btn silent-btn"></button>
+      </div>
+    </div>
+  </div>
 
   <script src="/js/app.js" defer></script>
   <!-- Vercel Speed Insights (Real User Monitoring).
