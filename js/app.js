@@ -664,7 +664,7 @@
     { label: "Strike",       kind: "combining", combiner: "̶" }
   ];
 
-  var VERSION = "v5.39.1";
+  var VERSION = "v5.40.3";
 
   /* --------- DOM refs --------- */
   var titleEl   = document.getElementById("title");
@@ -805,6 +805,25 @@
   var uiBrightVal    = document.getElementById("ui-bright-val");
   var uiHueEl        = document.getElementById("ui-hue");
   var uiHueVal       = document.getElementById("ui-hue-val");
+  /* v5.40.0: +9 knobs */
+  var uiContrastEl   = document.getElementById("ui-contrast");
+  var uiContrastVal  = document.getElementById("ui-contrast-val");
+  var uiSepiaEl      = document.getElementById("ui-sepia");
+  var uiSepiaVal     = document.getElementById("ui-sepia-val");
+  var uiInvertEl     = document.getElementById("ui-invert");
+  var uiInvertVal    = document.getElementById("ui-invert-val");
+  var uiGlassAlphaEl = document.getElementById("ui-glass-alpha");
+  var uiGlassAlphaVal= document.getElementById("ui-glass-alpha-val");
+  var uiBorderWEl    = document.getElementById("ui-border-w");
+  var uiBorderWVal   = document.getElementById("ui-border-w-val");
+  var uiShadowStrEl  = document.getElementById("ui-shadow-str");
+  var uiShadowStrVal = document.getElementById("ui-shadow-str-val");
+  var uiVignetteEl   = document.getElementById("ui-vignette");
+  var uiVignetteVal  = document.getElementById("ui-vignette-val");
+  var uiPagePadEl    = document.getElementById("ui-page-pad");
+  var uiPagePadVal   = document.getElementById("ui-page-pad-val");
+  var uiShadowZEl    = document.getElementById("ui-shadow-z");
+  var uiShadowZVal   = document.getElementById("ui-shadow-z-val");
   /* v5.33.0: Utility tools */
   var utilIoEl      = document.getElementById("util-io");
   var utilUuidBtn   = document.getElementById("util-uuid");
@@ -1290,7 +1309,59 @@
     aurora:         "#001a2e",
     "soviet-lift":     "#a05830", /* v5.21.2 — walnut wood */
     "soviet-podyezd":  "#5cb5a8", /* v5.21.2 — turquoise wall */
-    "owner":           "#1a0e22"  /* v5.28.0: deep purple-brown, banana-yellow accent */
+    "owner":           "#1a0e22", /* v5.28.0: deep purple-brown, banana-yellow accent */
+    /* v5.40.1 — 50 new themes get proper address-bar tint on mobile.
+       Color = bg1 from theme palette (matches what the user sees up top). */
+    moss:              "#0a1a0e",
+    sakura:            "#fff0f5",
+    "autumn-leaves":   "#2a0e08",
+    "winter-forest":   "#e8f4ff",
+    "desert-dune":     "#fdf0d8",
+    tundra:            "#f0f4f5",
+    savanna:           "#fff6d8",
+    tropics:           "#08362a",
+    swamp:             "#101f0e",
+    canyon:            "#2a1008",
+    nebula:            "#0a0518",
+    "event-horizon":   "#000000",
+    mars:              "#1a0808",
+    jupiter:           "#2a1408",
+    saturn:            "#fff4dc",
+    supernova:         "#000018",
+    "milky-way":       "#02030c",
+    pulsar:            "#000a10",
+    melancholy:        "#181a22",
+    euphoria:          "#fff3a8",
+    rage:              "#0a0000",
+    zen:               "#f0ede2",
+    nostalgia:         "#faecd0",
+    dreamy:            "#1a0f2a",
+    anxiety:           "#1a2008",
+    serenity:          "#eaf6ff",
+    ukiyoe:            "#f0ead8",
+    baroque:           "#1a0808",
+    "art-deco":        "#0a0805",
+    bauhaus:           "#fdf8ec",
+    memphis:           "#fff8f0",
+    vaporwave:         "#2a0a3a",
+    y2k:               "#dcebf8",
+    matcha:            "#e8f0d0",
+    caramel:           "#1a0a04",
+    mojito:            "#e8fff0",
+    blueberry:         "#080a28",
+    bubblegum:         "#ffe0f0",
+    "matrix-classic":  "#000400",
+    "tron-grid":       "#000000",
+    retrowave:         "#080018",
+    "amber-crt":       "#0a0500",
+    wireframe:         "#fafafa",
+    quantum:           "#001020",
+    ruby:              "#1a0008",
+    sapphire:          "#000820",
+    emerald:           "#001a10",
+    amethyst:          "#1a0820",
+    opal:              "#f0fcfa",
+    obsidian:          "#020000"
   };
   var themeTransitionTimer = null;
 
@@ -4429,20 +4500,54 @@
     osc.connect(g).connect(ctx.destination);
     osc.start(t0); osc.stop(t0 + 0.35);
   }
+  /* v5.40.3 — siren upgraded from 0.6s blip to a full 5-second police wail.
+     Lasts as long as the red-lockout countdown so the audio matches the UI.
+     stopSiren() is callable from lockPageInRed when apology is accepted —
+     ramps the gain down to silence over 220ms instead of cutting hard. */
+  var _activeSiren = null;
   function playSiren(ctx) {
-    var g0 = 0.04 * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
+    /* If a previous siren is still wailing, kill it first so a re-trigger
+       doesn't stack two oscillators that beat against each other. */
+    if (_activeSiren) {
+      try { _activeSiren.osc.stop(); } catch (e) {}
+      _activeSiren = null;
+    }
+    var g0 = 0.07 * soundVolume; if (g0 < 0.0001) g0 = 0.0001;
     var osc = ctx.createOscillator(), g = ctx.createGain();
     osc.type = "square";
     var t0 = ctx.currentTime;
-    for (var i = 0; i < 4; i++) {
-      osc.frequency.setValueAtTime(700, t0 + i * 0.15);
-      osc.frequency.setValueAtTime(900, t0 + i * 0.15 + 0.075);
+    var DUR    = 5.0;   /* total seconds — matches red-lockout countdown */
+    var PERIOD = 0.34;  /* full cycle (low + high) */
+    /* Build the alternating 700↔1100Hz wail using setValueAtTime —
+       sounds like a classic European police siren. */
+    for (var t = 0; t < DUR; t += PERIOD) {
+      osc.frequency.setValueAtTime(700,  t0 + t);
+      osc.frequency.setValueAtTime(1100, t0 + t + PERIOD / 2);
     }
     g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.6);
+    g.gain.exponentialRampToValueAtTime(g0, t0 + 0.03);
+    /* Hold full volume until the very end, then fade fast */
+    g.gain.setValueAtTime(g0, t0 + DUR - 0.15);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + DUR);
     osc.connect(g).connect(ctx.destination);
-    osc.start(t0); osc.stop(t0 + 0.62);
+    osc.start(t0); osc.stop(t0 + DUR + 0.02);
+    _activeSiren = { osc: osc, gain: g, ctx: ctx };
+    osc.onended = function () {
+      if (_activeSiren && _activeSiren.osc === osc) _activeSiren = null;
+    };
+  }
+  function stopSiren() {
+    if (!_activeSiren) return;
+    try {
+      var s = _activeSiren;
+      var now = s.ctx.currentTime;
+      /* Cancel future scheduled values, then quick exponential fade-out */
+      s.gain.gain.cancelScheduledValues(now);
+      s.gain.gain.setValueAtTime(Math.max(0.0001, s.gain.gain.value), now);
+      s.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      s.osc.stop(now + 0.25);
+    } catch (e) {}
+    _activeSiren = null;
   }
   function playFanfare(ctx) {
     [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) {
@@ -4614,7 +4719,11 @@
   var KNOB_DEFAULTS = {
     scale: 100, blur: 36, radius: 22, anim: 100, saturate: 200, compact: false,
     /* v5.34.0 — 5 new knobs */
-    weight: 500, spacing: 0, lineheight: 140, bright: 100, hue: 0
+    weight: 500, spacing: 0, lineheight: 140, bright: 100, hue: 0,
+    /* v5.40.0 — 9 new knobs */
+    contrast: 100, sepia: 0, invert: 0,
+    glassAlpha: 100, borderW: 1, shadowStr: 100,
+    vignette: 0, pagePad: 0, shadowZ: 12
   };
   var knobState = Object.assign({}, KNOB_DEFAULTS);
   try {
@@ -4622,7 +4731,9 @@
     if (saved) {
       var p = JSON.parse(saved);
       if (p && typeof p === "object") {
-        ["scale","blur","radius","anim","saturate","weight","spacing","lineheight","bright","hue"].forEach(function (k) {
+        ["scale","blur","radius","anim","saturate","weight","spacing","lineheight","bright","hue",
+         "contrast","sepia","invert","glassAlpha","borderW","shadowStr","vignette","pagePad","shadowZ"
+        ].forEach(function (k) {
           if (typeof p[k] === "number") knobState[k] = p[k];
         });
         if (typeof p.compact === "boolean") knobState.compact = p.compact;
@@ -4658,10 +4769,58 @@
     document.body.style.fontWeight = String(knobState.weight);
     document.body.style.letterSpacing = knobState.spacing + "px";
     document.body.style.lineHeight = (knobState.lineheight / 100).toFixed(2);
-    /* brightness + hue-rotate via filter on html (combined) */
-    var bf = (knobState.bright !== 100) ? ("brightness(" + (knobState.bright / 100) + ")") : "";
-    var hf = (knobState.hue !== 0) ? ("hue-rotate(" + knobState.hue + "deg)") : "";
-    root.style.filter = (bf + " " + hf).trim();
+    /* brightness + hue-rotate + v5.40.0 contrast/sepia/invert — all combined
+       into ONE filter string on <html> so they compose cleanly.
+       v5.40.2 perf: when all 5 are at defaults, REMOVE the inline filter
+       entirely so the browser doesn't create a wasted compositing layer
+       on <html>. Even an empty "filter:" string sometimes promotes the
+       root to its own GPU layer on Chromium. */
+    var fParts = [];
+    if (knobState.bright   !== 100) fParts.push("brightness(" + (knobState.bright   / 100) + ")");
+    if (knobState.contrast !== 100) fParts.push("contrast("   + (knobState.contrast / 100) + ")");
+    if (knobState.sepia    !== 0)   fParts.push("sepia("      + (knobState.sepia    / 100) + ")");
+    if (knobState.invert   !== 0)   fParts.push("invert("     + (knobState.invert   / 100) + ")");
+    if (knobState.hue      !== 0)   fParts.push("hue-rotate(" + knobState.hue       + "deg)");
+    if (fParts.length) root.style.filter = fParts.join(" ");
+    else               root.style.removeProperty("filter");
+
+    /* v5.40.0 — glass alpha multiplier. The themes set --glass-bg as
+       rgba(...,X). We can't multiply alpha inside an existing rgba()
+       value, so we layer the user's multiplier via a CSS custom prop
+       that the glass-card rules can chain. Easiest: scale the opacity
+       on the body so glass appears more/less translucent overall.
+       Workaround — set --bf-glass-opacity which CSS rules can use, AND
+       directly tweak the existing --glass-bg / --glass-bg-hover via a
+       rgba-wrap that respects existing values. We just store and feed
+       to CSS via filter-like multiplier via :root vars; the glass uses
+       background-color: var(--glass-bg) with backdrop-filter blur, so
+       we add a translucent overlay technique via root opacity prop. */
+    root.style.setProperty("--bf-glass-mul", (knobState.glassAlpha / 100).toFixed(2));
+    /* Also apply the alpha re-scale to --glass-* vars (defined below
+       applyKnobs but reachable via hoisting at call time). */
+    if (typeof applyGlassAlpha === "function") {
+      applyGlassAlpha(knobState.glassAlpha / 100);
+    }
+    /* Border width — themes use 1px solid var(--glass-border). Override
+       width via root var; CSS reads it as --bf-border-w. */
+    root.style.setProperty("--bf-border-w", knobState.borderW + "px");
+    /* Shadow strength multiplier (alpha) + Z (y-offset) */
+    root.style.setProperty("--bf-shadow-strength", (knobState.shadowStr / 100).toFixed(2));
+    root.style.setProperty("--bf-shadow-z", knobState.shadowZ + "px");
+    /* Vignette opacity — v5.40.2 perf: only mark body[data-bf-vignette]
+       when knob > 0. CSS rule (see main.css) gates the body::after pseudo
+       so when knob=0 the layer isn't composited at all (saves a fullscreen
+       GPU layer on every page). */
+    if (knobState.vignette > 0) {
+      root.style.setProperty("--bf-vignette", (knobState.vignette / 100).toFixed(2));
+      document.body.setAttribute("data-bf-vignette", "1");
+    } else {
+      root.style.removeProperty("--bf-vignette");
+      document.body.removeAttribute("data-bf-vignette");
+    }
+    /* Page horizontal padding */
+    root.style.setProperty("--bf-page-pad", knobState.pagePad + "px");
+
     /* Sync displays */
     uiScaleEl.value     = knobState.scale;     uiScaleVal.textContent = knobState.scale + "%";
     uiBlurEl.value      = knobState.blur;      uiBlurVal.textContent  = knobState.blur + "px";
@@ -4674,10 +4833,107 @@
     uiLineheightEl.value  = knobState.lineheight; uiLineheightVal.textContent= (knobState.lineheight / 100).toFixed(2);
     uiBrightEl.value      = knobState.bright;     uiBrightVal.textContent    = knobState.bright + "%";
     uiHueEl.value         = knobState.hue;        uiHueVal.textContent       = knobState.hue + "°";
+    /* v5.40.0 — sync 9 new knob values + labels */
+    uiContrastEl.value    = knobState.contrast;   uiContrastVal.textContent  = knobState.contrast + "%";
+    uiSepiaEl.value       = knobState.sepia;      uiSepiaVal.textContent     = knobState.sepia + "%";
+    uiInvertEl.value      = knobState.invert;     uiInvertVal.textContent    = knobState.invert + "%";
+    uiGlassAlphaEl.value  = knobState.glassAlpha; uiGlassAlphaVal.textContent= knobState.glassAlpha + "%";
+    uiBorderWEl.value     = knobState.borderW;    uiBorderWVal.textContent   = knobState.borderW + "px";
+    uiShadowStrEl.value   = knobState.shadowStr;  uiShadowStrVal.textContent = knobState.shadowStr + "%";
+    uiVignetteEl.value    = knobState.vignette;   uiVignetteVal.textContent  = knobState.vignette + "%";
+    uiPagePadEl.value     = knobState.pagePad;    uiPagePadVal.textContent   = knobState.pagePad + "px";
+    uiShadowZEl.value     = knobState.shadowZ;    uiShadowZVal.textContent   = knobState.shadowZ + "px";
   }
   function saveKnobs() {
     try { localStorage.setItem("bananafont:knobs", JSON.stringify(knobState)); } catch (e) {}
   }
+  /* v5.40.2 perf: rAF-coalesce knob applies + save. With 19 sliders and an
+     'input' event firing 60-100×/sec while dragging, the original code did
+     19 × (15 CSS var writes + 1 getComputedStyle + 19 label updates) per
+     frame which thrashed style recalc on low-end Android. rAF batching
+     means at most ONE apply per frame regardless of how many knobs changed.
+     localStorage write is also debounced to once per ~150ms idle so we
+     don't slam disk I/O while the user is actively dragging. */
+  var _knobApplyScheduled = false;
+  var _knobSaveTimer = null;
+  function scheduleApplyKnobs() {
+    if (_knobApplyScheduled) return;
+    _knobApplyScheduled = true;
+    requestAnimationFrame(function () {
+      _knobApplyScheduled = false;
+      applyKnobs();
+    });
+    if (_knobSaveTimer) clearTimeout(_knobSaveTimer);
+    _knobSaveTimer = setTimeout(saveKnobs, 150);
+  }
+  /* v5.40.2 safety net: flush pending save on tab-hide / page-unload so
+     if the user drags a knob and immediately closes the tab, their
+     setting still makes it to localStorage. pagehide fires more reliably
+     than beforeunload on iOS. */
+  function _flushKnobSave() {
+    if (_knobSaveTimer) {
+      clearTimeout(_knobSaveTimer);
+      _knobSaveTimer = null;
+      saveKnobs();
+    }
+  }
+  window.addEventListener("pagehide", _flushKnobSave);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") _flushKnobSave();
+  });
+  /* v5.40.0 — glassAlpha knob: re-scale the rgba alpha of the 6 glass
+     CSS vars (--glass-bg, --glass-bg-hover, --glass-border, --glass-border-soft,
+     --glass-inset, --glass-inset-soft). The themes set these as rgba() with
+     baked alpha, so we can't "multiply" in pure CSS. Strategy:
+       1. Cache the per-theme baseline via getComputedStyle after every
+          setTheme().
+       2. On each knob change OR theme change, multiply baseline alpha
+          by user's glassAlpha/100 and write back via inline style.
+     If knob is 100% we CLEAR inline overrides so the theme's value shows
+     through cleanly (no stale rgba stuck after switching themes).  */
+  var GLASS_PROPS = [
+    "--glass-bg", "--glass-bg-hover",
+    "--glass-border", "--glass-border-soft",
+    "--glass-inset", "--glass-inset-soft"
+  ];
+  var __baseGlass = {};
+  function captureBaseGlass() {
+    /* Clear our own inline overrides first so getComputedStyle returns
+       the theme's value, not our recompute. */
+    GLASS_PROPS.forEach(function (p) {
+      document.documentElement.style.removeProperty(p);
+    });
+    var cs = getComputedStyle(document.documentElement);
+    GLASS_PROPS.forEach(function (p) {
+      __baseGlass[p] = cs.getPropertyValue(p).trim();
+    });
+  }
+  function applyGlassAlpha(mul) {
+    var root = document.documentElement;
+    /* knob = 100 → no override; remove inline values so theme shows through. */
+    if (mul === 1) {
+      GLASS_PROPS.forEach(function (p) { root.style.removeProperty(p); });
+      return;
+    }
+    GLASS_PROPS.forEach(function (p) {
+      var raw = __baseGlass[p];
+      if (!raw) return;
+      var m = raw.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:[,\s/]+\s*([\d.]+))?\s*\)/);
+      if (!m) return;
+      var a = m[4] === undefined ? 1 : parseFloat(m[4]);
+      var newA = Math.max(0, Math.min(1, a * mul)).toFixed(3);
+      root.style.setProperty(p, "rgba(" + m[1] + "," + m[2] + "," + m[3] + "," + newA + ")");
+    });
+  }
+  /* Wrap setTheme — capture baseline AFTER theme switch, then re-apply
+     glassAlpha so user's knob persists across theme changes. */
+  var _origSetTheme = setTheme;
+  setTheme = function (theme) {
+    _origSetTheme(theme);
+    captureBaseGlass();
+    applyGlassAlpha(knobState.glassAlpha / 100);
+  };
+
   /* v5.35.0: Physically move the customization block from Settings into
      tab-custom. Done once on init; IDs stay unique. */
   (function moveCustomBlockToOwnTab() {
@@ -4685,20 +4941,34 @@
     var tabCustomEl = document.getElementById("tab-custom");
     if (block && tabCustomEl) tabCustomEl.appendChild(block);
   })();
+  /* Capture baseline once at boot too — covers the case where the user
+     never switches themes after page load. */
+  captureBaseGlass();
   applyKnobs();
+  applyGlassAlpha(knobState.glassAlpha / 100);
 
-  uiScaleEl.addEventListener("input", function () { knobState.scale    = parseInt(uiScaleEl.value, 10);    applyKnobs(); saveKnobs(); });
-  uiBlurEl.addEventListener("input", function ()  { knobState.blur     = parseInt(uiBlurEl.value, 10);     applyKnobs(); saveKnobs(); });
-  uiRadiusEl.addEventListener("input", function (){ knobState.radius   = parseInt(uiRadiusEl.value, 10);   applyKnobs(); saveKnobs(); });
-  uiAnimEl.addEventListener("input", function ()  { knobState.anim     = parseInt(uiAnimEl.value, 10);     applyKnobs(); saveKnobs(); });
-  uiSaturateEl.addEventListener("input", function(){ knobState.saturate= parseInt(uiSaturateEl.value, 10); applyKnobs(); saveKnobs(); });
+  uiScaleEl.addEventListener("input", function () { knobState.scale    = parseInt(uiScaleEl.value, 10);    scheduleApplyKnobs(); });
+  uiBlurEl.addEventListener("input", function ()  { knobState.blur     = parseInt(uiBlurEl.value, 10);     scheduleApplyKnobs(); });
+  uiRadiusEl.addEventListener("input", function (){ knobState.radius   = parseInt(uiRadiusEl.value, 10);   scheduleApplyKnobs(); });
+  uiAnimEl.addEventListener("input", function ()  { knobState.anim     = parseInt(uiAnimEl.value, 10);     scheduleApplyKnobs(); });
+  uiSaturateEl.addEventListener("input", function(){ knobState.saturate= parseInt(uiSaturateEl.value, 10); scheduleApplyKnobs(); });
   uiCompactEl.addEventListener("change", function (){ knobState.compact = uiCompactEl.checked;             applyKnobs(); saveKnobs(); });
   /* v5.34.0 — 5 new knob listeners */
-  uiWeightEl.addEventListener("input", function ()    { knobState.weight     = parseInt(uiWeightEl.value, 10);     applyKnobs(); saveKnobs(); });
-  uiSpacingEl.addEventListener("input", function ()   { knobState.spacing    = parseFloat(uiSpacingEl.value);      applyKnobs(); saveKnobs(); });
-  uiLineheightEl.addEventListener("input", function() { knobState.lineheight = parseInt(uiLineheightEl.value, 10); applyKnobs(); saveKnobs(); });
-  uiBrightEl.addEventListener("input", function ()    { knobState.bright     = parseInt(uiBrightEl.value, 10);     applyKnobs(); saveKnobs(); });
-  uiHueEl.addEventListener("input", function ()       { knobState.hue        = parseInt(uiHueEl.value, 10);        applyKnobs(); saveKnobs(); });
+  uiWeightEl.addEventListener("input", function ()    { knobState.weight     = parseInt(uiWeightEl.value, 10);     scheduleApplyKnobs(); });
+  uiSpacingEl.addEventListener("input", function ()   { knobState.spacing    = parseFloat(uiSpacingEl.value);      scheduleApplyKnobs(); });
+  uiLineheightEl.addEventListener("input", function() { knobState.lineheight = parseInt(uiLineheightEl.value, 10); scheduleApplyKnobs(); });
+  uiBrightEl.addEventListener("input", function ()    { knobState.bright     = parseInt(uiBrightEl.value, 10);     scheduleApplyKnobs(); });
+  uiHueEl.addEventListener("input", function ()       { knobState.hue        = parseInt(uiHueEl.value, 10);        scheduleApplyKnobs(); });
+  /* v5.40.0 — 9 new knob listeners */
+  uiContrastEl.addEventListener("input",   function () { knobState.contrast   = parseInt(uiContrastEl.value, 10);   scheduleApplyKnobs(); });
+  uiSepiaEl.addEventListener("input",      function () { knobState.sepia      = parseInt(uiSepiaEl.value, 10);      scheduleApplyKnobs(); });
+  uiInvertEl.addEventListener("input",     function () { knobState.invert     = parseInt(uiInvertEl.value, 10);     scheduleApplyKnobs(); });
+  uiGlassAlphaEl.addEventListener("input", function () { knobState.glassAlpha = parseInt(uiGlassAlphaEl.value, 10); scheduleApplyKnobs(); });
+  uiBorderWEl.addEventListener("input",    function () { knobState.borderW    = parseInt(uiBorderWEl.value, 10);    scheduleApplyKnobs(); });
+  uiShadowStrEl.addEventListener("input",  function () { knobState.shadowStr  = parseInt(uiShadowStrEl.value, 10);  scheduleApplyKnobs(); });
+  uiVignetteEl.addEventListener("input",   function () { knobState.vignette   = parseInt(uiVignetteEl.value, 10);   scheduleApplyKnobs(); });
+  uiPagePadEl.addEventListener("input",    function () { knobState.pagePad    = parseInt(uiPagePadEl.value, 10);    scheduleApplyKnobs(); });
+  uiShadowZEl.addEventListener("input",    function () { knobState.shadowZ    = parseInt(uiShadowZEl.value, 10);    scheduleApplyKnobs(); });
   resetKnobsBtn.addEventListener("click", function () {
     knobState = Object.assign({}, KNOB_DEFAULTS);
     applyKnobs();
@@ -5629,6 +5899,11 @@
     for (var i = 0; i < existing.length; i++) {
       if (existing[i].parentNode) existing[i].parentNode.removeChild(existing[i]);
     }
+    /* v5.40.3 — SIREN: full 5-second police wail matching the countdown.
+       Fires the moment the red screen appears. stopSiren() in check() will
+       kill it if the user apologizes correctly; on timeout/wipe the page
+       reloads and the audio dies with it. */
+    playUiSound("siren");
     var t = TEXT[currentLang];
 
     var red = document.createElement("div");
@@ -5708,6 +5983,7 @@
       if (v === "SORRY" || v === "ПРОСТИ") {
         settle();
         red.classList.add("removing");
+        stopSiren();                 /* v5.40.3: shut the wail off when forgiven */
         playUiSound("applause");     /* v5.38.2: forgiven → applause (was: confirm) */
         setTimeout(function () {
           if (red.parentNode) red.parentNode.removeChild(red);

@@ -4010,6 +4010,358 @@ footer a:hover {
   [data-theme="owner"] .theme-switch button:not(.active) {
     background: rgba(45, 25, 60, 0.92);
   }
+  /* ── v5.40.1 — solid-bg fallbacks for the 50 new themes (v5.39.x) ── */
+  [data-theme="moss"] .app,
+  [data-theme="moss"] textarea,
+  [data-theme="moss"] .not-found-card { background: #0a1a0e; }
+  [data-theme="moss"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="moss"] .fonts button:not(.active),
+  [data-theme="moss"] .lang-switch button:not(.active),
+  [data-theme="moss"] .theme-switch button:not(.active) { background: #1a3022; }
+  [data-theme="sakura"] .app,
+  [data-theme="sakura"] textarea,
+  [data-theme="sakura"] .not-found-card { background: #fff0f5; }
+  [data-theme="sakura"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="sakura"] .fonts button:not(.active),
+  [data-theme="sakura"] .lang-switch button:not(.active),
+  [data-theme="sakura"] .theme-switch button:not(.active) { background: #ffd5e5; }
+  [data-theme="autumn-leaves"] .app,
+  [data-theme="autumn-leaves"] textarea,
+  [data-theme="autumn-leaves"] .not-found-card { background: #2a0e08; }
+  [data-theme="autumn-leaves"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="autumn-leaves"] .fonts button:not(.active),
+  [data-theme="autumn-leaves"] .lang-switch button:not(.active),
+  [data-theme="autumn-leaves"] .theme-switch button:not(.active) { background: #5a2a10; }
+  [data-theme="winter-forest"] .app,
+  [data-theme="winter-forest"] textarea,
+  [data-theme="winter-forest"] .not-found-card { background: #e8f4ff; }
+  [data-theme="winter-forest"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="winter-forest"] .fonts button:not(.active),
+  [data-theme="winter-forest"] .lang-switch button:not(.active),
+  [data-theme="winter-forest"] .theme-switch button:not(.active) { background: #cce0f0; }
+  [data-theme="desert-dune"] .app,
+  [data-theme="desert-dune"] textarea,
+  [data-theme="desert-dune"] .not-found-card { background: #fdf0d8; }
+  [data-theme="desert-dune"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="desert-dune"] .fonts button:not(.active),
+  [data-theme="desert-dune"] .lang-switch button:not(.active),
+  [data-theme="desert-dune"] .theme-switch button:not(.active) { background: #f4d090; }
+  [data-theme="tundra"] .app,
+  [data-theme="tundra"] textarea,
+  [data-theme="tundra"] .not-found-card { background: #f0f4f5; }
+  [data-theme="tundra"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="tundra"] .fonts button:not(.active),
+  [data-theme="tundra"] .lang-switch button:not(.active),
+  [data-theme="tundra"] .theme-switch button:not(.active) { background: #d8e2e3; }
+  [data-theme="savanna"] .app,
+  [data-theme="savanna"] textarea,
+  [data-theme="savanna"] .not-found-card { background: #fff6d8; }
+  [data-theme="savanna"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="savanna"] .fonts button:not(.active),
+  [data-theme="savanna"] .lang-switch button:not(.active),
+  [data-theme="savanna"] .theme-switch button:not(.active) { background: #f5d878; }
+  [data-theme="tropics"] .app,
+  [data-theme="tropics"] textarea,
+  [data-theme="tropics"] .not-found-card { background: #08362a; }
+  [data-theme="tropics"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="tropics"] .fonts button:not(.active),
+  [data-theme="tropics"] .lang-switch button:not(.active),
+  [data-theme="tropics"] .theme-switch button:not(.active) { background: #0d6850; }
+  [data-theme="swamp"] .app,
+  [data-theme="swamp"] textarea,
+  [data-theme="swamp"] .not-found-card { background: #101f0e; }
+  [data-theme="swamp"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="swamp"] .fonts button:not(.active),
+  [data-theme="swamp"] .lang-switch button:not(.active),
+  [data-theme="swamp"] .theme-switch button:not(.active) { background: #1c3a20; }
+  [data-theme="canyon"] .app,
+  [data-theme="canyon"] textarea,
+  [data-theme="canyon"] .not-found-card { background: #2a1008; }
+  [data-theme="canyon"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="canyon"] .fonts button:not(.active),
+  [data-theme="canyon"] .lang-switch button:not(.active),
+  [data-theme="canyon"] .theme-switch button:not(.active) { background: #7a3018; }
+  [data-theme="nebula"] .app,
+  [data-theme="nebula"] textarea,
+  [data-theme="nebula"] .not-found-card { background: #0a0518; }
+  [data-theme="nebula"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="nebula"] .fonts button:not(.active),
+  [data-theme="nebula"] .lang-switch button:not(.active),
+  [data-theme="nebula"] .theme-switch button:not(.active) { background: #3a0c5e; }
+  [data-theme="event-horizon"] .app,
+  [data-theme="event-horizon"] textarea,
+  [data-theme="event-horizon"] .not-found-card { background: #000000; }
+  [data-theme="event-horizon"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="event-horizon"] .fonts button:not(.active),
+  [data-theme="event-horizon"] .lang-switch button:not(.active),
+  [data-theme="event-horizon"] .theme-switch button:not(.active) { background: #1a0a00; }
+  [data-theme="mars"] .app,
+  [data-theme="mars"] textarea,
+  [data-theme="mars"] .not-found-card { background: #1a0808; }
+  [data-theme="mars"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="mars"] .fonts button:not(.active),
+  [data-theme="mars"] .lang-switch button:not(.active),
+  [data-theme="mars"] .theme-switch button:not(.active) { background: #5a1808; }
+  [data-theme="jupiter"] .app,
+  [data-theme="jupiter"] textarea,
+  [data-theme="jupiter"] .not-found-card { background: #2a1408; }
+  [data-theme="jupiter"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="jupiter"] .fonts button:not(.active),
+  [data-theme="jupiter"] .lang-switch button:not(.active),
+  [data-theme="jupiter"] .theme-switch button:not(.active) { background: #6a3820; }
+  [data-theme="saturn"] .app,
+  [data-theme="saturn"] textarea,
+  [data-theme="saturn"] .not-found-card { background: #fff4dc; }
+  [data-theme="saturn"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="saturn"] .fonts button:not(.active),
+  [data-theme="saturn"] .lang-switch button:not(.active),
+  [data-theme="saturn"] .theme-switch button:not(.active) { background: #f0d896; }
+  [data-theme="supernova"] .app,
+  [data-theme="supernova"] textarea,
+  [data-theme="supernova"] .not-found-card { background: #000018; }
+  [data-theme="supernova"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="supernova"] .fonts button:not(.active),
+  [data-theme="supernova"] .lang-switch button:not(.active),
+  [data-theme="supernova"] .theme-switch button:not(.active) { background: #180a48; }
+  [data-theme="milky-way"] .app,
+  [data-theme="milky-way"] textarea,
+  [data-theme="milky-way"] .not-found-card { background: #02030c; }
+  [data-theme="milky-way"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="milky-way"] .fonts button:not(.active),
+  [data-theme="milky-way"] .lang-switch button:not(.active),
+  [data-theme="milky-way"] .theme-switch button:not(.active) { background: #0a1538; }
+  [data-theme="pulsar"] .app,
+  [data-theme="pulsar"] textarea,
+  [data-theme="pulsar"] .not-found-card { background: #000a10; }
+  [data-theme="pulsar"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="pulsar"] .fonts button:not(.active),
+  [data-theme="pulsar"] .lang-switch button:not(.active),
+  [data-theme="pulsar"] .theme-switch button:not(.active) { background: #001830; }
+  [data-theme="melancholy"] .app,
+  [data-theme="melancholy"] textarea,
+  [data-theme="melancholy"] .not-found-card { background: #181a22; }
+  [data-theme="melancholy"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="melancholy"] .fonts button:not(.active),
+  [data-theme="melancholy"] .lang-switch button:not(.active),
+  [data-theme="melancholy"] .theme-switch button:not(.active) { background: #252836; }
+  [data-theme="euphoria"] .app,
+  [data-theme="euphoria"] textarea,
+  [data-theme="euphoria"] .not-found-card { background: #fff3a8; }
+  [data-theme="euphoria"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="euphoria"] .fonts button:not(.active),
+  [data-theme="euphoria"] .lang-switch button:not(.active),
+  [data-theme="euphoria"] .theme-switch button:not(.active) { background: #ffb8e8; }
+  [data-theme="rage"] .app,
+  [data-theme="rage"] textarea,
+  [data-theme="rage"] .not-found-card { background: #0a0000; }
+  [data-theme="rage"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="rage"] .fonts button:not(.active),
+  [data-theme="rage"] .lang-switch button:not(.active),
+  [data-theme="rage"] .theme-switch button:not(.active) { background: #3a0000; }
+  [data-theme="zen"] .app,
+  [data-theme="zen"] textarea,
+  [data-theme="zen"] .not-found-card { background: #f0ede2; }
+  [data-theme="zen"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="zen"] .fonts button:not(.active),
+  [data-theme="zen"] .lang-switch button:not(.active),
+  [data-theme="zen"] .theme-switch button:not(.active) { background: #dcd8c8; }
+  [data-theme="nostalgia"] .app,
+  [data-theme="nostalgia"] textarea,
+  [data-theme="nostalgia"] .not-found-card { background: #faecd0; }
+  [data-theme="nostalgia"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="nostalgia"] .fonts button:not(.active),
+  [data-theme="nostalgia"] .lang-switch button:not(.active),
+  [data-theme="nostalgia"] .theme-switch button:not(.active) { background: #ecd2a8; }
+  [data-theme="dreamy"] .app,
+  [data-theme="dreamy"] textarea,
+  [data-theme="dreamy"] .not-found-card { background: #1a0f2a; }
+  [data-theme="dreamy"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="dreamy"] .fonts button:not(.active),
+  [data-theme="dreamy"] .lang-switch button:not(.active),
+  [data-theme="dreamy"] .theme-switch button:not(.active) { background: #3a2858; }
+  [data-theme="anxiety"] .app,
+  [data-theme="anxiety"] textarea,
+  [data-theme="anxiety"] .not-found-card { background: #1a2008; }
+  [data-theme="anxiety"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="anxiety"] .fonts button:not(.active),
+  [data-theme="anxiety"] .lang-switch button:not(.active),
+  [data-theme="anxiety"] .theme-switch button:not(.active) { background: #3a4810; }
+  [data-theme="serenity"] .app,
+  [data-theme="serenity"] textarea,
+  [data-theme="serenity"] .not-found-card { background: #eaf6ff; }
+  [data-theme="serenity"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="serenity"] .fonts button:not(.active),
+  [data-theme="serenity"] .lang-switch button:not(.active),
+  [data-theme="serenity"] .theme-switch button:not(.active) { background: #c8e0f0; }
+  [data-theme="ukiyoe"] .app,
+  [data-theme="ukiyoe"] textarea,
+  [data-theme="ukiyoe"] .not-found-card { background: #f0ead8; }
+  [data-theme="ukiyoe"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="ukiyoe"] .fonts button:not(.active),
+  [data-theme="ukiyoe"] .lang-switch button:not(.active),
+  [data-theme="ukiyoe"] .theme-switch button:not(.active) { background: #d8c8a8; }
+  [data-theme="baroque"] .app,
+  [data-theme="baroque"] textarea,
+  [data-theme="baroque"] .not-found-card { background: #1a0808; }
+  [data-theme="baroque"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="baroque"] .fonts button:not(.active),
+  [data-theme="baroque"] .lang-switch button:not(.active),
+  [data-theme="baroque"] .theme-switch button:not(.active) { background: #3a0a08; }
+  [data-theme="art-deco"] .app,
+  [data-theme="art-deco"] textarea,
+  [data-theme="art-deco"] .not-found-card { background: #0a0805; }
+  [data-theme="art-deco"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="art-deco"] .fonts button:not(.active),
+  [data-theme="art-deco"] .lang-switch button:not(.active),
+  [data-theme="art-deco"] .theme-switch button:not(.active) { background: #1a1408; }
+  [data-theme="bauhaus"] .app,
+  [data-theme="bauhaus"] textarea,
+  [data-theme="bauhaus"] .not-found-card { background: #fdf8ec; }
+  [data-theme="bauhaus"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="bauhaus"] .fonts button:not(.active),
+  [data-theme="bauhaus"] .lang-switch button:not(.active),
+  [data-theme="bauhaus"] .theme-switch button:not(.active) { background: #fff8e0; }
+  [data-theme="memphis"] .app,
+  [data-theme="memphis"] textarea,
+  [data-theme="memphis"] .not-found-card { background: #fff8f0; }
+  [data-theme="memphis"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="memphis"] .fonts button:not(.active),
+  [data-theme="memphis"] .lang-switch button:not(.active),
+  [data-theme="memphis"] .theme-switch button:not(.active) { background: #ffe8d8; }
+  [data-theme="vaporwave"] .app,
+  [data-theme="vaporwave"] textarea,
+  [data-theme="vaporwave"] .not-found-card { background: #2a0a3a; }
+  [data-theme="vaporwave"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="vaporwave"] .fonts button:not(.active),
+  [data-theme="vaporwave"] .lang-switch button:not(.active),
+  [data-theme="vaporwave"] .theme-switch button:not(.active) { background: #7a1888; }
+  [data-theme="y2k"] .app,
+  [data-theme="y2k"] textarea,
+  [data-theme="y2k"] .not-found-card { background: #dcebf8; }
+  [data-theme="y2k"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="y2k"] .fonts button:not(.active),
+  [data-theme="y2k"] .lang-switch button:not(.active),
+  [data-theme="y2k"] .theme-switch button:not(.active) { background: #a0c8e8; }
+  [data-theme="matcha"] .app,
+  [data-theme="matcha"] textarea,
+  [data-theme="matcha"] .not-found-card { background: #e8f0d0; }
+  [data-theme="matcha"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="matcha"] .fonts button:not(.active),
+  [data-theme="matcha"] .lang-switch button:not(.active),
+  [data-theme="matcha"] .theme-switch button:not(.active) { background: #bfd8a0; }
+  [data-theme="caramel"] .app,
+  [data-theme="caramel"] textarea,
+  [data-theme="caramel"] .not-found-card { background: #1a0a04; }
+  [data-theme="caramel"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="caramel"] .fonts button:not(.active),
+  [data-theme="caramel"] .lang-switch button:not(.active),
+  [data-theme="caramel"] .theme-switch button:not(.active) { background: #3a1c08; }
+  [data-theme="mojito"] .app,
+  [data-theme="mojito"] textarea,
+  [data-theme="mojito"] .not-found-card { background: #e8fff0; }
+  [data-theme="mojito"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="mojito"] .fonts button:not(.active),
+  [data-theme="mojito"] .lang-switch button:not(.active),
+  [data-theme="mojito"] .theme-switch button:not(.active) { background: #a8e8c0; }
+  [data-theme="blueberry"] .app,
+  [data-theme="blueberry"] textarea,
+  [data-theme="blueberry"] .not-found-card { background: #080a28; }
+  [data-theme="blueberry"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="blueberry"] .fonts button:not(.active),
+  [data-theme="blueberry"] .lang-switch button:not(.active),
+  [data-theme="blueberry"] .theme-switch button:not(.active) { background: #181c58; }
+  [data-theme="bubblegum"] .app,
+  [data-theme="bubblegum"] textarea,
+  [data-theme="bubblegum"] .not-found-card { background: #ffe0f0; }
+  [data-theme="bubblegum"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="bubblegum"] .fonts button:not(.active),
+  [data-theme="bubblegum"] .lang-switch button:not(.active),
+  [data-theme="bubblegum"] .theme-switch button:not(.active) { background: #ffa8d0; }
+  [data-theme="matrix-classic"] .app,
+  [data-theme="matrix-classic"] textarea,
+  [data-theme="matrix-classic"] .not-found-card { background: #000400; }
+  [data-theme="matrix-classic"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="matrix-classic"] .fonts button:not(.active),
+  [data-theme="matrix-classic"] .lang-switch button:not(.active),
+  [data-theme="matrix-classic"] .theme-switch button:not(.active) { background: #001800; }
+  [data-theme="tron-grid"] .app,
+  [data-theme="tron-grid"] textarea,
+  [data-theme="tron-grid"] .not-found-card { background: #000000; }
+  [data-theme="tron-grid"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="tron-grid"] .fonts button:not(.active),
+  [data-theme="tron-grid"] .lang-switch button:not(.active),
+  [data-theme="tron-grid"] .theme-switch button:not(.active) { background: #000a10; }
+  [data-theme="retrowave"] .app,
+  [data-theme="retrowave"] textarea,
+  [data-theme="retrowave"] .not-found-card { background: #080018; }
+  [data-theme="retrowave"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="retrowave"] .fonts button:not(.active),
+  [data-theme="retrowave"] .lang-switch button:not(.active),
+  [data-theme="retrowave"] .theme-switch button:not(.active) { background: #280850; }
+  [data-theme="amber-crt"] .app,
+  [data-theme="amber-crt"] textarea,
+  [data-theme="amber-crt"] .not-found-card { background: #0a0500; }
+  [data-theme="amber-crt"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="amber-crt"] .fonts button:not(.active),
+  [data-theme="amber-crt"] .lang-switch button:not(.active),
+  [data-theme="amber-crt"] .theme-switch button:not(.active) { background: #1a0e00; }
+  [data-theme="wireframe"] .app,
+  [data-theme="wireframe"] textarea,
+  [data-theme="wireframe"] .not-found-card { background: #fafafa; }
+  [data-theme="wireframe"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="wireframe"] .fonts button:not(.active),
+  [data-theme="wireframe"] .lang-switch button:not(.active),
+  [data-theme="wireframe"] .theme-switch button:not(.active) { background: #ebebeb; }
+  [data-theme="quantum"] .app,
+  [data-theme="quantum"] textarea,
+  [data-theme="quantum"] .not-found-card { background: #001020; }
+  [data-theme="quantum"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="quantum"] .fonts button:not(.active),
+  [data-theme="quantum"] .lang-switch button:not(.active),
+  [data-theme="quantum"] .theme-switch button:not(.active) { background: #0a3050; }
+  [data-theme="ruby"] .app,
+  [data-theme="ruby"] textarea,
+  [data-theme="ruby"] .not-found-card { background: #1a0008; }
+  [data-theme="ruby"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="ruby"] .fonts button:not(.active),
+  [data-theme="ruby"] .lang-switch button:not(.active),
+  [data-theme="ruby"] .theme-switch button:not(.active) { background: #5a0820; }
+  [data-theme="sapphire"] .app,
+  [data-theme="sapphire"] textarea,
+  [data-theme="sapphire"] .not-found-card { background: #000820; }
+  [data-theme="sapphire"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="sapphire"] .fonts button:not(.active),
+  [data-theme="sapphire"] .lang-switch button:not(.active),
+  [data-theme="sapphire"] .theme-switch button:not(.active) { background: #0a1858; }
+  [data-theme="emerald"] .app,
+  [data-theme="emerald"] textarea,
+  [data-theme="emerald"] .not-found-card { background: #001a10; }
+  [data-theme="emerald"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="emerald"] .fonts button:not(.active),
+  [data-theme="emerald"] .lang-switch button:not(.active),
+  [data-theme="emerald"] .theme-switch button:not(.active) { background: #053820; }
+  [data-theme="amethyst"] .app,
+  [data-theme="amethyst"] textarea,
+  [data-theme="amethyst"] .not-found-card { background: #1a0820; }
+  [data-theme="amethyst"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="amethyst"] .fonts button:not(.active),
+  [data-theme="amethyst"] .lang-switch button:not(.active),
+  [data-theme="amethyst"] .theme-switch button:not(.active) { background: #48188a; }
+  [data-theme="opal"] .app,
+  [data-theme="opal"] textarea,
+  [data-theme="opal"] .not-found-card { background: #f0fcfa; }
+  [data-theme="opal"] .output { background: rgba(255,255,255,0.7); }
+  [data-theme="opal"] .fonts button:not(.active),
+  [data-theme="opal"] .lang-switch button:not(.active),
+  [data-theme="opal"] .theme-switch button:not(.active) { background: #dee8f0; }
+  [data-theme="obsidian"] .app,
+  [data-theme="obsidian"] textarea,
+  [data-theme="obsidian"] .not-found-card { background: #020000; }
+  [data-theme="obsidian"] .output { background: rgba(0,0,0,0.55); }
+  [data-theme="obsidian"] .fonts button:not(.active),
+  [data-theme="obsidian"] .lang-switch button:not(.active),
+  [data-theme="obsidian"] .theme-switch button:not(.active) { background: #1a0a08; }
+
 }
 
 /* ──────── Flowing colors animation ──────── */
@@ -4487,6 +4839,43 @@ footer a:hover {
   min-height: 18px;
 }
 .admin-power-output:empty { display: none; }
+
+/* ============================================================
+   v5.40.0 — 9 new customization knobs. CSS hooks for vignette,
+   page padding, shadow strength + Z, border width. Driven by
+   inline-set CSS variables on <html> from applyKnobs().
+   ============================================================ */
+:root {
+  --bf-vignette: 0;             /* 0..1 opacity for body::after vignette */
+  --bf-page-pad: 0px;           /* extra horizontal padding around <main> */
+  --bf-shadow-strength: 1;      /* multiplier on shadow alpha */
+  --bf-shadow-z: 12px;          /* y-offset of liquid-glass card shadow */
+  --bf-border-w: 1px;           /* glass border thickness */
+}
+/* v5.40.2 perf: vignette ONLY rendered when body[data-bf-vignette] is set.
+   Without the attribute the ::after pseudo doesn't materialise → no
+   fullscreen GPU layer, no transition cost on the default site. JS toggles
+   the attribute when knob > 0. */
+body[data-bf-vignette]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+  opacity: var(--bf-vignette, 0);
+  background: radial-gradient(ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.55) 85%,
+    rgba(0, 0, 0, 0.85) 100%);
+  transition: opacity 0.18s ease;
+  will-change: opacity;
+}
+body {
+  /* Page padding knob — adds breathing room around the whole content */
+  padding-left: var(--bf-page-pad, 0px);
+  padding-right: var(--bf-page-pad, 0px);
+  box-sizing: border-box;
+}
 
 /* Power-tools body-class effects */
 body.bf-spin { animation: bfSpin 1.4s ease-in-out 1; }
@@ -6686,4 +7075,326 @@ body.compact-mode h3 {
   --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.55);
   --nf-bg: linear-gradient(160deg, #020000 0%, #100200 100%);
   --nf-code-gradient: linear-gradient(180deg, #c8483a 0%, #e85a48 100%);
+}
+
+/* ============================================================
+   v5.40.0 — wire 4 new customization knobs into glass cards.
+   Border-width, shadow-Z (y-offset), shadow-strength (alpha)
+   need explicit override rules because original glass rules
+   hard-coded  borders and used --shadow-card with baked
+   alpha. We target the most-common glass-card selectors with
+   one big comma-separated rule. Page-padding and vignette are
+   already handled via body{padding} and body::after at the
+   top of this v5.40 section.
+   ============================================================ */
+.app,
+.lang-switch,
+.tabs,
+.time-section,
+.tool-section,
+.home-input,
+.calc-input,
+.calc-btn,
+.calc-modes,
+.settings-btn,
+.tool-btn,
+.fonts-hero,
+.fonts-hero-input,
+.fonts-copy-btn,
+.fonts-search,
+.fonts-cat-pills,
+.tab-btn.active,
+.theme-btn,
+.extra-theme-btn,
+.secret-message,
+.admin-modal,
+textarea,
+.settings-slider {
+  /* Border thickness — pulls from knob, default 1px so untouched UI stays identical. */
+  border-width: var(--bf-border-w, 1px);
+}
+.app,
+.tool-section,
+.time-section,
+.home-input,
+.calc-input,
+.fonts-hero,
+.fonts-hero-input,
+.secret-message {
+  /* Box-shadow that respects both knobs: Z = y-offset, strength = alpha multiplier.
+     Blur is locked to 3.3× Z (the original 0 12px 40px ratio). Default knob values
+     reproduce the original  shadow exactly when
+     shadowZ=12, shadowStrength=1. Falls back gracefully if vars missing. */
+  box-shadow:
+    0
+    var(--bf-shadow-z, 12px)
+    calc(var(--bf-shadow-z, 12px) * 3.3)
+    rgba(0, 0, 0, calc(0.55 * var(--bf-shadow-strength, 1)));
+}
+
+
+/* ============================================================
+   v5.40.1 — MOBILE UPDATE
+   Real bugs this fixes on phones:
+     1. .custom-row had a 130px fixed-width label + slider + value all
+        in one row → on screens narrower than ~360px the label was
+        truncated and the slider thumb area shrank to ~80px. Now the
+        label gets its OWN line above the slider on narrow screens.
+     2. admin-repl textarea was font-size 13px → iOS auto-zoomed on
+        focus. Bumped to 16px on touch devices.
+     3. Admin power-tools grid had minmax(140px, 1fr) → on a 320px
+        phone you got 1 column with huge buttons taking 2× the space
+        they need. Tightened to minmax(110px, 1fr).
+     4. .admin-modal padded 20×16 even on small phones → switched to
+        14×10 + reduced section margins below 480px so 19 custom-row
+        knobs + 22 power-tool buttons actually fit visible area.
+     5. .calc-input / .secret-input were 14px font → iOS zoom on
+        focus. Made all <input type="text">/.calc-input ≥16px on
+        touch devices.
+   ============================================================ */
+@media (max-width: 600px) {
+  .custom-row {
+    /* Stack label above slider on narrow screens */
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+  .custom-row > label {
+    min-width: 0;
+    flex: 1 1 100%;
+    font-size: 12px;
+  }
+  .custom-row > input[type="range"] {
+    flex: 1 1 auto;
+    min-width: 140px;
+  }
+  .custom-val {
+    min-width: 48px;
+    font-size: 11px;
+  }
+  /* Admin modal — tighter on phones, more breathing room for content */
+  .admin-modal {
+    padding: 16px 12px 14px;
+    border-radius: 14px;
+    max-height: 94vh;
+  }
+  .admin-modal h2 { font-size: 18px; }
+  .admin-section { margin-bottom: 14px; }
+  .admin-section h3 { font-size: 14px; }
+  .admin-hint { font-size: 11px; }
+  /* Power-tools — denser grid on phones */
+  .admin-power-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+  }
+  .admin-power-grid button {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+  /* Codes list on phones — single column readable */
+  .admin-codes-list {
+    grid-template-columns: 1fr !important;
+  }
+  /* Themes grid — slightly tighter cards */
+  .admin-themes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)) !important;
+    gap: 6px;
+  }
+  /* Pomodoro buttons — full row width split */
+  .pomodoro-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* Touch / no-hover (real mobile devices) — iOS zoom prevention.
+   ANY focusable input/textarea on a touch screen must be ≥16px or iOS
+   triggers an obnoxious zoom-on-focus that requires manual pinch-out
+   to recover from. Applied broadly across admin + customization. */
+@media (hover: none), (pointer: coarse) {
+  .admin-repl-input,
+  .admin-repl-output,
+  .admin-power-output,
+  .calc-input,
+  #secret-input,
+  #admin-emoji-input,
+  #admin-emoji-count,
+  .home-input,
+  .fonts-hero-input,
+  .fonts-search,
+  textarea {
+    font-size: 16px !important;
+  }
+  /* Bigger touch targets on power-tool + emoji buttons */
+  .admin-power-grid button,
+  .admin-emoji-row button {
+    min-height: 38px;
+  }
+  /* Slider thumb — Apple HIG recommends ≥28px touch target */
+  .settings-slider::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  .settings-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Very narrow phones — last-ditch space saver */
+@media (max-width: 380px) {
+  .admin-modal {
+    padding: 12px 10px 12px;
+    border-radius: 12px;
+  }
+  .custom-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .custom-buttons > .passgen-check {
+    margin-left: 0 !important;
+    justify-content: center;
+  }
+  .admin-power-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-themes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)) !important;
+  }
+}
+
+/* Landscape phones — admin modal would otherwise overflow */
+@media (max-height: 480px) and (orientation: landscape) {
+  .admin-modal {
+    max-height: 96vh;
+    padding: 12px 14px 12px;
+  }
+  .admin-modal h2 { margin-bottom: 0; }
+  .admin-greeting { display: none; }
+  .admin-section { margin-bottom: 10px; }
+}
+
+/* Honor the new --bf-page-pad on narrow screens too — but cap it so the
+   user can't accidentally squeeze content to nothing via the knob. */
+@media (max-width: 600px) {
+  body {
+    padding-left: min(var(--bf-page-pad, 0px), 24px);
+    padding-right: min(var(--bf-page-pad, 0px), 24px);
+  }
+}
+
+
+/* ============================================================
+   v5.40.2 — CROSS-DEVICE OPTIMIZATION
+   Wins for low-end Android, old Chromebooks, big 4K monitors.
+   Audit notes:
+     - 71 backdrop-filter declarations (already gated for mobile)
+     - 63 box-shadow (now dynamic via knobs)
+     - Default site has zero filter on <html> now (vignette layer
+       gated by data-bf-vignette attribute)
+   This block adds:
+     1. content-visibility: auto on long admin-modal sections so
+        off-screen sections (e.g. burn-in, lockout-fire) skip layout
+        + paint cost until the user actually scrolls to them.
+     2. contain: layout style paint on glass-cards so a hover/tap
+        on a button only repaints THAT button, not the whole card.
+     3. @supports gates: graceful degradation for backdrop-filter
+        on Firefox/old WebViews (already partial elsewhere).
+     4. @media (prefers-reduced-data) — kill heavy effects on
+        Save-Data mode.
+     5. @media (max-resolution: 1dppx) AND (max-width: 1100px) —
+        catches old desktops + cheap monitors: drop blur and use
+        solid bg instead of glass.
+   ============================================================ */
+
+/* (1) content-visibility for admin modal sections + long tab content.
+   Browser skips layout/paint of off-screen sections during scroll. */
+.admin-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;  /* placeholder height for skipped content */
+}
+/* Font cards grid is the longest scroll target — skip off-screen items */
+.fonts-grid > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 60px;
+}
+
+/* (2) Style/paint containment on the most-clicked glass cards. Makes
+   hover/tap repaints local rather than promoting the whole document. */
+.tool-btn,
+.settings-btn,
+.calc-btn,
+.fonts-copy-btn,
+.tab-btn,
+.theme-btn,
+.extra-theme-btn,
+.admin-power-grid button,
+.admin-theme-btn {
+  contain: layout style;
+}
+
+/* (3) Graceful degradation: if backdrop-filter unsupported, use a more
+   opaque solid bg so glass cards stay readable on Firefox/Samsung Internet
+   that don't yet support full backdrop-filter syntax. */
+@supports not (backdrop-filter: blur(1px)) {
+  .app,
+  .tool-section,
+  .tool-btn,
+  .settings-btn,
+  .calc-btn,
+  .home-input,
+  textarea,
+  .admin-modal {
+    /* Force more solid bg when blur isn't available — uses --output-bg
+       which themes already define with ~0.7+ alpha. */
+    background-color: var(--output-bg, rgba(20, 20, 30, 0.92)) !important;
+  }
+}
+
+/* (4) Save-Data mode (data saver enabled). Kill heavy GPU effects so
+   the page loads/scrolls fast on low-end connections + devices. */
+@media (prefers-reduced-data: reduce) {
+  .app,
+  .tool-section,
+  .tool-btn,
+  .settings-btn,
+  .calc-btn,
+  .home-input,
+  textarea,
+  .fonts-hero,
+  .fonts-hero-input,
+  .fonts-copy-btn,
+  .fonts-search,
+  .admin-modal {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  body[data-bf-vignette]::after { display: none; }
+  /* Disable all animations on save-data */
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}
+
+/* (5) Low-DPR or small old monitors — drop glass blur (it's a luxury
+   that hurts FPS on integrated graphics). Detect via max-resolution
+   1dppx (non-retina) AND moderate width. */
+@media (max-resolution: 1dppx) and (max-width: 1366px) {
+  .fonts-copy-btn,
+  .fonts-cat-pills,
+  .admin-modal,
+  .calc-modes,
+  .secret-message {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+/* (6) Force-low GPU mode body class (set by admin power tool / future) */
+body.bf-low-gpu * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
 }
