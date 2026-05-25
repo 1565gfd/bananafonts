@@ -9316,14 +9316,11 @@ body {
   /* Lock min-height so even if tabs wrap to 2 rows, the nav doesn't
      visibly resize between RU/EN (same wrap config in both langs now). */
 }
+/* v5.55.10 — removed max-width + ellipsis. Full text shows. */
 .tab-btn {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 92px;
-  max-width: 140px;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   box-sizing: border-box;
 }
 .tab-btn[data-min-role="creator"] {
@@ -9335,12 +9332,10 @@ body {
    which spread them across the left half of top-bar. Now buttons keep
    their natural compact width but still have min-width for anti-jump.
    Container stays default inline-flex so it does not stretch. */
+/* v5.55.10 — keep min-width for anti-jump, allow full text width */
 .theme-switch button {
   flex: 0 0 auto;
   min-width: 96px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   text-align: center;
 }
 
