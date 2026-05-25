@@ -1010,17 +1010,15 @@ html.theme-transition *::after {
    ============================================================ */
 
 .top-bar {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
   margin-bottom: 18px;
-  /* v5.48.1 — reserve right-gutter so the fixed account widget doesn't
-     cover the lang-switch. Widget max-width ≈ 220px, typical .app right
-     margin ≈ 60px → 160px clears it cleanly. */
   padding-right: 160px;
 }
+.top-bar > .theme-switch { grid-column: 2; }
+.top-bar > .lang-switch { grid-column: 3; justify-self: end; }
 @media (max-width: 600px) {
   .top-bar { padding-right: 100px; }
 }
@@ -9366,4 +9364,19 @@ h1 {
    above when re-rendering. */
 #footer {
   min-height: 50px;
+}
+
+
+/* v5.55.11 — mobile fallback: on narrow screens the 3-col grid would
+   squeeze theme-switch too much. Drop back to flex with theme centered
+   and lang-switch ending up below it. */
+@media (max-width: 600px) {
+  .top-bar {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .top-bar > .theme-switch { grid-column: auto; }
+  .top-bar > .lang-switch  { grid-column: auto; justify-self: auto; }
 }
